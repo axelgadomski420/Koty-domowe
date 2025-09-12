@@ -2,7 +2,7 @@ import { FaBars, FaDonate, FaEdit, FaHome, FaList } from "react-icons/fa";
 import { NavLink, Outlet } from "react-router-dom";
 import Navbar from "../../pages/shared/Navbar/Navbar";
 import "./Dashboard.css"
-import { IoCreateOutline, IoPaw } from "react-icons/io5";
+import { IoPaw } from "react-icons/io5";
 import { BsFiles } from "react-icons/bs";
 import { FaHandHoldingDollar } from "react-icons/fa6";
 
