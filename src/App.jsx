@@ -66,8 +66,8 @@ const [organizations] = useState([
     website: 'www.fpl.pl'
   }
 ])
-  // 🐱 PRAWDZIWA BAZA KOTÓW RASOWYCH Z POLSKICH HODOWLI
-const [cats, setCats] = useState([
+  
+      const [cats, setCats] = useState([
   {
     id: 1,
     name: 'GOLDEN SUPREME Luna',
@@ -167,8 +167,8 @@ const [cats, setCats] = useState([
     },
     status: 'available',
     featured: true
-  }
-])
+  },
+  {
     id: 6,
     name: 'SIBERIAN FOREST Snowy',
     breed: 'Siberian',
@@ -263,203 +263,202 @@ const [cats, setCats] = useState([
     personality: ['Spokojna', 'Śliczna', 'Domatorka'],
     status: 'available',
     featured: false
+  },
+  {
+    id: 9,
+    name: 'NORDIC CATS Legend',
+    breed: 'Norwegian Forest',
+    color: 'Black Smoke',
+    gender: 'Samiec',
+    birthDate: '2023-10-15',
+    age: '1 rok 2 miesiące',
+    price: 5500,
+    priceFormatted: '5 500 PLN',
+    availableForBreeding: true,
+    img: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?w=800',
+    gallery: [
+      'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?w=800'
+    ],
+    breeder: {
+      name: '*PL Nordic Cats',
+      prefix: 'Nordic Cats',
+      owner: 'Piotr Woźniak',
+      rating: 4.93,
+      reviewsCount: 167,
+      location: 'Gdańsk, Pomorskie',
+      address: 'ul. Długa 78, 80-831 Gdańsk',
+      phone: '+48 609 012 345',
+      email: 'nordic@cats.pl',
+      website: 'www.nordiccats.pl',
+      responseTime: '< 4 godzin',
+      verified: true,
+      memberSince: '2018',
+      totalCatsSold: 92,
+      activeLitters: 2,
+      organization: 'FIFe / FPL',
+      description: 'Hodowla Norweskich Kotów Leśnych. Linia skandynawska. Duże, silne koty o łagodnym charakterze.'
+    },
+    pedigree: {
+      fife: true,
+      wcf: true,
+      tica: false,
+      fifeNumber: 'PL*NORDIC-NFO-2023-0267',
+      registeredIn: 'FPL',
+      generations: 6,
+      champions: 8
+    },
+    parents: {
+      father: {
+        name: "GIC Nordic Cats Viking Warrior",
+        title: 'Grand International Champion',
+        color: 'Black Smoke',
+        import: 'Import Norwegia'
+      },
+      mother: {
+        name: "IC Nordic Cats Forest Queen",
+        title: 'International Champion',
+        color: 'Black Smoke'
+      }
+    },
+    health: {
+      vaccinated: true,
+      vaccinationDate: '2024-11-20',
+      dewormed: true,
+      microchipped: true,
+      microchipNumber: '616093900901234',
+      vetChecked: true,
+      hcmTested: true,
+      hcmResult: 'Negatywny',
+      pkdTested: true,
+      pkdResult: 'N/N',
+      fivFelvTested: true,
+      fivFelvResult: 'Negatywny',
+      gsd4Tested: true,
+      gsd4Result: 'N/N - Clear',
+      healthCertificate: true,
+      healthGuarantee: '24 miesiące',
+      veterinarian: 'Dr wet. Ewa Lewandowska - Forest Vet Gdańsk'
+    },
+    stats: {
+      views: 5634,
+      likes: 1234,
+      shares: 89,
+      inquiries: 18,
+      lastUpdated: '2024-12-17'
+    },
+    personality: ['Niezależny', 'Inteligentny', 'Łowiecki', 'Majestatyczny'],
+    specialFeatures: ['Large forest cat', 'Norwegian import line', 'Excellent hunter', 'Breeding quality'],
+    included: ['Rodowód FIFe', 'Chip', 'Paszport', 'Szczepienia', 'Testy genetyczne', 'Umowa hodowlana'],
+    readyToGo: 'Gotowy do odbioru',
+    delivery: {
+      personal: true,
+      shipping: true,
+      shippingCost: '420 PLN',
+      meetingLocation: 'Gdańsk Główny'
+    },
+    videos: [],
+    featured: false,
+    verified: true,
+    urgent: false,
+    status: 'available'
+  },
+  {
+    id: 10,
+    name: 'EXOTIC DREAMS Teddy',
+    breed: 'Exotic Shorthair',
+    color: 'Cream',
+    gender: 'Samiec',
+    birthDate: '2024-07-20',
+    age: '5 miesięcy',
+    price: 7200,
+    priceFormatted: '7 200 PLN',
+    availableForBreeding: false,
+    img: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800',
+    gallery: [
+      'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800'
+    ],
+    breeder: {
+      name: '*PL Exotic Dreams',
+      prefix: 'Exotic Dreams',
+      owner: 'Joanna Michalska',
+      rating: 4.97,
+      reviewsCount: 234,
+      location: 'Wrocław, Dolnośląskie',
+      address: 'ul. Świdnicka 45, 50-066 Wrocław',
+      phone: '+48 610 123 456',
+      email: 'exotic@dreams.pl',
+      website: 'www.exoticdreams.pl',
+      responseTime: '< 2 godzin',
+      verified: true,
+      memberSince: '2017',
+      totalCatsSold: 134,
+      activeLitters: 2,
+      organization: 'FIFe / TICA / FPL',
+      description: 'Hodowla Exotic Shorthair i Persów. Koty o pluszowej aparycji i łagodnym charakterze.'
+    },
+    pedigree: {
+      fife: true,
+      wcf: true,
+      tica: true,
+      fifeNumber: 'PL*EXODREAM-EXO-2024-0189',
+      ticaNumber: 'TICA-PL-EXO-2024-0145',
+      registeredIn: 'FPL + TICA',
+      generations: 5,
+      champions: 9
+    },
+    parents: {
+      father: {
+        name: "CH Exotic Dreams Teddy Bear",
+        title: 'Champion FIFe',
+        color: 'Cream'
+      },
+      mother: {
+        name: "IC Exotic Dreams Plush Doll",
+        title: 'International Champion',
+        color: 'Cream'
+      }
+    },
+    health: {
+      vaccinated: true,
+      vaccinationDate: '2024-12-10',
+      dewormed: true,
+      microchipped: true,
+      microchipNumber: '616093901012345',
+      vetChecked: true,
+      hcmTested: false,
+      pkdTested: true,
+      pkdResult: 'N/N (rodzice)',
+      fivFelvTested: true,
+      fivFelvResult: 'Negatywny',
+      healthCertificate: true,
+      healthGuarantee: '24 miesiące',
+      veterinarian: 'Dr wet. Marek Nowak - Exotic Vet Wrocław'
+    },
+    stats: {
+      views: 9123,
+      likes: 2456,
+      shares: 178,
+      inquiries: 31,
+      lastUpdated: '2024-12-20'
+    },
+    personality: ['Spokojny', 'Łagodny', 'Pluszakowy', 'Rodzinny'],
+    specialFeatures: ['Teddy bear face', 'Perfect plush coat', 'Sweet character', 'Easy care'],
+    included: ['Rodowód FIFe+TICA', 'Chip', 'Paszport', 'Szczepienia', 'Zestaw pielęgnacyjny'],
+    readyToGo: '2025-01-25',
+    delivery: {
+      personal: true,
+      shipping: true,
+      shippingCost: '380 PLN',
+      meetingLocation: 'Wrocław Rynek'
+    },
+    videos: [],
+    featured: true,
+    verified: true,
+    urgent: false,
+    status: 'available'
   }
 ])
 
-      id: 9,
-      name: 'NORDIC CATS Legend',
-      breed: 'Norwegian Forest',
-      color: 'Black Smoke',
-      gender: 'Samiec',
-      birthDate: '2023-10-15',
-      age: '1 rok 2 miesiące',
-      price: 5500,
-      priceFormatted: '5 500 PLN',
-      availableForBreeding: true,
-      img: 'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?w=800',
-      gallery: [
-        'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?w=800'
-      ],
-      breeder: {
-        name: '*PL Nordic Cats',
-        prefix: 'Nordic Cats',
-        owner: 'Piotr Woźniak',
-        rating: 4.93,
-        reviewsCount: 167,
-        location: 'Gdańsk, Pomorskie',
-        address: 'ul. Długa 78, 80-831 Gdańsk',
-        phone: '+48 609 012 345',
-        email: 'nordic@cats.pl',
-        website: 'www.nordiccats.pl',
-        responseTime: '< 4 godzin',
-        verified: true,
-        memberSince: '2018',
-        totalCatsSold: 92,
-        activeLitters: 2,
-        organization: 'FIFe / FPL',
-        description: 'Hodowla Norweskich Kotów Leśnych. Linia skandynawska. Duże, silne koty o łagodnym charakterze.'
-      },
-      pedigree: {
-        fife: true,
-        wcf: true,
-        tica: false,
-        fifeNumber: 'PL*NORDIC-NFO-2023-0267',
-        registeredIn: 'FPL',
-        generations: 6,
-        champions: 8
-      },
-      parents: {
-        father: {
-          name: "GIC Nordic Cats Viking Warrior",
-          title: 'Grand International Champion',
-          color: 'Black Smoke',
-          import: 'Import Norwegia'
-        },
-        mother: {
-          name: "IC Nordic Cats Forest Queen",
-          title: 'International Champion',
-          color: 'Black Smoke'
-        }
-      },
-      health: {
-        vaccinated: true,
-        vaccinationDate: '2024-11-20',
-        dewormed: true,
-        microchipped: true,
-        microchipNumber: '616093900901234',
-        vetChecked: true,
-        hcmTested: true,
-        hcmResult: 'Negatywny',
-        pkdTested: true,
-        pkdResult: 'N/N',
-        fivFelvTested: true,
-        fivFelvResult: 'Negatywny',
-        gsd4Tested: true,
-        gsd4Result: 'N/N - Clear',
-        healthCertificate: true,
-        healthGuarantee: '24 miesiące',
-        veterinarian: 'Dr wet. Ewa Lewandowska - Forest Vet Gdańsk'
-      },
-      stats: {
-        views: 5634,
-        likes: 1234,
-        shares: 89,
-        inquiries: 18,
-        lastUpdated: '2024-12-17'
-      },
-      personality: ['Niezależny', 'Inteligentny', 'Łowiecki', 'Majestatyczny'],
-      specialFeatures: ['Large forest cat', 'Norwegian import line', 'Excellent hunter', 'Breeding quality'],
-      included: ['Rodowód FIFe', 'Chip', 'Paszport', 'Szczepienia', 'Testy genetyczne', 'Umowa hodowlana'],
-      readyToGo: 'Gotowy do odbioru',
-      delivery: {
-        personal: true,
-        shipping: true,
-        shippingCost: '420 PLN',
-        meetingLocation: 'Gdańsk Główny'
-      },
-      videos: [],
-      featured: false,
-      verified: true,
-      urgent: false,
-      status: 'available'
-    },
-    {
-      id: 10,
-      name: 'EXOTIC DREAMS Teddy',
-      breed: 'Exotic Shorthair',
-      color: 'Cream',
-      gender: 'Samiec',
-      birthDate: '2024-07-20',
-      age: '5 miesięcy',
-      price: 7200,
-      priceFormatted: '7 200 PLN',
-      availableForBreeding: false,
-      img: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800',
-      gallery: [
-        'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800'
-      ],
-      breeder: {
-        name: '*PL Exotic Dreams',
-        prefix: 'Exotic Dreams',
-        owner: 'Joanna Michalska',
-        rating: 4.97,
-        reviewsCount: 234,
-        location: 'Wrocław, Dolnośląskie',
-        address: 'ul. Świdnicka 45, 50-066 Wrocław',
-        phone: '+48 610 123 456',
-        email: 'exotic@dreams.pl',
-        website: 'www.exoticdreams.pl',
-        responseTime: '< 2 godzin',
-        verified: true,
-        memberSince: '2017',
-        totalCatsSold: 134,
-        activeLitters: 2,
-        organization: 'FIFe / TICA / FPL',
-        description: 'Hodowla Exotic Shorthair i Persów. Koty o pluszowej aparycji i łagodnym charakterze.'
-      },
-      pedigree: {
-        fife: true,
-        wcf: true,
-        tica: true,
-        fifeNumber: 'PL*EXODREAM-EXO-2024-0189',
-        ticaNumber: 'TICA-PL-EXO-2024-0145',
-        registeredIn: 'FPL + TICA',
-        generations: 5,
-        champions: 9
-      },
-      parents: {
-        father: {
-          name: "CH Exotic Dreams Teddy Bear",
-          title: 'Champion FIFe',
-          color: 'Cream'
-        },
-        mother: {
-          name: "IC Exotic Dreams Plush Doll",
-          title: 'International Champion',
-          color: 'Cream'
-        }
-      },
-      health: {
-        vaccinated: true,
-        vaccinationDate: '2024-12-10',
-        dewormed: true,
-        microchipped: true,
-        microchipNumber: '616093901012345',
-        vetChecked: true,
-        hcmTested: false,
-        pkdTested: true,
-        pkdResult: 'N/N (rodzice)',
-        fivFelvTested: true,
-        fivFelvResult: 'Negatywny',
-        healthCertificate: true,
-        healthGuarantee: '24 miesiące',
-        veterinarian: 'Dr wet. Marek Nowak - Exotic Vet Wrocław'
-      },
-      stats: {
-        views: 9123,
-        likes: 2456,
-        shares: 178,
-        inquiries: 31,
-        lastUpdated: '2024-12-20'
-      },
-      personality: ['Spokojny', 'Łagodny', 'Pluszakowy', 'Rodzinny'],
-      specialFeatures: ['Teddy bear face', 'Perfect plush coat', 'Sweet character', 'Easy care'],
-      included: ['Rodowód FIFe+TICA', 'Chip', 'Paszport', 'Szczepienia', 'Zestaw pielęgnacyjny'],
-      readyToGo: '2025-01-25',
-      delivery: {
-        personal: true,
-        shipping: true,
-        shippingCost: '380 PLN',
-        meetingLocation: 'Wrocław Rynek'
-      },
-      videos: [],
-      featured: true,
-      verified: true,
-      urgent: false,
-      status: 'available'
-    }
-    // Więcej kotów 11-25 w następnej sekcji dla oszczędności miejsca...
-  ])
 
   // 📱 HANDLERS (WSZYSTKIE FUNKCJE)
   const handleLike = (catId) => {
