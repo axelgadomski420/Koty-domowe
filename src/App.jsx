@@ -74,72 +74,17 @@ const [cats, setCats] = useState([
     breed: 'British Shorthair',
     color: 'Blue',
     gender: 'Samica',
-    birthDate: '2024-05-15',
     age: '7 miesięcy',
     price: 6500,
     priceFormatted: '6 500 PLN',
-    availableForBreeding: false,
     img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800',
-    gallery: [
-      'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800',
-      'https://images.unsplash.com/photo-1573865526739-10c1d3a1f0cc?w=800',
-      'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=800',
-      'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800'
-    ],
     breeder: {
       name: '*PL Golden British',
-      prefix: 'Golden British',
       owner: 'Anna Kowalska',
       rating: 4.98,
-      reviewsCount: 156,
       location: 'Warszawa, Mazowieckie',
-      address: 'ul. Królewska 45, 00-001 Warszawa',
-      phone: '+48 601 234 567',
-      email: 'kontakt@goldenbritish.pl',
-      website: 'www.goldenbritish.pl',
-      responseTime: '< 2 godzin',
-      verified: true,
-      memberSince: '2018',
-      totalCatsSold: 89,
-      activeLitters: 2,
-      organization: 'FIFe / FPL',
-      description: 'Hodowla British Shorthair z 12-letnim doświadczeniem. Członek FIFe i FPL.'
+      verified: true
     },
-    pedigree: {
-      fife: true,
-      wcf: false,
-      tica: false,
-      fifeNumber: 'PL*GOLDEN BR-0156-2024',
-      registeredIn: 'FPL',
-      generations: 5,
-      champions: 8
-    },
-    parents: {
-      father: {
-        name: "CH Golden British King's Crown",
-        title: 'Champion FIFe',
-        color: 'Blue'
-      },
-      mother: {
-        name: "IC Golden British Queen Elizabeth",
-        title: 'International Champion',
-        color: 'Blue'
-      }
-    },
-    health: {
-      vaccinated: true,
-      dewormed: true,
-      microchipped: true,
-      vetChecked: true,
-      healthGuarantee: '24 miesiące'
-    },
-    stats: {
-      views: 5234,
-      likes: 1247,
-      shares: 89
-    },
-    personality: ['Spokojna', 'Przyjazna', 'Lubi dzieci'],
-    specialFeatures: ['Champion bloodline', 'Show quality'],
     status: 'available',
     featured: true
   },
@@ -149,61 +94,17 @@ const [cats, setCats] = useState([
     breed: 'Maine Coon',
     color: 'Black Silver Tabby',
     gender: 'Samiec',
-    birthDate: '2024-03-10',
     age: '9 miesięcy',
     price: 9200,
     priceFormatted: '9 200 PLN',
-    availableForBreeding: true,
     img: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800',
-    gallery: [
-      'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800',
-      'https://images.unsplash.com/photo-1606208532980-e2b24a06a65f?w=800'
-    ],
     breeder: {
       name: '*PL Giants Coon',
-      prefix: 'Giants Coon',
       owner: 'Marek Wiśniewski',
       rating: 4.99,
-      reviewsCount: 289,
       location: 'Kraków, Małopolskie',
-      phone: '+48 602 345 678',
-      email: 'info@giantscoon.pl',
-      responseTime: '< 1 godziny',
-      verified: true,
-      organization: 'FIFe / TICA'
+      verified: true
     },
-    pedigree: {
-      fife: true,
-      tica: true,
-      generations: 6,
-      champions: 12
-    },
-    parents: {
-      father: {
-        name: "GIC Giants Coon Maximus",
-        title: 'Grand International Champion',
-        color: 'Black Silver Tabby'
-      },
-      mother: {
-        name: "IC Giants Coon Bella Grande",
-        title: 'International Champion',
-        color: 'Black Silver Tabby'
-      }
-    },
-    health: {
-      vaccinated: true,
-      dewormed: true,
-      microchipped: true,
-      vetChecked: true,
-      healthGuarantee: '36 miesięcy'
-    },
-    stats: {
-      views: 8421,
-      likes: 2156,
-      shares: 145
-    },
-    personality: ['Towarzyski', 'Łagodny olbrzym', 'Inteligentny'],
-    specialFeatures: ['XXL - 8.2kg', 'Linia pokazowa', 'Top bloodline'],
     status: 'available',
     featured: true
   },
@@ -213,56 +114,17 @@ const [cats, setCats] = useState([
     breed: 'Persian',
     color: 'White',
     gender: 'Samica',
-    birthDate: '2023-08-20',
     age: '1 rok 4 miesiące',
     price: 5800,
     priceFormatted: '5 800 PLN',
-    availableForBreeding: true,
     img: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800',
-    gallery: [
-      'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800'
-    ],
     breeder: {
       name: '*PL Persian Dream',
       owner: 'Katarzyna Lewandowska',
       rating: 4.96,
-      reviewsCount: 178,
       location: 'Gdańsk, Pomorskie',
-      phone: '+48 603 456 789',
-      verified: true,
-      organization: 'WCF'
+      verified: true
     },
-    pedigree: {
-      wcf: true,
-      generations: 5,
-      champions: 6
-    },
-    parents: {
-      father: {
-        name: "CH Persian Dream White Knight",
-        title: 'Champion WCF',
-        color: 'White'
-      },
-      mother: {
-        name: "Persian Dream Snow Queen",
-        title: 'Champion',
-        color: 'White'
-      }
-    },
-    health: {
-      vaccinated: true,
-      dewormed: true,
-      microchipped: true,
-      vetChecked: true,
-      healthGuarantee: '24 miesiące'
-    },
-    stats: {
-      views: 3421,
-      likes: 892,
-      shares: 67
-    },
-    personality: ['Spokojna', 'Domatorka', 'Elegancka'],
-    specialFeatures: ['Breeding quality', 'Perfect white coat'],
     status: 'available',
     featured: false
   },
@@ -272,56 +134,17 @@ const [cats, setCats] = useState([
     breed: 'Ragdoll',
     color: 'Seal Point',
     gender: 'Samiec',
-    birthDate: '2024-07-01',
     age: '5.5 miesiąca',
     price: 5200,
     priceFormatted: '5 200 PLN',
     img: 'https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=800',
-    gallery: [
-      'https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=800',
-      'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=800'
-    ],
     breeder: {
       name: '*PL Ragdoll Angels',
       owner: 'Agnieszka Nowak',
       rating: 4.97,
-      reviewsCount: 134,
       location: 'Wrocław, Dolnośląskie',
-      phone: '+48 604 567 890',
-      verified: true,
-      organization: 'TICA'
+      verified: true
     },
-    pedigree: {
-      tica: true,
-      generations: 5,
-      champions: 4
-    },
-    parents: {
-      father: {
-        name: "QGC Ragdoll Angels Blue Prince",
-        title: 'Quadruple Grand Champion',
-        color: 'Blue Point'
-      },
-      mother: {
-        name: "CH Ragdoll Angels Sweet Dream",
-        title: 'Champion TICA',
-        color: 'Seal Point'
-      }
-    },
-    health: {
-      vaccinated: true,
-      dewormed: true,
-      microchipped: true,
-      vetChecked: true,
-      healthGuarantee: '24 miesiące'
-    },
-    stats: {
-      views: 4567,
-      likes: 1123,
-      shares: 78
-    },
-    personality: ['Łagodny', 'Rodzinny', 'Cierpliwy z dziećmi'],
-    specialFeatures: ['Idealny dla rodziny', 'Wychowany z dziećmi'],
     status: 'available',
     featured: false
   },
@@ -331,225 +154,21 @@ const [cats, setCats] = useState([
     breed: 'Bengal',
     color: 'Brown Spotted Tabby',
     gender: 'Samica',
-    birthDate: '2024-01-15',
     age: '11 miesięcy',
     price: 7800,
     priceFormatted: '7 800 PLN',
-    availableForBreeding: true,
     img: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800',
-    gallery: [
-      'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800',
-      'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=800'
-    ],
     breeder: {
       name: '*PL Wild Bengal',
       owner: 'Tomasz Zieliński',
       rating: 4.95,
-      reviewsCount: 201,
       location: 'Poznań, Wielkopolskie',
-      phone: '+48 605 678 901',
-      verified: true,
-      organization: 'TICA / WCF'
+      verified: true
     },
-    pedigree: {
-      tica: true,
-      wcf: true,
-      generations: 6,
-      champions: 9
-    },
-    parents: {
-      father: {
-        name: "RW SGC Wild Bengal King Leonidas",
-        title: 'Regional Winner Supreme Grand Champion',
-        color: 'Brown Rosetted',
-        import: 'USA'
-      },
-      mother: {
-        name: "GC Wild Bengal Princess Maya",
-        title: 'Grand Champion',
-        color: 'Brown Spotted'
-      }
-    },
-    health: {
-      vaccinated: true,
-      dewormed: true,
-      microchipped: true,
-      vetChecked: true,
-      healthGuarantee: '36 miesięcy'
-    },
-    stats: {
-      views: 6789,
-      likes: 1678,
-      shares: 123
-    },
-    personality: ['Energiczna', 'Inteligentna', 'Towarzyska'],
-    specialFeatures: ['Show quality rosettes', 'Import bloodline USA'],
     status: 'available',
     featured: true
   }
 ])
-
-  {
-    id: 1,
-    name: 'GOLDEN SUPREME Luna',
-    breed: 'British Shorthair',
-    color: 'Blue',
-    gender: 'Samica',
-    age: '7 miesięcy',
-    price: 6500,
-    priceFormatted: '6 500 PLN',
-    img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800',
-    gallery: ['https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800'],
-    breeder: {
-      name: '*PL Golden British',
-      owner: 'Anna Kowalska',
-      rating: 4.98,
-      reviewsCount: 156,
-      location: 'Warszawa, Mazowieckie',
-      phone: '+48 601 234 567',
-      verified: true,
-      organization: 'FIFe / FPL'
-    },
-    pedigree: { fife: true, generations: 5, champions: 8 },
-    parents: {
-      father: { name: "CH Golden British King's Crown", title: 'Champion FIFe' },
-      mother: { name: "IC Golden British Queen Elizabeth", title: 'International Champion' }
-    },
-    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
-    stats: { views: 5234, likes: 1247 },
-    personality: ['Spokojna', 'Przyjazna', 'Lubi dzieci'],
-    status: 'available',
-    featured: true
-  },
-  {
-    id: 2,
-    name: 'GIANT COON Thunder',
-    breed: 'Maine Coon',
-    color: 'Black Silver Tabby',
-    gender: 'Samiec',
-    age: '9 miesięcy',
-    price: 9200,
-    priceFormatted: '9 200 PLN',
-    img: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800',
-    gallery: ['https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800'],
-    breeder: {
-      name: '*PL Giants Coon',
-      owner: 'Marek Wiśniewski',
-      rating: 4.99,
-      reviewsCount: 289,
-      location: 'Kraków, Małopolskie',
-      phone: '+48 602 345 678',
-      verified: true,
-      organization: 'FIFe / TICA'
-    },
-    pedigree: { fife: true, tica: true, generations: 6, champions: 12 },
-    parents: {
-      father: { name: "GIC Giants Coon Maximus", title: 'Grand International Champion' },
-      mother: { name: "IC Giants Coon Bella Grande", title: 'International Champion' }
-    },
-    health: { vaccinated: true, microchipped: true, healthGuarantee: '36 miesięcy' },
-    stats: { views: 8421, likes: 2156 },
-    personality: ['Towarzyski', 'Łagodny olbrzym', 'Inteligentny'],
-    status: 'available',
-    featured: true
-  },
-  {
-    id: 3,
-    name: 'PERSIAN DREAM Bella',
-    breed: 'Persian',
-    color: 'White',
-    gender: 'Samica',
-    age: '1 rok 4 miesiące',
-    price: 5800,
-    priceFormatted: '5 800 PLN',
-    img: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800',
-    gallery: ['https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800'],
-    breeder: {
-      name: '*PL Persian Dream',
-      owner: 'Katarzyna Lewandowska',
-      rating: 4.96,
-      reviewsCount: 178,
-      location: 'Gdańsk, Pomorskie',
-      phone: '+48 603 456 789',
-      verified: true,
-      organization: 'WCF'
-    },
-    pedigree: { wcf: true, generations: 5, champions: 6 },
-    parents: {
-      father: { name: "CH Persian Dream White Knight", title: 'Champion WCF' },
-      mother: { name: "Persian Dream Snow Queen", title: 'Champion' }
-    },
-    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
-    stats: { views: 3421, likes: 892 },
-    personality: ['Spokojna', 'Domatorka', 'Elegancka'],
-    status: 'available',
-    featured: false
-  },
-  {
-    id: 4,
-    name: 'RAGDOLL ANGELS Shadow',
-    breed: 'Ragdoll',
-    color: 'Seal Point',
-    gender: 'Samiec',
-    age: '5.5 miesiąca',
-    price: 5200,
-    priceFormatted: '5 200 PLN',
-    img: 'https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=800',
-    gallery: ['https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=800'],
-    breeder: {
-      name: '*PL Ragdoll Angels',
-      owner: 'Agnieszka Nowak',
-      rating: 4.97,
-      reviewsCount: 134,
-      location: 'Wrocław, Dolnośląskie',
-      phone: '+48 604 567 890',
-      verified: true,
-      organization: 'TICA'
-    },
-    pedigree: { tica: true, generations: 5, champions: 4 },
-    parents: {
-      father: { name: "QGC Ragdoll Angels Blue Prince", title: 'Quadruple Grand Champion' },
-      mother: { name: "CH Ragdoll Angels Sweet Dream", title: 'Champion TICA' }
-    },
-    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
-    stats: { views: 4567, likes: 1123 },
-    personality: ['Łagodny', 'Rodzinny', 'Cierpliwy z dziećmi'],
-    status: 'available',
-    featured: false
-  },
-  {
-    id: 5,
-    name: 'WILD BENGAL Mystic',
-    breed: 'Bengal',
-    color: 'Brown Spotted Tabby',
-    gender: 'Samica',
-    age: '11 miesięcy',
-    price: 7800,
-    priceFormatted: '7 800 PLN',
-    img: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800',
-    gallery: ['https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800'],
-    breeder: {
-      name: '*PL Wild Bengal',
-      owner: 'Tomasz Zieliński',
-      rating: 4.95,
-      reviewsCount: 201,
-      location: 'Poznań, Wielkopolskie',
-      phone: '+48 605 678 901',
-      verified: true,
-      organization: 'TICA / WCF'
-    },
-    pedigree: { tica: true, wcf: true, generations: 6, champions: 9 },
-    parents: {
-      father: { name: "RW SGC Wild Bengal King Leonidas", title: 'Regional Winner Supreme Grand Champion' },
-      mother: { name: "GC Wild Bengal Princess Maya", title: 'Grand Champion' }
-    },
-    health: { vaccinated: true, microchipped: true, healthGuarantee: '36 miesięcy' },
-    stats: { views: 6789, likes: 1678 },
-    personality: ['Energiczna', 'Inteligentna', 'Towarzyska'],
-    status: 'available',
-    featured: true
-  },
-  {
     id: 6,
     name: 'SIBERIAN FOREST Snowy',
     breed: 'Siberian',
