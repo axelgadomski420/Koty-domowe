@@ -2439,9 +2439,6 @@ const [organizations] = useState([
     </button>
   )
 
-  Dodaj to do pliku (kontynuacja po MSG 5):
-
-  // 🐱 KOTY 16-25 (DOKOŃCZENIE PEŁNEJ BAZY)
   const moreCats = [
     {
       id: 16,
