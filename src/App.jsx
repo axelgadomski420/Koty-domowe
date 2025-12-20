@@ -21,7 +21,51 @@ function App() {
   const [selectedBreeder, setSelectedBreeder] = useState(null)
   const [userFavorites, setUserFavorites] = useState([])
   const [notifications, setNotifications] = useState(12)
-  
+
+
+  // 🏛️ ORGANIZACJE FELINOLOGICZNE W POLSCE
+const [organizations] = useState([
+  {
+    id: 'fife',
+    name: 'FIFe',
+    fullName: 'Fédération Internationale Féline',
+    logo: '🏆',
+    country: 'Międzynarodowa',
+    polishMember: 'FPL (Felinologia Polska)',
+    description: 'Największa międzynarodowa organizacja felinologiczna',
+    website: 'www.fifeweb.org'
+  },
+  {
+    id: 'wcf',
+    name: 'WCF',
+    fullName: 'World Cat Federation',
+    logo: '🌍',
+    country: 'Międzynarodowa',
+    polishMember: 'WCF Poland',
+    description: 'Międzynarodowa federacja hodowców kotów',
+    website: 'www.wcf-online.de'
+  },
+  {
+    id: 'tica',
+    name: 'TICA',
+    fullName: 'The International Cat Association',
+    logo: '🌟',
+    country: 'USA / Międzynarodowa',
+    polishMember: 'TICA Poland Region',
+    description: 'Największa amerykańska organizacja genetyczna kotów',
+    website: 'www.tica.org'
+  },
+  {
+    id: 'fpl',
+    name: 'FPL',
+    fullName: 'Felinologia Polska Licencjonowana',
+    logo: '🇵🇱',
+    country: 'Polska',
+    polishMember: 'Członek FIFe',
+    description: 'Polska organizacja, członek FIFe',
+    website: 'www.fpl.pl'
+  }
+])
   // 🐱 PRAWDZIWA BAZA KOTÓW RASOWYCH Z POLSKICH HODOWLI
 const [cats, setCats] = useState([
   {
@@ -345,322 +389,266 @@ const [cats, setCats] = useState([
   }
 ])
 
-  // 🏛️ ORGANIZACJE FELINOLOGICZNE W POLSCE
-const [organizations] = useState([
+  // 🐱 PRAWDZIWA BAZA KOTÓW RASOWYCH Z POLSKICH HODOWLI
+const [cats, setCats] = useState([
   {
-    id: 'fife',
-    name: 'FIFe',
-    fullName: 'Fédération Internationale Féline',
-    logo: '🏆',
-    country: 'Międzynarodowa',
-    polishMember: 'FPL (Felinologia Polska)',
-    description: 'Największa międzynarodowa organizacja felinologiczna',
-    website: 'www.fifeweb.org'
+    id: 1,
+    name: 'GOLDEN SUPREME Luna',
+    breed: 'British Shorthair',
+    color: 'Blue',
+    gender: 'Samica',
+    age: '7 miesięcy',
+    price: 6500,
+    priceFormatted: '6 500 PLN',
+    img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800',
+    gallery: ['https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800'],
+    breeder: {
+      name: '*PL Golden British',
+      owner: 'Anna Kowalska',
+      rating: 4.98,
+      reviewsCount: 156,
+      location: 'Warszawa, Mazowieckie',
+      phone: '+48 601 234 567',
+      verified: true,
+      organization: 'FIFe / FPL'
+    },
+    pedigree: { fife: true, generations: 5, champions: 8 },
+    parents: {
+      father: { name: "CH Golden British King's Crown", title: 'Champion FIFe' },
+      mother: { name: "IC Golden British Queen Elizabeth", title: 'International Champion' }
+    },
+    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
+    stats: { views: 5234, likes: 1247 },
+    personality: ['Spokojna', 'Przyjazna', 'Lubi dzieci'],
+    status: 'available',
+    featured: true
   },
   {
-    id: 'wcf',
-    name: 'WCF',
-    fullName: 'World Cat Federation',
-    logo: '🌍',
-    country: 'Międzynarodowa',
-    polishMember: 'WCF Poland',
-    description: 'Międzynarodowa federacja hodowców kotów',
-    website: 'www.wcf-online.de'
+    id: 2,
+    name: 'GIANT COON Thunder',
+    breed: 'Maine Coon',
+    color: 'Black Silver Tabby',
+    gender: 'Samiec',
+    age: '9 miesięcy',
+    price: 9200,
+    priceFormatted: '9 200 PLN',
+    img: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800',
+    gallery: ['https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800'],
+    breeder: {
+      name: '*PL Giants Coon',
+      owner: 'Marek Wiśniewski',
+      rating: 4.99,
+      reviewsCount: 289,
+      location: 'Kraków, Małopolskie',
+      phone: '+48 602 345 678',
+      verified: true,
+      organization: 'FIFe / TICA'
+    },
+    pedigree: { fife: true, tica: true, generations: 6, champions: 12 },
+    parents: {
+      father: { name: "GIC Giants Coon Maximus", title: 'Grand International Champion' },
+      mother: { name: "IC Giants Coon Bella Grande", title: 'International Champion' }
+    },
+    health: { vaccinated: true, microchipped: true, healthGuarantee: '36 miesięcy' },
+    stats: { views: 8421, likes: 2156 },
+    personality: ['Towarzyski', 'Łagodny olbrzym', 'Inteligentny'],
+    status: 'available',
+    featured: true
   },
   {
-    id: 'tica',
-    name: 'TICA',
-    fullName: 'The International Cat Association',
-    logo: '🌟',
-    country: 'USA / Międzynarodowa',
-    polishMember: 'TICA Poland Region',
-    description: 'Największa amerykańska organizacja genetyczna kotów',
-    website: 'www.tica.org'
+    id: 3,
+    name: 'PERSIAN DREAM Bella',
+    breed: 'Persian',
+    color: 'White',
+    gender: 'Samica',
+    age: '1 rok 4 miesiące',
+    price: 5800,
+    priceFormatted: '5 800 PLN',
+    img: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800',
+    gallery: ['https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800'],
+    breeder: {
+      name: '*PL Persian Dream',
+      owner: 'Katarzyna Lewandowska',
+      rating: 4.96,
+      reviewsCount: 178,
+      location: 'Gdańsk, Pomorskie',
+      phone: '+48 603 456 789',
+      verified: true,
+      organization: 'WCF'
+    },
+    pedigree: { wcf: true, generations: 5, champions: 6 },
+    parents: {
+      father: { name: "CH Persian Dream White Knight", title: 'Champion WCF' },
+      mother: { name: "Persian Dream Snow Queen", title: 'Champion' }
+    },
+    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
+    stats: { views: 3421, likes: 892 },
+    personality: ['Spokojna', 'Domatorka', 'Elegancka'],
+    status: 'available',
+    featured: false
   },
   {
-    id: 'fpl',
-    name: 'FPL',
-    fullName: 'Felinologia Polska Licencjonowana',
-    logo: '🇵🇱',
-    country: 'Polska',
-    polishMember: 'Członek FIFe',
-    description: 'Polska organizacja, członek FIFe',
-    website: 'www.fpl.pl'
-  }
-])
-
-// 🐱 BAZA KOTÓW (rozszerzona)
-  // ... TU POWINNY BYĆ KOTY 1-5 ...
-  // (nie usuwaj ich!)
-  
-  // 🆕 KOTY 6-25 (KONTYNUACJA BAZY)
+    id: 4,
+    name: 'RAGDOLL ANGELS Shadow',
+    breed: 'Ragdoll',
+    color: 'Seal Point',
+    gender: 'Samiec',
+    age: '5.5 miesiąca',
+    price: 5200,
+    priceFormatted: '5 200 PLN',
+    img: 'https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=800',
+    gallery: ['https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=800'],
+    breeder: {
+      name: '*PL Ragdoll Angels',
+      owner: 'Agnieszka Nowak',
+      rating: 4.97,
+      reviewsCount: 134,
+      location: 'Wrocław, Dolnośląskie',
+      phone: '+48 604 567 890',
+      verified: true,
+      organization: 'TICA'
+    },
+    pedigree: { tica: true, generations: 5, champions: 4 },
+    parents: {
+      father: { name: "QGC Ragdoll Angels Blue Prince", title: 'Quadruple Grand Champion' },
+      mother: { name: "CH Ragdoll Angels Sweet Dream", title: 'Champion TICA' }
+    },
+    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
+    stats: { views: 4567, likes: 1123 },
+    personality: ['Łagodny', 'Rodzinny', 'Cierpliwy z dziećmi'],
+    status: 'available',
+    featured: false
+  },
+  {
+    id: 5,
+    name: 'WILD BENGAL Mystic',
+    breed: 'Bengal',
+    color: 'Brown Spotted Tabby',
+    gender: 'Samica',
+    age: '11 miesięcy',
+    price: 7800,
+    priceFormatted: '7 800 PLN',
+    img: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800',
+    gallery: ['https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800'],
+    breeder: {
+      name: '*PL Wild Bengal',
+      owner: 'Tomasz Zieliński',
+      rating: 4.95,
+      reviewsCount: 201,
+      location: 'Poznań, Wielkopolskie',
+      phone: '+48 605 678 901',
+      verified: true,
+      organization: 'TICA / WCF'
+    },
+    pedigree: { tica: true, wcf: true, generations: 6, champions: 9 },
+    parents: {
+      father: { name: "RW SGC Wild Bengal King Leonidas", title: 'Regional Winner Supreme Grand Champion' },
+      mother: { name: "GC Wild Bengal Princess Maya", title: 'Grand Champion' }
+    },
+    health: { vaccinated: true, microchipped: true, healthGuarantee: '36 miesięcy' },
+    stats: { views: 6789, likes: 1678 },
+    personality: ['Energiczna', 'Inteligentna', 'Towarzyska'],
+    status: 'available',
+    featured: true
+  },
   {
     id: 6,
     name: 'SIBERIAN FOREST Snowy',
     breed: 'Siberian',
     color: 'Silver Tabby',
     gender: 'Samiec',
-    birthDate: '2024-04-20',
     age: '8 miesięcy',
     price: 4900,
     priceFormatted: '4 900 PLN',
-    availableForBreeding: false,
     img: 'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=800',
-    gallery: [
-      'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=800'
-    ],
+    gallery: ['https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=800'],
     breeder: {
       name: '*PL Siberian Forest',
-      prefix: 'Siberian Forest',
       owner: 'Ewa Krajewska',
       rating: 4.94,
       reviewsCount: 167,
       location: 'Łódź, Łódzkie',
-      address: 'ul. Piotrkowska 156, 90-001 Łódź',
       phone: '+48 606 789 012',
-      email: 'forest@siberian.pl',
-      website: 'www.siberianforest.pl',
-      responseTime: '< 5 godzin',
       verified: true,
-      memberSince: '2019',
-      totalCatsSold: 78,
-      activeLitters: 1,
-      organization: 'FIFe / FPL',
-      description: 'Hodowla Kotów Syberyjskich. Koty hypoalergiczne, idealne dla alergików. Linia tradycyjna rosyjska.'
+      organization: 'FIFe / FPL'
     },
-    pedigree: {
-      fife: true,
-      wcf: true,
-      tica: false,
-      fifeNumber: 'PL*SIBFOR-SIB-2024-0123',
-      wcfNumber: 'WCF-PL-SIB-2024-0089',
-      registeredIn: 'FPL + WCF Poland',
-      generations: 5,
-      champions: 7
-    },
+    pedigree: { fife: true, wcf: true, generations: 5, champions: 7 },
     parents: {
-      father: {
-        name: "IC Siberian Forest Ivan Veliki",
-        title: 'International Champion',
-        color: 'Silver Tabby',
-        import: 'Import Rosja'
-      },
-      mother: {
-        name: "CH Siberian Forest Natasha",
-        title: 'Champion FIFe',
-        color: 'Silver Tabby'
-      }
+      father: { name: "IC Siberian Forest Ivan Veliki", title: 'International Champion' },
+      mother: { name: "CH Siberian Forest Natasha", title: 'Champion FIFe' }
     },
-    health: {
-      vaccinated: true,
-      dewormed: true,
-      veterinaryExam: true,
-      microchip: true,
-      passport: true,
-      healthGuarantee: '2 lata',
-      geneticTests: ['PKD negative', 'HCM negative']
-    },
+    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
+    stats: { views: 4123, likes: 987 },
     personality: ['Łagodny', 'Towarzyski', 'Inteligentny'],
-    specialFeatures: ['Hipoalergiczny', 'Duży rozmiar', 'Piękne futro'],
+    status: 'available',
+    featured: false
+  },
+  {
+    id: 7,
+    name: 'SPHYNX ELITE Royal King',
+    breed: 'Sphynx',
+    color: 'Pink',
+    gender: 'Samiec',
+    age: '5 miesięcy',
+    price: 8900,
+    priceFormatted: '8 900 PLN',
+    img: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=800',
+    gallery: ['https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=800'],
+    breeder: {
+      name: '*PL Naked Beauties',
+      owner: 'Monika Szymańska',
+      rating: 4.96,
+      reviewsCount: 143,
+      location: 'Warszawa, Mazowieckie',
+      phone: '+48 607 890 123',
+      verified: true,
+      organization: 'TICA'
+    },
+    pedigree: { tica: true, generations: 5, champions: 8 },
+    parents: {
+      father: { name: "GC Naked Beauties Emperor", title: 'Grand Champion' },
+      mother: { name: "CH Naked Beauties Princess", title: 'Champion' }
+    },
+    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
+    stats: { views: 7234, likes: 1456 },
+    personality: ['Energiczny', 'Towarzyski', 'Ciepły'],
+    status: 'available',
+    featured: true
+  },
+  {
+    id: 8,
+    name: 'SCOTTISH FOLD Melody',
+    breed: 'Scottish Fold',
+    color: 'Lilac',
+    gender: 'Samica',
+    age: '4 miesiące',
+    price: 7800,
+    priceFormatted: '7 800 PLN',
+    img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800',
+    gallery: ['https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800'],
+    breeder: {
+      name: '*PL Fold Masters',
+      owner: 'Adam Nowicki',
+      rating: 4.89,
+      reviewsCount: 98,
+      location: 'Gdynia, Pomorskie',
+      phone: '+48 608 901 234',
+      verified: true,
+      organization: 'WCF'
+    },
+    pedigree: { wcf: true, generations: 4, champions: 5 },
+    parents: {
+      father: { name: "CH Fold Masters Sweet Prince", title: 'Champion' },
+      mother: { name: "Fold Masters Angel", title: 'Champion' }
+    },
+    health: { vaccinated: true, microchipped: true, healthGuarantee: '24 miesiące' },
+    stats: { views: 5678, likes: 1234 },
+    personality: ['Spokojna', 'Śliczna', 'Domatorka'],
     status: 'available',
     featured: false
   }
-      id: 7,
-      name: 'SPHYNX ELITE Royal King',
-      breed: 'Sphynx',
-      color: 'Black',
-      gender: 'Samiec',
-      birthDate: '2024-02-10',
-      age: '10 miesięcy',
-      price: 8500,
-      priceFormatted: '8 500 PLN',
-      availableForBreeding: true,
-      img: 'https://images.unsplash.com/photo-1611003228941-98852ba62227?w=800',
-      gallery: [
-        'https://images.unsplash.com/photo-1611003228941-98852ba62227?w=800',
-        'https://images.unsplash.com/photo-1615789591457-74a63395c990?w=800'
-      ],
-      breeder: {
-        name: '*PL Sphynx Elite',
-        prefix: 'Sphynx Elite',
-        owner: 'Magdalena Wójcik',
-        rating: 4.99,
-        reviewsCount: 342,
-        location: 'Warszawa, Mazowieckie',
-        address: 'ul. Nowa 67, 02-001 Warszawa',
-        phone: '+48 607 890 123',
-        email: 'elite@sphynx.pl',
-        website: 'www.sphynxelite.pl',
-        responseTime: '< 1 godziny',
-        verified: true,
-        memberSince: '2015',
-        totalCatsSold: 189,
-        activeLitters: 3,
-        organization: 'TICA / WCF / FPL',
-        description: 'Najstarsza hodowla Sphynx w Polsce. Importy z Kanady i USA. Linia pokazowa najwyższej klasy.'
-      },
-      pedigree: {
-        fife: false,
-        wcf: true,
-        tica: true,
-        ticaNumber: 'TICA-PL-SPH-2024-0234',
-        wcfNumber: 'WCF-PL-SPH-2024-0156',
-        registeredIn: 'TICA + WCF',
-        generations: 6,
-        champions: 14
-      },
-      parents: {
-        father: {
-          name: "RW QGC Sphynx Elite Pharaoh",
-          title: 'Regional Winner Quadruple GC',
-          color: 'Black',
-          import: 'Import Kanada'
-        },
-        mother: {
-          name: "GC Sphynx Elite Cleopatra",
-          title: 'Grand Champion TICA',
-          color: 'Black'
-        }
-      },
-      health: {
-        vaccinated: true,
-        vaccinationDate: '2024-12-08',
-        dewormed: true,
-        microchipped: true,
-        microchipNumber: '616093900789012',
-        vetChecked: true,
-        hcmTested: true,
-        hcmResult: 'Negatywny (echo serca)',
-        fivFelvTested: true,
-        fivFelvResult: 'Negatywny',
-        healthCertificate: true,
-        healthGuarantee: '36 miesięcy',
-        veterinarian: 'Dr wet. Paweł Kowalski - Sphynx Vet Expert'
-      },
-      stats: {
-        views: 12456,
-        likes: 3421,
-        shares: 234,
-        inquiries: 45,
-        lastUpdated: '2024-12-20'
-      },
-      personality: ['Bardzo towarzyski', 'Ciepły w dotyku', 'Loves cuddles', 'Aktywny'],
-      specialFeatures: ['Show quality', 'Canadian import line', 'Champion bloodline', 'Breeding rights'],
-      included: ['Rodowód TICA+WCF', 'Chip', 'Paszport EU', 'Wszystkie szczepienia', 'Testy', 'Ubranka', 'Umowa hodowlana'],
-      readyToGo: 'Gotowy do odbioru',
-      delivery: {
-        personal: true,
-        shipping: true,
-        shippingCost: '500 PLN',
-        international: true,
-        meetingLocation: 'Warszawa Centrum'
-      },
-      videos: [
-        {
-          url: 'https://example.com/royal-king.mp4',
-          title: 'Royal King - prezentacja',
-          duration: '2:45'
-        }
-      ],
-      featured: true,
-      verified: true,
-      urgent: false,
-      status: 'available'
-    },
-    {
-      id: 8,
-      name: 'SCOTTISH DREAMS Angel',
-      breed: 'Scottish Fold',
-      color: 'Lilac',
-      gender: 'Samica',
-      birthDate: '2024-06-05',
-      age: '6.5 miesiąca',
-      price: 6200,
-      priceFormatted: '6 200 PLN',
-      availableForBreeding: false,
-      img: 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=800',
-      gallery: [
-        'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=800'
-      ],
-      breeder: {
-        name: '*PL Scottish Dreams',
-        prefix: 'Scottish Dreams',
-        owner: 'Kamila Mazur',
-        rating: 4.96,
-        reviewsCount: 198,
-        location: 'Kraków, Małopolskie',
-        address: 'ul. Floriańska 23, 31-019 Kraków',
-        phone: '+48 608 901 234',
-        email: 'dreams@scottish.pl',
-        website: 'www.scottishdreams.pl',
-        responseTime: '< 3 godzin',
-        verified: true,
-        memberSince: '2020',
-        totalCatsSold: 56,
-        activeLitters: 1,
-        organization: 'TICA / FPL',
-        description: 'Hodowla Scottish Fold i Straight. Koty o wspaniałych uszkach i charakterze.'
-      },
-      pedigree: {
-        fife: false,
-        wcf: false,
-        tica: true,
-        ticaNumber: 'TICA-PL-SFS-2024-0178',
-        registeredIn: 'TICA',
-        generations: 5,
-        champions: 5
-      },
-      parents: {
-        father: {
-          name: "CH Scottish Dreams Prince Charming",
-          title: 'Champion TICA',
-          color: 'Lilac'
-        },
-        mother: {
-          name: "Scottish Dreams Sweet Angel",
-          title: 'Show cat',
-          color: 'Lilac'
-        }
-      },
-      health: {
-        vaccinated: true,
-        vaccinationDate: '2024-12-01',
-        dewormed: true,
-        microchipped: true,
-        microchipNumber: '616093900890123',
-        vetChecked: true,
-        hcmTested: false,
-        pkdTested: false,
-        fivFelvTested: true,
-        fivFelvResult: 'Negatywny',
-        healthCertificate: true,
-        healthGuarantee: '24 miesiące',
-        veterinarian: 'Dr wet. Anna Kowalczyk - Pet Clinic Kraków'
-      },
-      stats: {
-        views: 7823,
-        likes: 1923,
-        shares: 145,
-        inquiries: 27,
-        lastUpdated: '2024-12-18'
-      },
-      personality: ['Delikatna', 'Spokojna', 'Rodzinna', 'Śliczne uszka'],
-      specialFeatures: ['Perfect folded ears', 'Rare lilac color', 'Sweet face', 'Family friendly'],
-      included: ['Rodowód TICA', 'Chip', 'Paszport', 'Szczepienia', 'Wyprawka'],
-      readyToGo: '2025-01-15',
-      delivery: {
-        personal: true,
-        shipping: true,
-        shippingCost: '400 PLN',
-        meetingLocation: 'Kraków Rynek'
-      },
-      videos: [],
-      featured: false,
-      verified: true,
-      urgent: false,
-      status: 'available'
-    },
-    {
+])
+
       id: 9,
       name: 'NORDIC CATS Legend',
       breed: 'Norwegian Forest',
