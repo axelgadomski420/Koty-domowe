@@ -1,2325 +1,3190 @@
-console.log('React starting...');
-import { useState, useEffect } from 'react'
-import './App.css'
-
-function App() {
-  // 🔥 STATE MANAGEMENT
-  const [activeTab, setActiveTab] = useState('home')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedBreed, setSelectedBreed] = useState('all')
-  const [priceRange, setPriceRange] = useState([0, 50000])
-  const [selectedCat, setSelectedCat] = useState(null)
-  const [showModal, setShowModal] = useState(false)
-  const [showFilters, setShowFilters] = useState(false)
-  const [likedCats, setLikedCats] = useState([])
-  const [cartItems, setCartItems] = useState([])
-  const [isOnline, setIsOnline] = useState(true)
-  const [sortBy, setSortBy] = useState('featured')
-  const [viewMode, setViewMode] = useState('grid')
-  const [showVideoPlayer, setShowVideoPlayer] = useState(false)
-  const [videoUrl, setVideoUrl] = useState('')
-  const [showBreederProfile, setShowBreederProfile] = useState(false)
-  const [selectedBreeder, setSelectedBreeder] = useState(null)
-  const [userFavorites, setUserFavorites] = useState([])
-  const [notifications, setNotifications] = useState(12)
-
-  // 🔐 ADMIN STATE
-  const [isAdmin, setIsAdmin] = useState(false) // Zmień na true aby przetestować panel
-  const [showAdminPanel, setShowAdminPanel] = useState(false)
-  const [adminPassword, setAdminPassword] = useState('')
-
-  // 🐱 20 RAS KOTÓW + INNE
-  const catBreeds = [
-    { id: 'all', name: 'Wszystkie rasy', emoji: '🐱', count: 0 },
-    { id: 'british-shorthair', name: 'British Shorthair', emoji: '🇬🇧', count: 0 },
-    { id: 'maine-coon', name: 'Maine Coon', emoji: '🦁', count: 0 },
-    { id: 'persian', name: 'Persian', emoji: '👑', count: 0 },
-    { id: 'ragdoll', name: 'Ragdoll', emoji: '🧸', count: 0 },
-    { id: 'bengal', name: 'Bengal', emoji: '🐆', count: 0 },
-    { id: 'sphynx', name: 'Sphynx', emoji: '👽', count: 0 },
-    { id: 'siamese', name: 'Siamese', emoji: '🇹🇭', count: 0 },
-    { id: 'scottish-fold', name: 'Scottish Fold', emoji: '🏴', count: 0 },
-    { id: 'norwegian-forest', name: 'Norwegian Forest', emoji: '🌲', count: 0 },
-    { id: 'siberian', name: 'Siberian', emoji: '❄️', count: 0 },
-    { id: 'abyssinian', name: 'Abyssinian', emoji: '🦊', count: 0 },
-    { id: 'exotic-shorthair', name: 'Exotic Shorthair', emoji: '🐻', count: 0 },
-    { id: 'russian-blue', name: 'Russian Blue', emoji: '💎', count: 0 },
-    { id: 'birman', name: 'Birman', emoji: '🤍', count: 0 },
-    { id: 'oriental', name: 'Oriental', emoji: '🎭', count: 0 },
-    { id: 'burmese', name: 'Burmese', emoji: '🟤', count: 0 },
-    { id: 'devon-rex', name: 'Devon Rex', emoji: '👾', count: 0 },
-    { id: 'cornish-rex', name: 'Cornish Rex', emoji: '🌊', count: 0 },
-    { id: 'turkish-van', name: 'Turkish Van', emoji: '🇹🇷', count: 0 },
-    { id: 'savannah', name: 'Savannah', emoji: '🐅', count: 0 },
-    { id: 'other', name: 'Inne', emoji: '❓', count: 0 }
-  ]
-
-  // 🏛️ ORGANIZACJE
-  const [organizations] = useState([
-    {
-      id: 'fife',
-      name: 'FIFe',
-      fullName: 'Fédération Internationale Féline',
-      logo: '🏆',
-      country: 'Międzynarodowa',
-      polishMember: 'FPL (Felinologia Polska)',
-      description: 'Największa międzynarodowa organizacja felinologiczna',
-      website: 'www.fifeweb.org'
+const ClientRegistration = {
+  personalData: {
+    firstName: String,
+    lastName: String,
+    email: String,
+    phone: String,
+    birthDate: Date,
+    pesel: String, // opcjonalne dla płatności
+    nip: String // opcjonalne dla faktur VAT
+  },
+  address: {
+    street: String,
+    houseNumber: String,
+    apartmentNumber: String,
+    postalCode: String,
+    city: String,
+    voivodeship: String,
+    country: String
+  },
+  preferences: {
+    favoriteBreeds: [String],
+    priceRange: { min: Number, max: Number },
+    lookingFor: ['pet', 'breeding', 'show'],
+    experienceLevel: ['first_time', 'experienced', 'expert'],
+    hasOtherPets: Boolean,
+    livingSpace: ['apartment', 'house', 'house_with_garden'],
+    familySize: Number
+  },
+  verification: {
+    emailVerified: Boolean,
+    phoneVerified: Boolean,
+    identityVerified: Boolean, // dla zakupów hodowlanych
+    documentScan: String // ID/paszport dla premium
+  },
+  subscription: {
+    type: ['free', 'premium', 'vip'],
+    startDate: Date,
+    endDate: Date,
+    autoRenew: Boolean
+  }
+}
+const BreederRegistration = {
+  personalData: {
+    firstName: String,
+    lastName: String,
+    email: String,
+    phone: String,
+    secondaryPhone: String
+  },
+  breeding: {
+    prefix: String, // *PL Golden British
+    organization: ['FIFe', 'WCF', 'TICA', 'CFA'],
+    registrationNumber: String,
+    registrationDate: Date,
+    activeBreeds: [String], // maksymalnie 5 ras
+    experienceYears: Number,
+    totalCatsSold: Number,
+    activeLitters: Number
+  },
+  verification: {
+    prefixVerification: {
+      status: ['pending', 'verified', 'rejected'],
+      documents: [String], // skany dokumentów
+      verifiedBy: ObjectId, // admin ID
+      verifiedDate: Date
     },
-    {
-      id: 'wcf',
-      name: 'WCF',
-      fullName: 'World Cat Federation',
-      logo: '🌍',
-      country: 'Międzynarodowa',
-      polishMember: 'WCF Poland',
-      description: 'Międzynarodowa federacja hodowców kotów',
-      website: 'www.wcf-online.de'
+    visitVerification: {
+      status: ['pending', 'scheduled', 'completed'],
+      visitDate: Date,
+      inspector: String,
+      report: String,
+      photos: [String]
     },
-    {
-      id: 'tica',
-      name: 'TICA',
-      fullName: 'The International Cat Association',
-      logo: '🌟',
-      country: 'USA / Międzynarodowa',
-      polishMember: 'TICA Poland Region',
-      description: 'Największa amerykańska organizacja genetyczna kotów',
-      website: 'www.tica.org'
+    certificatesUploaded: [String],
+    businessLicense: String // jeśli działalność
+  },
+  cattery: {
+    name: String,
+    website: String,
+    socialMedia: {
+      facebook: String,
+      instagram: String,
+      youtube: String,
+      tiktok: String
     },
-    {
-      id: 'fpl',
-      name: 'FPL',
-      fullName: 'Felinologia Polska Licencjonowana',
-      logo: '🇵🇱',
-      country: 'Polska',
-      polishMember: 'Członek FIFe',
-      description: 'Polska organizacja, członek FIFe',
-      website: 'www.fpl.pl'
-    }
-  ])
-
-  // 🐱 KOTY - EDYTOWALNY STATE (DO USUWANIA PRZEZ ADMINA)
-  const [cats, setCats] = useState([
-    {
-      id: 1,
-      name: 'GOLDEN SUPREME Luna',
-      breed: 'British Shorthair',
-      breedId: 'british-shorthair',
-      color: 'Blue',
-      gender: 'Samica',
-      age: '7 miesięcy',
-      birthDate: '2024-05-15',
-      price: 6500,
-      priceFormatted: '6 500 PLN',
-      img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800',
-      gallery: ['https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800'],
-      breeder: {
-        name: '*PL Golden British',
-        owner: 'Anna Kowalska',
-        rating: 4.98,
-        reviewsCount: 234,
-        location: 'Warszawa, Mazowieckie',
-        phone: '+48 600 123 456',
-        email: 'anna@goldenbritish.pl',
-        verified: true,
-        organization: 'FIFe / FPL'
-      },
-      pedigree: { fife: true, wcf: false, tica: false, generations: 5, champions: 7 },
-      parents: {
-        father: { name: "IC British Gold King", title: 'International Champion' },
-        mother: { name: "CH Golden Luna Queen", title: 'Champion FIFe' }
-      },
-      health: { 
-        vaccinated: true, 
-        microchipped: true, 
-        healthGuarantee: '24 miesiące',
-        hcmTested: true,
-        hcmResult: 'Negatywny',
-        pkdTested: true,
-        pkdResult: 'N/N'
-      },
-      stats: { views: 5234, likes: 1234, shares: 89, inquiries: 34 },
-      personality: ['Spokojny', 'Towarzyski', 'Łagodny'],
-      status: 'available',
-      featured: true,
-      verified: true,
-      readyToGo: 'Gotowy do odbioru',
-      videos: [],
-      isDemoData: true // Oznaczenie demo kota
+    address: {
+      street: String,
+      city: String,
+      voivodeship: String,
+      country: String,
+      coordinates: { lat: Number, lng: Number }
     },
-    {
-      id: 2,
-      name: 'GIANT COON Thunder',
-      breed: 'Maine Coon',
-      breedId: 'maine-coon',
-      color: 'Black Silver Tabby',
-      gender: 'Samiec',
-      age: '9 miesięcy',
-      birthDate: '2024-03-15',
-      price: 9200,
-      priceFormatted: '9 200 PLN',
-      img: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800',
-      gallery: ['https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800'],
-      breeder: {
-        name: '*PL Giants Coon',
-        owner: 'Marek Wiśniewski',
-        rating: 4.99,
-        reviewsCount: 456,
-        location: 'Kraków, Małopolskie',
-        phone: '+48 601 234 567',
-        email: 'marek@giantscoon.pl',
-        verified: true,
-        organization: 'WCF'
-      },
-      pedigree: { fife: false, wcf: true, tica: true, generations: 6, champions: 10 },
-      parents: {
-        father: { name: "GC Giants Thunder Storm", title: 'Grand Champion' },
-        mother: { name: "IC Giants Silver Moon", title: 'International Champion' }
-      },
-      health: { 
-        vaccinated: true, 
-        microchipped: true, 
-        healthGuarantee: '24 miesiące',
-        hcmTested: true,
-        hcmResult: 'Negatywny',
-        pkdTested: true,
-        pkdResult: 'N/N'
-      },
-      stats: { views: 8234, likes: 2134, shares: 156, inquiries: 67 },
-      personality: ['Energiczny', 'Inteligentny', 'Przyjazny'],
-      status: 'available',
-      featured: true,
-      verified: true,
-      readyToGo: 'Gotowy do odbioru',
-      availableForBreeding: true,
-      videos: [],
-      isDemoData: true
-    },
-    {
-      id: 3,
-      name: 'PERSIAN DREAM Bella',
-      breed: 'Persian',
-      breedId: 'persian',
-      color: 'White',
-      gender: 'Samica',
-      age: '1 rok 4 miesiące',
-      birthDate: '2023-08-10',
-      price: 5800,
-      priceFormatted: '5 800 PLN',
-      img: 'https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800',
-      gallery: ['https://images.unsplash.com/photo-1595433707802-6b2626ef1c91?w=800'],
-      breeder: {
-        name: '*PL Persian Dream',
-        owner: 'Katarzyna Lewandowska',
-        rating: 4.96,
-        reviewsCount: 189,
-        location: 'Gdańsk, Pomorskie',
-        phone: '+48 602 345 678',
-        email: 'kasia@persiandream.pl',
-        verified: true,
-        organization: 'FIFe / FPL'
-      },
-      pedigree: { fife: true, wcf: true, tica: false, generations: 5, champions: 8 },
-      parents: {
-        father: { name: "CH Persian Dream White Prince", title: 'Champion' },
-        mother: { name: "IC Persian Dream Snow Queen", title: 'International Champion' }
-      },
-      health: { 
-        vaccinated: true, 
-        microchipped: true, 
-        healthGuarantee: '24 miesiące',
-        hcmTested: false,
-        pkdTested: true,
-        pkdResult: 'N/N'
-      },
-      stats: { views: 4567, likes: 987, shares: 67, inquiries: 28 },
-      personality: ['Spokojna', 'Delikatna', 'Domatorka'],
-      status: 'available',
-      featured: false,
-      verified: true,
-      readyToGo: '2025-01-15',
-      videos: [],
-      isDemoData: true
-    },
-    {
-      id: 4,
-      name: 'RAGDOLL ANGELS Shadow',
-      breed: 'Ragdoll',
-      breedId: 'ragdoll',
-      color: 'Seal Point',
-      gender: 'Samiec',
-      age: '5.5 miesiąca',
-      birthDate: '2024-06-20',
-      price: 5200,
-      priceFormatted: '5 200 PLN',
-      img: 'https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=800',
-      gallery: ['https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=800'],
-      breeder: {
-        name: '*PL Ragdoll Angels',
-        owner: 'Agnieszka Nowak',
-        rating: 4.97,
-        reviewsCount: 267,
-        location: 'Wrocław, Dolnośląskie',
-        phone: '+48 603 456 789',
-        email: 'agnieszka@ragdollangels.pl',
-        verified: true,
-        organization: 'TICA'
-      },
-      pedigree: { fife: false, wcf: false, tica: true, generations: 5, champions: 6 },
-      parents: {
-        father: { name: "GC Ragdoll Angels Dark Knight", title: 'Grand Champion' },
-        mother: { name: "CH Ragdoll Angels Sweet Angel", title: 'Champion' }
-      },
-      health: { 
-        vaccinated: true, 
-        microchipped: true, 
-        healthGuarantee: '24 miesiące',
-        hcmTested: true,
-        hcmResult: 'Negatywny',
-        pkdTested: true,
-        pkdResult: 'N/N'
-      },
-      stats: { views: 3456, likes: 789, shares: 45, inquiries: 23 },
-      personality: ['Łagodny', 'Towarzyski', 'Spokojny'],
-      status: 'available',
-      featured: false,
-      verified: true,
-      readyToGo: 'Gotowy do odbioru',
-      videos: [],
-      isDemoData: true
-    },
-    {
-      id: 5,
-      name: 'WILD BENGAL Mystic',
-      breed: 'Bengal',
-      breedId: 'bengal',
-      color: 'Brown Spotted Tabby',
-      gender: 'Samica',
-      age: '11 miesięcy',
-      birthDate: '2024-01-15',
-      price: 7800,
-      priceFormatted: '7 800 PLN',
-      img: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800',
-      gallery: ['https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800'],
-      breeder: {
-        name: '*PL Wild Bengal',
-        owner: 'Tomasz Zieliński',
-        rating: 4.95,
-        reviewsCount: 178,
-        location: 'Poznań, Wielkopolskie',
-        phone: '+48 604 567 890',
-        email: 'tomasz@wildbengal.pl',
-        verified: true,
-        organization: 'TICA'
-      },
-      pedigree: { fife: false, wcf: false, tica: true, generations: 6, champions: 9 },
-      parents: {
-        father: { name: "GC Wild Bengal Tiger King", title: 'Grand Champion' },
-        mother: { name: "IC Wild Bengal Mystic Queen", title: 'International Champion' }
-      },
-      health: { 
-        vaccinated: true, 
-        microchipped: true, 
-        healthGuarantee: '24 miesiące',
-        hcmTested: true,
-        hcmResult: 'Negatywny',
-        pkdTested: true,
-        pkdResult: 'N/N'
-      },
-      stats: { views: 6789, likes: 1567, shares: 123, inquiries: 45 },
-      personality: ['Energiczny', 'Inteligentny', 'Zabawny'],
-      status: 'available',
-      featured: true,
-      verified: true,
-      readyToGo: 'Gotowy do odbioru',
-      availableForBreeding: false,
-      videos: [],
-      isDemoData: true
+    facilities: {
+      cages: Number,
+      separateRooms: Number,
+      outdoor: Boolean,
+      catioSize: Number
     }
-  ])
-
-  // Update breed counts
-  const updateBreedCounts = () => {
-    return catBreeds.map(breed => {
-      if (breed.id === 'all') {
-        return { ...breed, count: cats.length }
-      }
-      const count = cats.filter(cat => cat.breedId === breed.id).length
-      return { ...breed, count }
-    })
+  },
+  pricing: {
+    subscriptionPlan: ['basic', 'pro', 'elite'],
+    commissionRate: Number, // 3-8% zależnie od planu
+    monthlyFee: Number,
+    activeListings: Number,
+    maxListings: Number
+  },
+  ratings: {
+    overall: Number,
+    communication: Number,
+    catQuality: Number,
+    afterSaleSupport: Number,
+    reviewsCount: Number
   }
-
-  const breedsWithCounts = updateBreedCounts()
-  // 📱 BASIC HANDLERS
-  const handleLike = (catId) => {
-    if (likedCats.includes(catId)) {
-      setLikedCats(likedCats.filter(id => id !== catId))
-    } else {
-      setLikedCats([...likedCats, catId])
-    }
+}
+const BreederDashboard = {
+  analytics: {
+    viewsLastMonth: Number,
+    inquiriesLastMonth: Number,
+    salesLastMonth: Number,
+    conversionRate: Number,
+    averageResponseTime: String,
+    topViewedCats: [Object],
+    trafficSources: Object
+  },
+  catManagement: {
+    addNewCat: Function,
+    editCat: Function,
+    archiveCat: Function,
+    markAsSold: Function,
+    bulkActions: Function,
+    autoRenewListings: Boolean
+  },
+  litterManagement: {
+    createLitter: Function,
+    trackPregnancy: Function,
+    birthNotifications: Function,
+    kittenDevelopment: Array,
+    vaccinationSchedule: Array,
+    waitingList: Array
+  },
+  communication: {
+    inbox: Array,
+    chatSystem: Function,
+    autoResponder: Function,
+    canned Responses: Array,
+    emailTemplates: Array,
+    bulkMessaging: Function
+  },
+  contracts: {
+    templateLibrary: Array,
+    customContracts: Function,
+    eSignature: Function,
+    contractHistory: Array
+  },
+  financials: {
+    earnings: Number,
+    pending: Number,
+    withdrawn: Number,
+    invoices: Array,
+    taxReports: Function,
+    payoutSettings: Object
   }
-
-  const handleAddToCart = (cat) => {
-    if (!cartItems.find(item => item.id === cat.id)) {
-      setCartItems([...cartItems, cat])
-      showNotification(`✅ ${cat.name} dodany do koszyka!`, '🛒')
-    } else {
-      showNotification(`⚠️ ${cat.name} jest już w koszyku!`, '⚠️')
-    }
-  }
-
-  const handleRemoveFromCart = (catId) => {
-    setCartItems(cartItems.filter(item => item.id !== catId))
-  }
-
-  const handleViewDetails = (cat) => {
-    setSelectedCat(cat)
-    setShowModal(true)
-    trackView(cat)
-  }
-
-  const handleCloseModal = () => {
-    setShowModal(false)
-    setSelectedCat(null)
-  }
-
-  const handleShare = async (cat) => {
-    const shareData = {
-      title: `${cat.name} - ${cat.breed}`,
-      text: `Sprawdź ${cat.name} (${cat.breed}, ${cat.age}) za ${cat.priceFormatted} na CAT PURRE!`,
-      url: window.location.href
-    }
-    
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData)
-      } catch (err) {
-        console.log('Share cancelled')
-      }
-    } else {
-      navigator.clipboard.writeText(`${shareData.title} - ${shareData.url}`)
-      showNotification('✅ Link skopiowany do schowka!', '🔗')
-    }
-  }
-
-  const handleContactBreeder = (breeder) => {
-    setSelectedBreeder(breeder)
-    setShowBreederProfile(true)
-  }
-
-  const handleSortChange = (sortOption) => {
-    setSortBy(sortOption)
-  }
-
-  const handleViewModeChange = (mode) => {
-    setViewMode(mode)
-  }
-
-  // ====================================================================
-  // 👑 ADMIN FUNCTIONS - ZARZĄDZANIE KOTAMI
-  // ====================================================================
-
-  const adminLogin = () => {
-    // Proste hasło - w produkcji użyj prawdziwej autentykacji!
-    if (adminPassword === 'admin123') {
-      setIsAdmin(true)
-      setShowAdminPanel(true)
-      showNotification('✅ Zalogowano jako Administrator', '👑')
-      setAdminPassword('')
-    } else {
-      showNotification('❌ Błędne hasło!', '🔒')
-    }
-  }
-
-  const adminLogout = () => {
-    setIsAdmin(false)
-    setShowAdminPanel(false)
-    showNotification('👋 Wylogowano z panelu admina', '🔓')
-  }
-
-  // Usuń demo koty
-  const deleteAllDemoCats = () => {
-    if (window.confirm('🗑️ Czy na pewno usunąć wszystkie koty demo? Tej operacji nie można cofnąć!')) {
-      const realCats = cats.filter(cat => !cat.isDemoData)
-      setCats(realCats)
-      showNotification(`✅ Usunięto ${cats.length - realCats.length} kotów demo`, '🗑️')
-    }
-  }
-
-  // Usuń pojedynczego kota
-  const deleteCat = (catId) => {
-    if (window.confirm('❌ Czy na pewno usunąć tego kota?')) {
-      setCats(cats.filter(cat => cat.id !== catId))
-      showNotification('✅ Kot został usunięty', '🗑️')
-    }
-  }
-
-  // Dodaj nowego kota (przykładowa funkcja)
-  const addNewCat = (catData) => {
-    const newCat = {
-      ...catData,
-      id: Date.now(),
-      isDemoData: false,
-      stats: { views: 0, likes: 0, shares: 0, inquiries: 0 },
-      status: 'available',
-      verified: false
-    }
-    setCats([...cats, newCat])
-    showNotification(`✅ Dodano kota: ${newCat.name}`, '🐱')
-  }
-
-  // Toggle featured status
-  const toggleFeatured = (catId) => {
-    setCats(cats.map(cat => 
-      cat.id === catId ? { ...cat, featured: !cat.featured } : cat
-    ))
-    showNotification('✅ Status wyróżnienia zmieniony', '⭐')
-  }
-
-  // Toggle verified status
-  const toggleVerified = (catId) => {
-    setCats(cats.map(cat => 
-      cat.id === catId ? { ...cat, verified: !cat.verified } : cat
-    ))
-    showNotification('✅ Status weryfikacji zmieniony', '✓')
-  }
-
-  // Edytuj cenę kota
-  const updateCatPrice = (catId, newPrice) => {
-    setCats(cats.map(cat => 
-      cat.id === catId ? { 
-        ...cat, 
-        price: newPrice,
-        priceFormatted: `${newPrice.toLocaleString('pl-PL')} PLN`
-      } : cat
-    ))
-    showNotification('✅ Cena zaktualizowana', '💰')
-  }
-
-  // ====================================================================
-  // 🤖 AI CHAT ASSISTANT
-  // ====================================================================
+}
+const AdminPanel = {
+  userManagement: {
+    allUsers: Function, // paginacja, filtry, search
+    verifyBreeder: Function,
+    suspendUser: Function,
+    deleteUser: Function,
+    sendWarning: Function,
+    massActions: Function,
+    exportUserData: Function // RODO compliance
+  },
   
-  const [showAIChat, setShowAIChat] = useState(false)
-  const [aiMessages, setAiMessages] = useState([
-    {
-      id: 1,
-      sender: 'ai',
-      text: 'Cześć! 👋 Jestem AI Doradcą CAT PURRE. Pomogę Ci wybrać idealnego kota! Możesz zapytać o rasy, ceny, charaktery kotów i wiele więcej.',
-      timestamp: Date.now(),
-      suggestions: [
-        'Spokojny kot dla rodziny',
-        'Koty dla alergików',
-        'Aktywne rasy',
-        'Koty do hodowli'
+  breederVerification: {
+    pendingRequests: Array,
+    scheduleVisit: Function,
+    uploadInspectionReport: Function,
+    approveBreeder: Function,
+    rejectBreeder: Function,
+    revokeVerification: Function,
+    verificationHistory: Array
+  },
+  
+  catManagement: {
+    allCats: Function,
+    moderateListing: Function,
+    flagSuspicious: Function,
+    removeInappropriate: Function,
+    verifyPedigree: Function,
+    bulkEdit: Function,
+    exportCatalog: Function
+  },
+  
+  demoDataManagement: {
+    createDemoCats: Function, // generowanie kotów demo
+    populateDatabase: Function, // 100, 500, 1000 kotów
+    deleteDemoCats: Function, // masowe usuwanie
+    resetDemoData: Function, // reset do stanu początkowego
+    importFromCSV: Function,
+    exportToCSV: Function,
+    demoToggle: Boolean // pokazuj/ukryj demo
+  },
+  
+  contentModeration: {
+    reportedContent: Array,
+    reviewReports: Function,
+    takeAction: Function,
+    moderationHistory: Array,
+    aiModeration: {
+      enabled: Boolean,
+      autoFlag: Function,
+      confidence: Number
+    }
+  },
+  
+  financialOversight: {
+    totalRevenue: Number,
+    commissionCollected: Number,
+    pendingPayouts: Array,
+    processPayouts: Function,
+    refundManagement: Function,
+    fraudDetection: Array,
+    taxReporting: Function
+  },
+  
+  platformSettings: {
+    commissionRates: Object,
+    subscriptionPricing: Object,
+    featureFlags: Object,
+    maintenanceMode: Boolean,
+    announcementBanner: String,
+    emailNotifications: Object,
+    smsNotifications: Object,
+    pushNotifications: Object
+  },
+  
+  analytics: {
+    dashboardOverview: Object,
+    userGrowth: Array,
+    salesMetrics: Object,
+    topBreeders: Array,
+    topBreeds: Array,
+    geographicDistribution: Object,
+    performanceMetrics: Object,
+    customReports: Function
+  },
+  
+  breeds Management: {
+    allBreeds: Array,
+    addBreed: Function,
+    editBreed: Function,
+    breedStandards: Function,
+    uploadBreedPhotos: Function,
+    seoOptimization: Function
+  },
+  
+  systemMaintenance: {
+    databaseBackup: Function,
+    systemHealth: Object,
+    errorLogs: Array,
+    apiUsage: Object,
+    cacheManagement: Function,
+    cdnManagement: Function
+  }
+}
+const COMPLETE_BREEDS_DATABASE = [
+  {
+    id: 1,
+    name: 'British Shorthair',
+    origin: 'Wielka Brytania',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '5-8 kg', height: '30-35 cm' },
+      female: { weight: '3-5 kg', height: '25-30 cm' }
+    },
+    colors: ['Blue', 'Black', 'White', 'Cream', 'Red', 'Silver', 'Golden', 'Tortie', 'Bicolor', 'Tabby'],
+    personality: ['Spokojny', 'Niezależny', 'Łagodny', 'Cierpliwy'],
+    grooming: 'Łatwa pielęgnacja',
+    health: {
+      common: ['HCM', 'PKD'],
+      tests: ['HCM', 'PKD', 'Grupa krwi'],
+      lifespan: '12-17 lat'
+    },
+    priceRange: { min: 3500, max: 8000 },
+    popularity: 9.5,
+    goodWith: ['Dzieci', 'Inne koty', 'Psy'],
+    activityLevel: 'Średnia',
+    vocality: 'Cicha',
+    imageUrl: String,
+    gallery: [String],
+    standard: {
+      head: 'Okrągła, szeroka czaszka',
+      eyes: 'Duże, okrągłe, szeroko rozstawione',
+      body: 'Krępy, masywny, muskularne',
+      legs: 'Krótkie, mocne',
+      tail: 'Gruby, tępy koniec',
+      coat: 'Krótka, gęsta, pluszowa'
+    }
+  },
+  
+  {
+    id: 2,
+    name: 'Maine Coon',
+    origin: 'USA',
+    category: 'Długoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '6-11 kg', height: '25-41 cm' },
+      female: { weight: '4-7 kg', height: '23-35 cm' }
+    },
+    colors: ['Brown Tabby', 'Black', 'White', 'Red', 'Cream', 'Silver', 'Blue', 'Tortie'],
+    personality: ['Łagodny olbrzym', 'Inteligentny', 'Towarzyski', 'Psopodobny'],
+    grooming: 'Wymaga regularnego szczotkowania',
+    health: {
+      common: ['HCM', 'Dysplazja stawu biodrowego', 'SMA'],
+      tests: ['HCM', 'SMA', 'PKD'],
+      lifespan: '12-15 lat'
+    },
+    priceRange: { min: 4000, max: 12000 },
+    popularity: 10,
+    goodWith: ['Dzieci', 'Inne koty', 'Psy'],
+    activityLevel: 'Wysoka',
+    vocality: 'Umiarkowana - chirrups',
+    imageUrl: String,
+    gallery: [String]
+  },
+  
+  {
+    id: 3,
+    name: 'Persian',
+    origin: 'Iran (Persja)',
+    category: 'Długoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '4-6 kg', height: '25-30 cm' },
+      female: { weight: '3-5 kg', height: '23-28 cm' }
+    },
+    colors: ['White', 'Black', 'Blue', 'Cream', 'Red', 'Silver', 'Golden', 'Chinchilla', 'Colorpoint'],
+    personality: ['Spokojny', 'Domatorski', 'Łagodny', 'Przywiązany'],
+    grooming: 'Bardzo wymagająca - codzienna',
+    health: {
+      common: ['PKD', 'Problemy z oddychaniem', 'Epifora', 'Problemy dentystyczne'],
+      tests: ['PKD', 'Grupa krwi'],
+      lifespan: '12-17 lat'
+    },
+    priceRange: { min: 3000, max: 7000 },
+    popularity: 8.5,
+    goodWith: ['Spokojne dzieci', 'Spokojne środowisko'],
+    activityLevel: 'Niska',
+    vocality: 'Cicha',
+    specialCare: 'Regularne czyszczenie oczu, dzienna pielęgnacja',
+    imageUrl: String
+  },
+  
+  {
+    id: 4,
+    name: 'Ragdoll',
+    origin: 'USA',
+    category: 'Długoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '6-9 kg', height: '30-35 cm' },
+      female: { weight: '4-6 kg', height: '25-30 cm' }
+    },
+    colors: ['Seal Point', 'Blue Point', 'Chocolate Point', 'Lilac Point', 'Red Point', 'Cream Point'],
+    patterns: ['Colorpoint', 'Mitted', 'Bicolor'],
+    personality: ['Wyjątkowo łagodny', 'Puppy-like', 'Relaksujący', 'Ufny'],
+    grooming: 'Średnia - 2-3x tydzień',
+    health: {
+      common: ['HCM', 'PKD'],
+      tests: ['HCM', 'PKD', 'Grupa krwi'],
+      lifespan: '12-17 lat'
+    },
+    priceRange: { min: 3500, max: 6500 },
+    popularity: 9.0,
+    goodWith: ['Dzieci', 'Inne koty', 'Psy', 'Początkujący'],
+    activityLevel: 'Niska-Średnia',
+    vocality: 'Cicha',
+    imageUrl: String
+  },
+  
+  {
+    id: 5,
+    name: 'Bengal',
+    origin: 'USA',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: false,
+    wildAncestry: 'Asian Leopard Cat',
+    sizes: {
+      male: { weight: '5-7 kg', height: '33-38 cm' },
+      female: { weight: '3-5 kg', height: '30-35 cm' }
+    },
+    colors: ['Brown Spotted', 'Brown Marbled', 'Snow Spotted', 'Snow Marbled', 'Silver'],
+    personality: ['Bardzo aktywny', 'Inteligentny', 'Psopodobny', 'Uwielbia wodę', 'Rozmowny'],
+    grooming: 'Łatwa',
+    health: {
+      common: ['HCM', 'PRA', 'Flat Chest Kitten Syndrome'],
+      tests: ['HCM', 'PRA-b', 'PK-Def'],
+      lifespan: '12-16 lat'
+    },
+    priceRange: { min: 5000, max: 15000 },
+    popularity: 9.2,
+    goodWith: ['Aktywne rodziny', 'Doświadczeni właściciele'],
+    activityLevel: 'Bardzo wysoka',
+    vocality: 'Głośna',
+    specialNeeds: 'Wymaga dużo stymulacji, zabawek, space to climb',
+    imageUrl: String
+  },
+  
+  {
+    id: 6,
+    name: 'Siberian (Syberyjski)',
+    origin: 'Rosja',
+    category: 'Długoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '6-9 kg', height: '30-38 cm' },
+      female: { weight: '4-6 kg', height: '28-33 cm' }
+    },
+    colors: ['All colors and patterns accepted'],
+    personality: ['Łagodny', 'Towarzyski', 'Inteligentny', 'Psopodobny', 'Lubi wodę'],
+    grooming: 'Średnia - sezonowe linienie',
+    health: {
+      common: ['HCM'],
+      tests: ['HCM', 'PKD'],
+      lifespan: '12-15 lat'
+    },
+    hypoallergenic: 'Niski poziom Fel d1',
+    priceRange: { min: 3500, max: 6000 },
+    popularity: 8.0,
+    goodWith: ['Dzieci', 'Inne koty', 'Psy', 'Alergicy'],
+    activityLevel: 'Wysoka',
+    vocality: 'Cicha',
+    imageUrl: String
+  },
+  
+  {
+    id: 7,
+    name: 'Sphynx (Sfinks)',
+    origin: 'Kanada',
+    category: 'Bezwłose',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '4-6 kg', height: '20-25 cm' },
+      female: { weight: '3-4 kg', height: '20-23 cm' }
+    },
+    colors: ['All colors - skin pigmentation'],
+    personality: ['Bardzo towarzyski', 'Energiczny', 'Ciepły', 'Extrovert', 'Uwielbia ludzi'],
+    grooming: 'Specjalna - regularne kąpiele, czyszczenie uszu',
+    health: {
+      common: ['HCM', 'Problemy skórne', 'Wrażliwość na temperaturę'],
+      tests: ['HCM'],
+      lifespan: '12-15 lat'
+    },
+    priceRange: { min: 6000, max: 12000 },
+    popularity: 7.5,
+    goodWith: ['Osoby samotne', 'Aktywne rodziny'],
+    activityLevel: 'Bardzo wysoka',
+    vocality: 'Umiarkowana',
+    specialCare: 'Utrzymanie temperatury, ochrona przed słońcem, regularne kąpiele',
+    imageUrl: String
+  },
+  
+  {
+    id: 8,
+    name: 'Scottish Fold',
+    origin: 'Szkocja',
+    category: 'Krótkoszerstne/Długoszerstne',
+    fife: false, // banned
+    wcf: true,
+    tica: true,
+    cfa: true,
+    controversy: 'Gen folded ears - osteochondrodysplasia',
+    sizes: {
+      male: { weight: '4-6 kg', height: '23-28 cm' },
+      female: { weight: '3-5 kg', height: '20-25 cm' }
+    },
+    ears: ['Folded', 'Straight (Scottish Straight)'],
+    colors: ['All colors and patterns'],
+    personality: ['Spokojny', 'Uroczy', 'Towarzyski', 'Łagodny'],
+    grooming: 'Łatwa',
+    health: {
+      common: ['Osteochondrodysplasia', 'Arthritis', 'Problemy ze stawami'],
+      tests: ['Screening stawów', 'X-ray'],
+      lifespan: '11-15 lat',
+      ethical: 'Kontrowersyjna rasa - problemy genetyczne'
+    },
+    priceRange: { min: 4000, max: 8000 },
+    popularity: 8.0,
+    goodWith: ['Spokojne rodziny'],
+    activityLevel: 'Niska-Średnia',
+    vocality: 'Cicha',
+    imageUrl: String
+  },
+  
+  {
+    id: 9,
+    name: 'Norwegian Forest Cat (Norweski Leśny)',
+    origin: 'Norwegia',
+    category: 'Długoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '6-9 kg', height: '30-40 cm' },
+      female: { weight: '4-6 kg', height: '28-35 cm' }
+    },
+    colors: ['All except chocolate, lilac, cinnamon, fawn, pointed'],
+    personality: ['Niezależny', 'Majestatyczny', 'Łowiecki', 'Inteligentny', 'Rodzinny'],
+    grooming: 'Średnia - wodoodporne futro',
+    health: {
+      common: ['HCM', 'GSD IV', 'Dysplazja biodra'],
+      tests: ['HCM', 'GSD IV', 'PKD'],
+      lifespan: '14-16 lat'
+    },
+    priceRange: { min: 3000, max: 6000 },
+    popularity: 7.8,
+    goodWith: ['Rodziny', 'Inne zwierzęta', 'Outdoor access'],
+    activityLevel: 'Wysoka',
+    vocality: 'Cicha',
+    imageUrl: String
+  },
+  
+  {
+    id: 10,
+    name: 'Exotic Shorthair',
+    origin: 'USA',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    description: 'Persian Short-haired',
+    sizes: {
+      male: { weight: '4-7 kg', height: '25-30 cm' },
+      female: { weight: '3-5 kg', height: '23-28 cm' }
+    },
+    colors: ['All Persian colors'],
+    personality: ['Spokojny', 'Łagodny', 'Pluszakowy', 'Mniej wymagający niż pers'],
+    grooming: 'Łatwa - weekly',
+    health: {
+      common: ['PKD', 'Problemy z oddychaniem (lżejsze niż pers)', 'Epifora'],
+      tests: ['PKD', 'Grupa krwi'],
+      lifespan: '12-15 lat'
+    },
+    priceRange: { min: 3500, max: 7500 },
+    popularity: 8.5,
+    goodWith: ['Dzieci', 'Apartament', 'Początkujący'],
+    activityLevel: 'Niska-Średnia',
+    vocality: 'Cicha',
+    imageUrl: String
+  },
+  
+  {
+    id: 11,
+    name: 'Abyssinian (Abisyński)',
+    origin: 'Etiopia',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '4-5 kg', height: '20-25 cm' },
+      female: { weight: '3-4 kg', height: '20-23 cm' }
+    },
+    colors: ['Ruddy', 'Red (Sorrel)', 'Blue', 'Fawn'],
+    coat: 'Ticked tabby',
+    personality: ['Bardzo aktywny', 'Ciekawy', 'Inteligentny', 'Extrovert', 'Athletic'],
+    grooming: 'Bardzo łatwa',
+    health: {
+      common: ['PRA', 'PK-Def', 'Renal Amyloidosis'],
+      tests: ['PRA', 'PK-Def'],
+      lifespan: '12-15 lat'
+    },
+    priceRange: { min: 4000, max: 7000 },
+    popularity: 7.5,
+    goodWith: ['Aktywne rodziny', 'Doświadczeni właściciele'],
+    activityLevel: 'Bardzo wysoka',
+    vocality: 'Umiarkowana',
+    imageUrl: String
+  },
+  
+  {
+    id: 12,
+    name: 'Russian Blue (Rosyjski Niebieski)',
+    origin: 'Rosja',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '4-6 kg', height: '25-28 cm' },
+      female: { weight: '3-5 kg', height: '23-25 cm' }
+    },
+    colors: ['Blue only'],
+    eyes: 'Vivid green',
+    personality: ['Nieśmiały', 'Inteligentny', 'Lojalny', 'Spokojny', 'Czuły'],
+    grooming: 'Bardzo łatwa',
+    health: {
+      common: ['Brak poważnych problemów genetycznych'],
+      tests: ['Podstawowe'],
+      lifespan: '15-20 lat'
+    },
+    hypoallergenic: 'Niższy poziom Fel d1',
+    priceRange: { min: 3500, max: 6500 },
+    popularity: 8.0,
+    goodWith: ['Spokojne rodziny', 'Apartamenty'],
+    activityLevel: 'Średnia',
+    vocality: 'Cicha',
+    imageUrl: String
+  },
+  
+  {
+    id: 13,
+    name: 'Birman (Birmański Święty)',
+    origin: 'Birma (Myanmar)',
+    category: 'Długoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '5-7 kg', height: '25-30 cm' },
+      female: { weight: '3-5 kg', height: '23-28 cm' }
+    },
+    colors: ['Seal Point', 'Blue Point', 'Chocolate Point', 'Lilac Point', 'Red Point'],
+    pattern: 'Colorpoint with white gloves',
+    personality: ['Łagodny', 'Towarzyski', 'Spokojny', 'Inteligentny'],
+    grooming: 'Średnia - single coat',
+    health: {
+      common: ['HCM', 'PKD'],
+      tests: ['HCM', 'PKD'],
+      lifespan: '12-16 lat'
+    },
+    priceRange: { min: 3000, max: 6000 },
+    popularity: 7.5,
+    goodWith: ['Rodziny', 'Dzieci', 'Inne zwierzęta'],
+    activityLevel: 'Średnia',
+    vocality: 'Cicha',
+    imageUrl: String
+  },
+  
+  {
+    id: 14,
+    name: 'Oriental Shorthair',
+    origin: 'Tajlandia/USA',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    relatedTo: 'Siamese',
+    sizes: {
+      male: { weight: '4-6 kg', height: '23-28 cm' },
+      female: { weight: '3-5 kg', height: '20-25 cm' }
+    },
+    colors: ['300+ color combinations'],
+    personality: ['Bardzo rozmowny', 'Ekstrawertyk', 'Inteligentny', 'Potrzebuje uwagi', 'Energiczny'],
+    grooming: 'Bardzo łatwa',
+    health: {
+      common: ['HCM', 'Amyloidosis', 'Lymphoma'],
+      tests: ['HCM'],
+      lifespan: '12-15 lat'
+    },
+    priceRange: { min: 3500, max: 6500 },
+    popularity: 6.5,
+    goodWith: ['Osoby samotne', 'Aktywne rodziny'],
+    activityLevel: 'Bardzo wysoka',
+    vocality: 'Bardzo głośna',
+    imageUrl: String
+  },
+  
+  {
+    id: 15,
+    name: 'Savannah',
+    origin: 'USA',
+    category: 'Krótkoszerstne',
+    fife: false,
+    wcf: false,
+    tica: true,
+    cfa: false,
+    wildAncestry: 'African Serval',
+    generations: ['F1', 'F2', 'F3', 'F4', 'F5+'],
+    sizes: {
+      male: { weight: '6-11 kg (F1), 4-7 kg (F5)', height: '35-45 cm' },
+      female: { weight: '5-8 kg (F1), 3-6 kg (F5)', height: '30-40 cm' }
+    },
+    colors: ['Brown Spotted', 'Silver Spotted', 'Black', 'Smoke'],
+    personality: ['Bardzo aktywny', 'Inteligentny', 'Psopodobny', 'Athletic', 'Wymaga doświadczenia'],
+    grooming: 'Łatwa',
+    health: {
+      common: ['HCM', 'PRA-b'],
+      tests: ['HCM', 'PRA-b'],
+      lifespan: '12-20 lat'
+    },
+    priceRange: { min: 15000, max: 50000 }, // F1-F2 bardzo drogie
+    popularity: 6.0,
+    legal: 'Sprawdź lokalne przepisy - zabronione w niektórych krajach/stanach',
+    goodWith: ['Doświadczeni właściciele', 'Duże przestrzenie'],
+    activityLevel: 'Ekstremalnie wysoka',
+    vocality: 'Umiarkowana',
+    specialNeeds: 'Wymaga bardzo dużo przestrzeni, outdoor access, wysokie ogrodzenie',
+    imageUrl: String
+  },
+  
+  {
+    id: 16,
+    name: 'Devon Rex',
+    origin: 'Anglia',
+    category: 'Krótkoszerstne - kręcone',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '3-4 kg', height: '25-30 cm' },
+      female: { weight: '2-3 kg', height: '23-28 cm' }
+    },
+    coat: 'Curly/wavy',
+    colors: ['All colors and patterns'],
+    personality: ['Pixie-like', 'Bardzo aktywny', 'Psopodobny', 'Uwielbia wysokie miejsca', 'Extrovert'],
+    grooming: 'Specjalna - gentle, rzadkie kąpiele',
+    health: {
+      common: ['HCM', 'Hereditary Myopathy', 'Patellar Luxation'],
+      tests: ['HCM', 'Myopathy test'],
+      lifespan: '12-15 lat'
+    },
+    hypoallergenic: 'Częściowo - less shedding',
+    priceRange: { min: 4500, max: 8000 },
+    popularity: 7.0,
+    goodWith: ['Aktywne rodziny', 'Inne zwierzęta'],
+    activityLevel: 'Bardzo wysoka',
+    vocality: 'Umiarkowana',
+    imageUrl: String
+  },
+  
+  {
+    id: 17,
+    name: 'Burmese (Birmański)',
+    origin: 'Birma/Tajlandia',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '4-6 kg', height: '25-28 cm' },
+      female: { weight: '3-5 kg', height: '23-25 cm' }
+    },
+    colors: ['Sable', 'Champagne', 'Blue', 'Platinum'],
+    personality: ['Bardzo towarzyski', 'Psopodobny', 'Playful', 'Vocal', 'Potrzebuje towarzystwa'],
+    grooming: 'Bardzo łatwa',
+    health: {
+      common: ['Hypokalaemia', 'HCM', 'Diabates'],
+      tests: ['Hypokalaemia', 'HCM'],
+      lifespan: '12-16 lat'
+    },
+    priceRange: { min: 3500, max: 6500 },
+    popularity: 7.0,
+    goodWith: ['Rodziny', 'Inne zwierzęta', 'Nie dla samotnych osób'],
+    activityLevel: 'Wysoka',
+    vocality: 'Głośna',
+    imageUrl: String
+  },
+  
+  {
+    id: 18,
+    name: 'Turkish Angora (Angora Turecka)',
+    origin: 'Turcja',
+    category: 'Długoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '4-5 kg', height: '23-25 cm' },
+      female: { weight: '3-4 kg', height: '20-23 cm' }
+    },
+    colors: ['White (traditional)', 'All colors accepted'],
+    eyes: ['Blue', 'Amber', 'Odd-eyed'],
+    personality: ['Inteligentny', 'Energiczny', 'Atletyczny', 'Vocal', 'Dominant'],
+    grooming: 'Średnia',
+    health: {
+      common: ['Deafness (white cats)', 'HCM', 'Ataxia'],
+      tests: ['BAER test (hearing)', 'HCM', 'Ataxia'],
+      lifespan: '12-18 lat'
+    },
+    priceRange: { min: 3000, max: 6000 },
+    popularity: 6.5,
+    goodWith: ['Doświadczeni właściciele', 'Aktywne rodziny'],
+    activityLevel: 'Bardzo wysoka',
+    vocality: 'Głośna',
+    imageUrl: String
+  },
+  
+  {
+    id: 19,
+    name: 'Tonkinese',
+    origin: 'Kanada/USA',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    crossOf: 'Siamese x Burmese',
+    sizes: {
+      male: { weight: '4-6 kg', height: '20-25 cm' },
+      female: { weight: '3-4 kg', height: '20-23 cm' }
+    },
+    colors: ['Natural', 'Champagne', 'Blue', 'Platinum'],
+    patterns: ['Pointed', 'Mink', 'Solid'],
+    personality: ['Bardzo towarzyski', 'Inteligentny', 'Aktywny', 'Psopodobny', 'Extrovert'],
+    grooming: 'Bardzo łatwa',
+    health: {
+      common: ['Amyloidosis', 'HCM'],
+      tests: ['HCM'],
+      lifespan: '15-18 lat'
+    },
+    priceRange: { min: 3500, max: 6000 },
+    popularity: 6.0,
+    goodWith: ['Rodziny', 'Inne zwierzęta'],
+    activityLevel: 'Wysoka',
+    vocality: 'Umiarkowana',
+    imageUrl: String
+  },
+  
+  {
+    id: 20,
+    name: 'Chartreux',
+    origin: 'Francja',
+    category: 'Krótkoszerstne',
+    fife: true,
+    wcf: true,
+    tica: true,
+    cfa: true,
+    sizes: {
+      male: { weight: '5-7 kg', height: '25-28 cm' },
+      female: { weight: '3-5 kg', height: '23-25 cm' }
+    },
+    colors: ['Blue only - wszystkie odcienie'],
+    eyes: 'Orange to copper',
+    personality: ['Cichy', 'Inteligentny', 'Lojalny', 'Gentle', 'Polite'],
+    grooming: 'Łatwa',
+    health: {
+      common: ['Patellar Luxation', 'HCM'],
+      tests: ['HCM', 'Patellar screening'],
+      lifespan: '12-15 lat'
+    },
+    priceRange: { min: 4000, max: 7000 },
+    popularity: 6.0,
+    goodWith: ['Rodziny', 'Apartamenty', 'Inne zwierzęta'],
+    activityLevel: 'Średnia',
+    vocality: 'Bardzo cicha',
+    nickname: 'Smiling cat of France',
+    imageUrl: String
+  }
+]
+const ContractSystem = {
+  templates: {
+    standard: {
+      id: 'contract_standard_v2',
+      name: 'Standardowa Umowa Sprzedaży Kota',
+      sections: [
+        {
+          title: 'Dane Sprzedawcy (Hodowcy)',
+          fields: ['fullName', 'address', 'phone', 'email', 'prefix', 'organization', 'nip']
+        },
+        {
+          title: 'Dane Kupującego',
+          fields: ['fullName', 'address', 'phone', 'email', 'idNumber', 'pesel']
+        },
+        {
+          title: 'Dane Kota',
+          fields: [
+            'name',
+            'breed',
+            'color',
+            'gender',
+            'birthDate',
+            'microchipNumber',
+            'pedigreeNumber',
+            'organization',
+            'parents',
+            'healthTests',
+            'vaccinations'
+          ]
+        },
+        {
+          title: 'Przedmiot Umowy',
+          content: `
+Sprzedający oświadcza, że jest prawnym właścicielem kota opisanego powyżej
+i przysługuje mu prawo do jego zbycia. Sprzedający przenosi na Kupującego
+własność kota wraz z pełnym rodowodem i dokumentacją weterynaryjną.
+          `
+        },
+        {
+          title: 'Cena i Płatność',
+          fields: [
+            'price',
+            'currency',
+            'advancePayment',
+            'remainingPayment',
+            'paymentMethod',
+            'paymentDeadline'
+          ],
+          content: `
+Strony ustalają cenę kota na kwotę: {price} {currency}.
+Kupujący zobowiązuje się do zapłaty:
+- Zaliczka: {advancePayment} {currency} - wpłacona dnia {advanceDate}
+- Pozostała kwota: {remainingPayment} {currency} - termin płatności: {paymentDeadline}
+Płatność: {paymentMethod}
+          `
+        },
+        {
+          title: 'Wydanie Kota',
+          fields: ['deliveryDate', 'deliveryPlace', 'deliveryMethod'],
+          content: `
+Kot zostanie wydany Kupującemu w dniu: {deliveryDate}
+Miejsce: {deliveryPlace}
+Sposób: {deliveryMethod}
+
+W chwili odbioru Kupujący otrzymuje:
+✅ Rodowód FIFe/WCF/TICA
+✅ Paszport weterynaryjny ze szczepieniami
+✅ Karta szczepień
+✅ Wyniki testów genetycznych (HCM, PKD, inne)
+✅ Chip (numer: {microchipNumber})
+✅ Umowa kupna-sprzedaży
+✅ Starter pack (karma, zabawki)
+          `
+        },
+        {
+          title: 'Gwarancja Zdrowia',
+          content: `
+1. Sprzedający gwarantuje, że kot w chwili sprzedaży jest zdrowy,
+   wolny od chorób zakaźnych i pasożytów.
+   
+2. Gwarancja zdrowia: 24 miesiące od daty zakupu na wady genetyczne
+   wykryte przez licencjonowanego weterynarza.
+   
+3. Kupujący zobowiązany jest do przeprowadzenia badania weterynaryjnego
+   w ciągu 72 godzin od odbioru kota.
+   
+4. W przypadku stwierdzenia wady genetycznej, Sprzedający:
+   - Zwraca pełną kwotę zakupu + koszty weterynaryjne (do 2000 PLN)
+   - LUB oferuje wymianę na innego kota z hodowli
+   
+5. Gwarancja NIE obejmuje:
+   - Chorób nabytych po odbiorze
+   - Urazów
+   - Zaniedbania w opiece
+   - Niewłaściwego żywienia
+          `
+        },
+        {
+          title: 'Prawa Hodowlane',
+          conditional: true,
+          field: 'breedingRights',
+          content: `
+☐ KOT SPRZEDAWANY JAKO PET (bez praw hodowlanych)
+    - Kot musi zostać wykastrowany/wysterylizowany do {castrationDeadline}
+    - Kupujący zobowiązuje się dostarczyć zaświadczenie weterynaryjne
+    - Kot NIE MOŻE być wykorzystywany do rozrodu
+    
+☐ KOT SPRZEDAWANY Z PRAWAMI HODOWLANYMI
+    - Kupujący otrzymuje pełny rodowód hodowlany
+    - Kupujący ma prawo do wykorzystania kota w hodowli
+    - Obowiązek zgłoszenia miotu do odpowiedniej organizacji
+    - Dodatkowa opłata: {breedingFee} PLN
+    
+☐ PRAWA HODOWLANE Z OGRANICZENIAMI
+    - Maksymalnie {maxLitters} miotów
+    - Współpraca z obecnym hodowcą przy pierwszym miocie
+    - First kitten pick dla sprzedającego (opcjonalnie)
+          `
+        },
+        {
+          title: 'Obowiązki Kupującego',
+          content: `
+1. Zapewnić kotowi odpowiednie warunki życia:
+   - Bezpieczne mieszkanie/dom
+   - Odpowiednią karmę wysokiej jakości
+   - Dostęp do wody, kuwety, drapaka
+   - Regularne wizyty weterynaryjne
+   
+2. Kontynuować szczepienia według kalendarza
+   
+3. Nie przekazywać kota osobom trzecim bez zgody Sprzedającego
+   
+4. W przypadku niemożności dalszej opieki - pierwszeństwo odkupu
+   przysługuje Sprzedającemu
+   
+5. Utrzymywać kontakt ze Sprzedającym (zdjęcia, aktualizacje)
+          `
+        },
+        {
+          title: 'Prawo Odstąpienia',
+          content: `
+1. Kupujący ma prawo odstąpić od umowy w ciągu 14 dni bez podania przyczyny
+   (zgodnie z ustawą o prawach konsumenta)
+   
+2. Zwrot kota możliwy pod warunkiem:
+   - Kot jest w takim samym stanie zdrowia jak przy odbiorze
+   - Kot nie został wykastrowany/wysterylizowany
+   - Wszystkie dokumenty są kompletne
+   
+3. Sprzedający zwraca pełną kwotę w ciągu 14 dni od zwrotu kota
+   
+4. Koszty transportu zwrotnego ponosi Kupujący
+          `
+        },
+        {
+          title: 'Dane Kontaktowe Awaryjne',
+          fields: ['emergencyVet', 'emergencyVetPhone', 'breederEmergencyPhone']
+        },
+        {
+          title: 'Klauzula RODO',
+          content: `
+Administratorem danych osobowych jest {breederName}.
+Dane będą przetwarzane w celu realizacji umowy sprzedaży.
+Dane nie będą przekazywane osobom trzecim bez zgody.
+Przysługuje Panu/Pani prawo dostępu, poprawy, usunięcia danych.
+          `
+        },
+        {
+          title: 'Postanowienia Końcowe',
+          content: `
+1. W sprawach nieuregulowanych niniejszą umową mają zastosowanie
+   przepisy Kodeksu Cywilnego.
+   
+2. Ewentualne spory będą rozstrzygane przez sąd właściwy
+   dla miejsca zamieszkania Sprzedającego.
+   
+3. Umowa została sporządzona w 2 jednobrzmiących egzemplarzach,
+   po jednym dla każdej ze stron.
+   
+4. Umowa wchodzi w życie z dniem podpisania przez obie strony.
+          `
+        },
+        {
+          title: 'Podpisy',
+          signatures: [
+            {
+              party: 'seller',
+              fields: ['date', 'place', 'signature', 'stamp']
+            },
+            {
+              party: 'buyer',
+              fields: ['date', 'place', 'signature']
+            }
+          ]
+        }
+      ],
+      
+      attachments: [
+        'Kopia rodowodu',
+        'Kopia paszportu weterynaryjnego',
+        'Wyniki testów genetycznych',
+        'Zdjęcia kota',
+        'Dowód płatności'
+      ]
+    },
+    
+    breeding: {
+      id: 'contract_breeding_v2',
+      name: 'Umowa Sprzedaży z Prawami Hodowlanymi',
+      extends: 'standard',
+      additional Sections: [
+        'Zobowiązania hodowlane',
+        'Prefix usage',
+        'Współpraca przy miecie',
+        'Wymiana informacji o potomstwie'
+      ]
+    },
+    
+    coOwnership: {
+      id: 'contract_coownership_v1',
+      name: 'Umowa Współwłasności',
+      parties: ['Hodowca A', 'Hodowca B', 'Optional: Kupujący'],
+      sections: ['Podział własności', 'Podział kosztów', 'Podział potomstwa', 'Show schedule']
+    }
+  },
+  
+  eSignature: {
+    provider: 'DocuSign / AutoentiSign / Polish eSignature',
+    methods: [
+      {
+        type: 'qualified',
+        name: 'Kwalifikowany Podpis Elektroniczny',
+        security: 'highest',
+        legal: 'Równoważny podpisowi własnoręcznemu',
+        cost: 'Paid',
+        providers: ['mObywatel', 'Szafir', 'CertumPro']
+      },
+      {
+        type: 'trusted',
+        name: 'Zaufany Podpis Elektroniczny (PeUP)',
+        security: 'high',
+        legal: 'Wysoka moc prawna',
+        cost: 'Free with ePUAP',
+        provider: 'ePUAP/mObywatel'
+      },
+      {
+        type: 'simple',
+        name: 'Prosty Podpis Elektroniczny',
+        security: 'medium',
+        legal: 'Ważny przy dowodzie tożsamości',
+        cost: 'Free',
+        methods: ['Email confirmation', 'SMS OTP', 'App signature']
+      },
+      {
+        type: 'biometric',
+        name: 'Podpis Biometryczny',
+        security: 'high',
+        device: 'Tablet with stylus',
+        capture: 'Pressure, speed, angle',
+        legal: 'Ważny przy zapisie biometrii'
+      }
+    ],
+    
+    workflow: {
+      steps: [
+        {
+          step: 1,
+          action: 'Hodowca wypełnia szablon',
+          autofill: true,
+          source: ['Cat database', 'Breeder profile', 'Buyer form']
+        },
+        {
+          step: 2,
+          action: 'System generuje PDF preview',
+          watermark: 'DRAFT - DO NOT SIGN'
+        },
+        {
+          step: 3,
+          action: 'Hodowca review i akceptacja',
+          changes: 'Edycja dostępna'
+        },
+        {
+          step: 4,
+          action: 'Wysłanie do Kupującego',
+          notification: ['Email', 'SMS', 'App push'],
+          deadline: '7 dni'
+        },
+        {
+          step: 5,
+          action: 'Kupujący review',
+          time: '48h na przeczytanie',
+          questions: 'Chat z hodowcą dostępny'
+        },
+        {
+          step: 6,
+          action: 'Weryfikacja tożsamości Kupującego',
+          methods: ['Email OTP', 'SMS OTP', 'Video call', 'ID scan']
+        },
+        {
+          step: 7,
+          action: 'Podpis Kupującego',
+          timestamp: true,
+          ipLog: true,
+          geoLocation: true
+        },
+        {
+          step: 8,
+          action: 'Powrót do Hodowcy do ostatecznego podpisu',
+          notification: true
+        },
+        {
+          step: 9,
+          action: 'Podpis Hodowcy',
+          timestamp: true,
+          requireStamp: 'Optional'
+        },
+        {
+          step: 10,
+          action: 'Finalizacja umowy',
+          actions: [
+            'Generowanie finального PDF',
+            'Opatrzenie hash code (blockchain optional)',
+            'Timestamp serwera',
+            'Wysłanie kopii do obu stron',
+            'Archiwizacja w systemie (10 lat)',
+            'Powiadomienie admina',
+            'Aktualizacja statusu kota na "Sold"'
+          ]
+        }
+      ]
+    },
+    
+    security: {
+      encryption: 'AES-256',
+      storage: 'Encrypted cloud storage (AWS/Azure/Google)',
+      backup: 'Daily encrypted backups',
+      retention: '10 years mandatory',
+      audit Trail: {
+        logged: [
+          'Document created',
+          'Document viewed',
+          'Document edited',
+          'Document sent',
+          'Email opened',
+          'Document signed',
+          'IP addresses',
+          'Timestamps',
+          'Device info',
+          'Geo location'
+        ],
+        immutable: true,
+        blockchain: 'Optional - hash stored on blockchain'
+      },
+      compliance: ['RODO/GDPR', 'eIDAS', 'Polish e-signature law']
+    }
+  },
+  
+  disputeResolution: {
+    mediator: 'CAT PURRE Mediation Team',
+    process: [
+      'Zgłoszenie sporu przez którąkolwiek stronę',
+      'Analiza umowy i dokumentacji',
+      'Kontakt z obiema stronami',
+      'Propozycja rozwiązania',
+      'Jeśli brak zgody - mediator zewnętrzny',
+      'Ostateczność - sąd konsumencki'
+    ],
+    insurance: {
+      optional: true,
+      provider: 'Partner Insurance Company',
+      coverage: 'Do 10,000 PLN',
+      cost: '2% ceny kota'
+    }
+  }
+}
+const ADVANCED_ADMIN_FEATURES = {
+  demoDataManager: {
+    generate: {
+      cats: {
+        quick: ['10 kotów', '50 kotów', '100 kotów'],
+        custom: {
+          count: Number,
+          breeds: [String], // wybór ras
+          priceRange: { min: Number, max: Number },
+          organizations: [String],
+          locations: [String], // miasta
+          withPhotos: Boolean,
+          withPedigrees: Boolean,
+          realisticData: Boolean // AI-generated realistic data
+        }
+      },
+      breeders: {
+        count: Number,
+        verificationStatus: ['all', 'verified', 'pending', 'rejected'],
+        withRealEmails: Boolean,
+        assignCats: Boolean
+      },
+      clients: {
+        count: Number,
+        withOrders: Boolean,
+        withReviews: Boolean
+      },
+      orders: {
+        count: Number,
+        status: ['completed', 'pending', 'cancelled'],
+        dateRange: { from: Date, to: Date }
+      }
+    },
+    
+    delete: {
+      selective: {
+        demoCatsOnly: Function,
+        demoBreedersOnly: Function,
+        demoClientsOnly: Function,
+        demoOrdersOnly: Function
+      },
+      bulk: {
+        deleteByBreed: Function,
+        deleteByPrice: Function,
+        deleteByDate: Function,
+        deleteByLocation: Function
+      },
+      complete: {
+        resetToFactory: Function, // kasuje wszystko oprócz adminów
+        keepAdmins: Boolean,
+        keepSettings: Boolean,
+        confirm: 'TYPE: DELETE-EVERYTHING'
+      }
+    },
+    
+    import: {
+      csv: {
+        cats: Function,
+        breeders: Function,
+        mapping: Object // mapowanie kolumn
+      },
+      json: {
+        fullBackup: Function,
+        partial: Function
+      },
+      api: {
+        from OtherPlatform: Function,
+        credentials: Object
+      }
+    },
+    
+    export: {
+      formats: ['CSV', 'Excel', 'JSON', 'XML', 'PDF'],
+      scope: ['all', 'filtered', 'selected'],
+      includeImages: Boolean,
+      includeDocuments: Boolean
+    }
+  },
+  
+  advancedModeration: {
+    aiContentFilter: {
+      enabled: Boolean,
+      checkFor: [
+        'Inappropriate images',
+        'Fake pedigrees',
+        'Suspicious prices',
+        'Duplicate listings',
+        'Scam indicators',
+        'Animal welfare concerns'
+      ],
+      autoActions: {
+        flag: Boolean,
+        quarantine: Boolean,
+        notify Admin: Boolean,
+        notifyBreeder: Boolean
+      },
+      mlModel: 'TensorFlow image recognition + NLP'
+    },
+    
+    manualReview: {
+      queue: Array,
+      prioritize: ['High risk', 'Reported', 'New breeders'],
+      assign To: ObjectId, // admin/moderator
+      sla: '24 hours',
+      actions: [
+        'Approve',
+        'Approve with edits',
+        'Request changes',
+        'Reject',
+        'Suspend breeder',
+        'Escalate to senior'
+      ]
+    },
+    
+    reportSystem: {
+      categories: [
+        'Fake listing',
+        'Sick cat',
+        'Bad breeder',
+        'Scam',
+        'Price manipulation',
+        'Inappropriate content',
+        'Other'
+      ],
+      workflow: [
+        'User reports',
+        'Auto-check by AI',
+        'Manual review',
+        'Investigation',
+        'Action taken',
+        'Reporter notified',
+        'Public transparency report'
       ]
     }
-  ])
-  const [aiInput, setAiInput] = useState('')
-  const [aiTyping, setAiTyping] = useState(false)
-
-  const generateAIResponse = (userMessage) => {
-    const msg = userMessage.toLowerCase()
-
-    // Spokojne rasy
-    if (msg.includes('spokojny') || msg.includes('łagodny') || msg.includes('rodzina')) {
-      const calmCats = cats.filter(cat => 
-        cat.personality.some(p => p.toLowerCase().includes('spokojn') || p.toLowerCase().includes('łagod'))
-      ).slice(0, 3)
-      
-      return {
-        text: `Polecam spokojne rasy idealne dla rodziny:\n\n${calmCats.map(cat => 
-          `🐱 ${cat.breed} - ${cat.name}\n   Cechy: ${cat.personality.join(', ')}\n   Cena: ${cat.priceFormatted}`
-        ).join('\n\n')}\n\nWszystkie te koty są cierpliwe i łagodne!`,
-        suggestions: ['Zobacz więcej spokojnych ras', 'Które najlepsze dla dzieci?', 'Porównaj te koty'],
-        recommendedCats: calmCats.map(c => c.id)
-      }
-    }
-
-    // Alergicy
-    if (msg.includes('alergi') || msg.includes('hypoalergiczn')) {
-      const hypoallergenic = cats.filter(cat => 
-        cat.breed === 'Sphynx' || cat.breed === 'Siberian' || cat.breed === 'Russian Blue'
-      )
-      
-      return {
-        text: `Dla alergików polecam:\n\n${hypoallergenic.map(cat => 
-          `🐱 ${cat.breed} - ${cat.breed === 'Sphynx' ? 'bez futra = niska produkcja alergenu' : 'niska produkcja Fel d 1'}\n   ${cat.name} - ${cat.priceFormatted}`
-        ).join('\n\n')}\n\nSphynx to najlepsza opcja, ale wymaga specjalnej pielęgnacji skóry!`,
-        suggestions: ['Pielęgnacja Sphynx', 'Siberian vs inne rasy', 'Testy alergiczne'],
-        recommendedCats: hypoallergenic.map(c => c.id)
-      }
-    }
-
-    // Energiczne/aktywne
-    if (msg.includes('aktywny') || msg.includes('energiczny') || msg.includes('zabaw')) {
-      const activeCats = cats.filter(cat => 
-        cat.personality.some(p => p.toLowerCase().includes('energiczn') || p.toLowerCase().includes('aktywn'))
-      ).slice(0, 3)
-      
-      return {
-        text: `Koty energiczne to świetny wybór!\n\n${activeCats.map(cat => 
-          `🐱 ${cat.breed} - ${cat.name}\n   ${cat.personality.join(', ')}\n   ${cat.priceFormatted}`
-        ).join('\n\n')}\n\n⚠️ Pamiętaj: aktywne koty potrzebują dużo zabawy i stymulacji!`,
-        suggestions: ['Jakie zabawki dla aktywnych kotów?', 'Ile czasu na zabawę?', 'Zobacz te koty'],
-        recommendedCats: activeCats.map(c => c.id)
-      }
-    }
-
-    // Hodowla
-    if (msg.includes('hodowl') || msg.includes('breeding')) {
-      const breedingCats = cats.filter(cat => cat.availableForBreeding).slice(0, 3)
-      
-      return {
-        text: `Koty z prawami hodowlanymi:\n\n${breedingCats.map(cat => 
-          `🏆 ${cat.name} (${cat.breed})\n   Organizacja: ${cat.breeder.organization}\n   Rodowód: ${cat.pedigree.generations} pokoleń, ${cat.pedigree.champions} championów\n   Cena: ${cat.priceFormatted}`
-        ).join('\n\n')}\n\nWszystkie z pełnymi testami genetycznymi i umową hodowlaną!`,
-        suggestions: ['Jak założyć hodowlę?', 'Wymagania organizacji', 'Porównaj koty'],
-        recommendedCats: breedingCats.map(c => c.id)
-      }
-    }
-
-    // Cena/budżet
-    if (msg.includes('cena') || msg.includes('budżet') || msg.includes('tani')) {
-      const priceRanges = {
-        low: cats.filter(cat => cat.price < 6000).slice(0, 3),
-        mid: cats.filter(cat => cat.price >= 6000 && cat.price < 8000).slice(0, 3),
-        high: cats.filter(cat => cat.price >= 8000).slice(0, 3)
-      }
-      
-      return {
-        text: `Przedziały cenowe:\n\n💰 DO 6000 PLN\n${priceRanges.low.map(c => `${c.breed} - ${c.priceFormatted}`).join('\n')}\n\n💰 6000-8000 PLN\n${priceRanges.mid.map(c => `${c.breed} - ${c.priceFormatted}`).join('\n')}\n\n💎 POWYŻEJ 8000 PLN\n${priceRanges.high.map(c => `${c.breed} - ${c.priceFormatted}`).join('\n')}\n\nPamiętaj: cena zależy od rodowodu, testów i linii (pet/breeding/show)!`,
-        suggestions: ['Dlaczego różne ceny?', 'Co wpływa na cenę?', 'Ukryte koszty'],
-        recommendedCats: [...priceRanges.low, ...priceRanges.mid].map(c => c.id)
-      }
-    }
-
-    // DEFAULT
-    return {
-      text: `Mogę pomóc w wielu kwestiach:\n\n✨ Wybór rasy\n✨ Charakterystyka\n✨ Wymagania zdrowotne\n✨ Budżet\n✨ Dopasowanie do rodziny\n✨ Wymagania mieszkaniowe\n\nZadaj mi konkretne pytanie!`,
-      suggestions: ['Spokojny kot dla rodziny', 'Aktywne rasy', 'Koty hypoalergiczne', 'Koty do hodowli'],
-      recommendedCats: []
-    }
-  }
-
-  const handleSendAIMessage = () => {
-    if (!aiInput.trim()) return
-
-    const userMsg = {
-      id: Date.now(),
-      sender: 'user',
-      text: aiInput,
-      timestamp: Date.now()
-    }
-    setAiMessages(prev => [...prev, userMsg])
-    setAiInput('')
-    setAiTyping(true)
-
-    setTimeout(() => {
-      const aiResponse = generateAIResponse(aiInput)
-      const aiMsg = {
-        id: Date.now() + 1,
-        sender: 'ai',
-        text: aiResponse.text,
-        timestamp: Date.now(),
-        suggestions: aiResponse.suggestions || [],
-        recommendedCats: aiResponse.recommendedCats || []
-      }
-      setAiMessages(prev => [...prev, aiMsg])
-      setAiTyping(false)
-    }, 1500)
-  }
-
-  // ====================================================================
-  // ⚖️ PORÓWNYWARKA KOTÓW
-  // ====================================================================
+  },
   
-  const [showComparison, setShowComparison] = useState(false)
-  const [comparisonCats, setComparisonCats] = useState([])
-
-  const handleAddToComparison = (cat) => {
-    if (comparisonCats.length >= 3) {
-      showNotification('⚠️ Możesz porównać maksymalnie 3 koty!', '⚖️')
-      return
-    }
-    if (comparisonCats.find(c => c.id === cat.id)) {
-      showNotification('⚠️ Ten kot jest już w porównaniu!', '⚖️')
-      return
-    }
-    setComparisonCats([...comparisonCats, cat])
-    setShowComparison(true)
-    showNotification(`✅ ${cat.name} dodany do porównania`, '⚖️')
-  }
-
-  const handleRemoveFromComparison = (catId) => {
-    setComparisonCats(comparisonCats.filter(c => c.id !== catId))
-  }
-
-  // ====================================================================
-  // ❤️ ULUBIONE + HISTORIA
-  // ====================================================================
-  
-  const [favorites, setFavorites] = useState([])
-  const [viewHistory, setViewHistory] = useState([])
-  const [showFavoritesPanel, setShowFavoritesPanel] = useState(false)
-
-  const toggleFavorite = (cat) => {
-    const isFav = favorites.some(f => f.id === cat.id)
-    if (isFav) {
-      setFavorites(favorites.filter(f => f.id !== cat.id))
-      showNotification('🤍 Usunięto z ulubionych', '❤️')
-    } else {
-      setFavorites([...favorites, { ...cat, savedAt: Date.now() }])
-      showNotification(`❤️ ${cat.name} dodany do ulubionych!`, '❤️')
-    }
-  }
-
-  const trackView = (cat) => {
-    const exists = viewHistory.some(h => h.id === cat.id)
-    if (!exists) {
-      const newHistory = [{ ...cat, viewedAt: Date.now() }, ...viewHistory.slice(0, 20)]
-      setViewHistory(newHistory)
-    }
-  }
-
-  useEffect(() => {
-    if (selectedCat) {
-      trackView(selectedCat)
-    }
-  }, [selectedCat])
-
-  // ====================================================================
-  // 🔔 SYSTEM POWIADOMIEŃ
-  // ====================================================================
-  
-  const [notificationsList, setNotificationsList] = useState([
-    {
-      id: 1,
-      type: 'success',
-      icon: '✅',
-      text: 'Witamy w CAT PURRE! Mamy 5 nowych kotów.',
-      time: 'Teraz',
-      unread: true
+  analytics Dashboard: {
+    realtime: {
+      activeUsers: Number,
+      ongoingChats: Number,
+      newListings: Number,
+      salesInProgress: Number,
+      serverLoad: Object
     },
-    {
-      id: 2,
-      type: 'info',
-      icon: '💰',
-      text: 'British Shorthair - obniżka ceny o 500 PLN!',
-      time: '2 godz. temu',
-      unread: true
-    }
-  ])
-  const [showNotifications, setShowNotifications] = useState(false)
-
-  const showNotification = (text, icon = '🔔') => {
-    const newNotif = {
-      id: Date.now(),
-      type: 'success',
-      icon,
-      text,
-      time: 'Teraz',
-      unread: true
-    }
-    setNotificationsList([newNotif, ...notificationsList])
     
-    setTimeout(() => {
-      setNotificationsList(prev => prev.filter(n => n.id !== newNotif.id))
-    }, 5000)
-  }
-
-  const markAsRead = (id) => {
-    setNotificationsList(notificationsList.map(n => 
-      n.id === id ? { ...n, unread: false } : n
-    ))
-  }
-
-  const unreadCount = notificationsList.filter(n => n.unread).length
-
-  // 🎯 FILTERED & SORTED CATS
-  const getFilteredAndSortedCats = () => {
-    let filtered = cats.filter(cat => {
-      const matchesSearch = 
-        cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cat.breed.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cat.breeder.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cat.breeder.location.toLowerCase().includes(searchQuery.toLowerCase())
-      
-      const matchesBreed = selectedBreed === 'all' || cat.breedId === selectedBreed
-      const matchesPrice = cat.price >= priceRange[0] && cat.price <= priceRange[1]
-      
-      return matchesSearch && matchesBreed && matchesPrice
-    })
-
-    switch(sortBy) {
-      case 'price_low':
-        filtered.sort((a, b) => a.price - b.price)
-        break
-      case 'price_high':
-        filtered.sort((a, b) => b.price - a.price)
-        break
-      case 'age_young':
-        filtered.sort((a, b) => new Date(b.birthDate) - new Date(a.birthDate))
-        break
-      case 'age_old':
-        filtered.sort((a, b) => new Date(a.birthDate) - new Date(b.birthDate))
-        break
-      case 'popular':
-        filtered.sort((a, b) => b.stats.views - a.stats.views)
-        break
-      case 'featured':
-      default:
-        filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
-        break
-    }
-
-    return filtered
-  }
-
-  // 🔔 EFFECTS
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsOnline(navigator.onLine)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
-
-  // 📊 STATISTICS
-  const totalCats = cats.length
-  const totalBreeders = new Set(cats.map(cat => cat.breeder.name)).size
-  const averagePrice = cats.length > 0 ? Math.round(cats.reduce((sum, cat) => sum + cat.price, 0) / cats.length) : 0
-  const availableCats = cats.filter(cat => cat.status === 'available').length
-  // 🎯 RENDER HOME TAB
-  const renderHome = () => {
-    const filteredCats = getFilteredAndSortedCats()
+    metrics: {
+      users: {
+        total: Number,
+        newThisMonth: Number,
+        activeUsers: Number,
+        churnRate: Number,
+        lifetimeValue: Number
+      },
+      breeders: {
+        total: Number,
+        verified: Number,
+        pending: Number,
+        avgListings: Number,
+        topPerformers: Array
+      },
+      sales: {
+        totalRevenue: Number,
+        thisMonth: Number,
+        projectedNextMonth: Number,
+        avgTransactionValue: Number,
+        commissionCollected: Number,
+        conversionRate: Number
+      },
+      platform: {
+        listingsTotal: Number,
+        activeListings: Number,
+        soldThisMonth: Number,
+        avgTimeToSale: Number,
+        popularBreeds: Array,
+        priceDistribution: Object
+      }
+    },
     
-    return (
-      <div className="home-tab">
-        {/* HERO SECTION */}
-        <div className="hero-main">
-          <div className="hero-content">
-            <div className="hero-emoji">😻</div>
-            <h1 className="hero-title">CAT PURRE</h1>
-            <p className="hero-subtitle">Premium Marketplace Kotów Rasowych z Rodowodem</p>
-            
-            {/* ORGANIZACJE */}
-            <div className="organizations-section">
-              <h3 className="orgs-title">🏛️ Organizacje Zrzeszające Hodowców w Polsce</h3>
-              <div className="organizations-grid">
-                {organizations.map(org => (
-                  <div key={org.id} className="org-card main-org">
-                    <div className="org-logo">{org.logo}</div>
-                    <h4 className="org-name">{org.name}</h4>
-                    <p className="org-full">{org.fullName}</p>
-                    <div className="org-arrow">↓</div>
-                    <div className="org-polish">
-                      <span className="polish-flag">🇵🇱</span>
-                      <span className="polish-name">{org.polishMember}</span>
-                    </div>
-                    <p className="org-desc">{org.description}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="orgs-info">
-                <p className="info-text">
-                  ℹ️ <strong>Wszystkie koty na CAT PURRE</strong> pochodzą wyłącznie z hodowli 
-                  zarejestrowanych w oficjalnych organizacjach felinologicznych (FIFe, WCF, TICA).
-                  Każdy kot posiada <strong>pełny rodowód</strong>, testy genetyczne i gwarancję zdrowia.
-                </p>
-              </div>
-            </div>
-
-            {/* STATYSTYKI LIVE */}
-            <div className="hero-stats">
-              <div className="stat-item">
-                <span className="stat-icon">🐱</span>
-                <span className="stat-number">{availableCats}</span>
-                <span className="stat-label">Kotów dostępnych</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-icon">👥</span>
-                <span className="stat-number">{totalBreeders}</span>
-                <span className="stat-label">Zweryfikowanych hodowców</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-icon">💰</span>
-                <span className="stat-number">{averagePrice.toLocaleString('pl-PL')}</span>
-                <span className="stat-label">PLN średnia cena</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-icon">⭐</span>
-                <span className="stat-number">4.97</span>
-                <span className="stat-label">Średnia ocena</span>
-              </div>
-            </div>
-
-            {/* 🐱 20 BREED BUTTONS - NOWA SEKCJA */}
-            <div className="breeds-section">
-              <h3 className="breeds-title">🎯 Wybierz rasę</h3>
-              <div className="breeds-grid">
-                {breedsWithCounts.map(breed => (
-                  <button
-                    key={breed.id}
-                    className={`breed-btn ${selectedBreed === breed.id ? 'active' : ''} ${breed.count === 0 ? 'disabled' : ''}`}
-                    onClick={() => setSelectedBreed(breed.id)}
-                    disabled={breed.count === 0 && breed.id !== 'all'}
-                  >
-                    <span className="breed-emoji">{breed.emoji}</span>
-                    <span className="breed-name">{breed.name}</span>
-                    <span className="breed-count">({breed.count})</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* SEARCH BAR */}
-            <div className="search-section">
-              <div className="search-bar-container">
-                <span className="search-icon">🔍</span>
-                <input
-                  type="text"
-                  className="search-bar"
-                  placeholder="Szukaj po razie, nazwie, lokalizacji, hodowcy..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                {searchQuery && (
-                  <button 
-                    className="search-clear"
-                    onClick={() => setSearchQuery('')}
-                  >
-                    ✖️
-                  </button>
-                )}
-              </div>
-
-              <button 
-                className="filters-toggle"
-                onClick={() => setShowFilters(!showFilters)}
-              >
-                🎛️ Filtry {showFilters ? '▲' : '▼'}
-              </button>
-            </div>
-
-            {/* ADVANCED FILTERS */}
-            {showFilters && (
-              <div className="filters-panel">
-                <div className="filters-grid">
-                  <div className="filter-group">
-                    <label className="filter-label">
-                      <span className="filter-icon">💰</span>
-                      Przedział cenowy: {priceRange[0]} - {priceRange[1]} PLN
-                    </label>
-                    <div className="price-range-container">
-                      <input
-                        type="range"
-                        min="0"
-                        max="50000"
-                        step="500"
-                        value={priceRange[0]}
-                        onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-                        className="price-slider"
-                      />
-                      <input
-                        type="range"
-                        min="0"
-                        max="50000"
-                        step="500"
-                        value={priceRange[1]}
-                        onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                        className="price-slider"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="filter-group">
-                    <label className="filter-label">
-                      <span className="filter-icon">📋</span>
-                      Sortuj
-                    </label>
-                    <select 
-                      className="filter-select"
-                      value={sortBy}
-                      onChange={(e) => handleSortChange(e.target.value)}
-                    >
-                      <option value="featured">Wyróżnione</option>
-                      <option value="price_low">Cena rosnąco</option>
-                      <option value="price_high">Cena malejąco</option>
-                      <option value="age_young">Najmłodsze</option>
-                      <option value="age_old">Najstarsze</option>
-                      <option value="popular">Najpopularniejsze</option>
-                    </select>
-                  </div>
-
-                  <div className="filter-group">
-                    <label className="filter-label">
-                      <span className="filter-icon">👁️</span>
-                      Widok
-                    </label>
-                    <div className="view-mode-buttons">
-                      <button 
-                        className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                        onClick={() => handleViewModeChange('grid')}
-                      >
-                        ▦ Siatka
-                      </button>
-                      <button 
-                        className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                        onClick={() => handleViewModeChange('list')}
-                      >
-                        ☰ Lista
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <button 
-                  className="filters-reset"
-                  onClick={() => {
-                    setSelectedBreed('all')
-                    setPriceRange([0, 50000])
-                    setSearchQuery('')
-                    setSortBy('featured')
-                  }}
-                >
-                  🔄 Resetuj filtry
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* CATS LISTING */}
-        <div className="cats-listing-section">
-          <div className="listing-header">
-            <h2 className="listing-title">
-              🐾 Koty Rasowe z Rodowodem
-              <span className="results-badge">{filteredCats.length} wyników</span>
-            </h2>
-          </div>
-
-          {filteredCats.length > 0 ? (
-            <div className={`cats-container ${viewMode === 'list' ? 'list-view' : 'grid-view'}`}>
-              {filteredCats.map(cat => (
-                <div 
-                  key={cat.id} 
-                  className={`cat-card ${cat.featured ? 'featured' : ''} ${cat.isDemoData ? 'demo-cat' : ''}`}
-                  onClick={() => handleViewDetails(cat)}
-                >
-                  {/* BADGES */}
-                  <div className="card-badges">
-                    {cat.featured && (
-                      <span className="badge featured-badge">⭐ Wyróżnione</span>
-                    )}
-                    {cat.verified && (
-                      <span className="badge verified-badge">✓ Zweryfikowane</span>
-                    )}
-                    {cat.isDemoData && (
-                      <span className="badge demo-badge">🎭 DEMO</span>
-                    )}
-                  </div>
-
-                  {/* IMAGE */}
-                  <div className="card-image-container">
-                    <img 
-                      src={cat.img} 
-                      alt={cat.name}
-                      className="card-image"
-                      loading="lazy"
-                    />
-                    
-                    {/* PEDIGREE BADGES */}
-                    <div className="pedigree-badges">
-                      {cat.pedigree.fife && (
-                        <span className="pedigree-badge fife">FIFe</span>
-                      )}
-                      {cat.pedigree.wcf && (
-                        <span className="pedigree-badge wcf">WCF</span>
-                      )}
-                      {cat.pedigree.tica && (
-                        <span className="pedigree-badge tica">TICA</span>
-                      )}
-                    </div>
-
-                    {/* LIKE BUTTON */}
-                    <button 
-                      className={`like-btn ${likedCats.includes(cat.id) ? 'liked' : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleLike(cat.id)
-                      }}
-                    >
-                      {likedCats.includes(cat.id) ? '❤️' : '🤍'}
-                    </button>
-
-                    {/* ADMIN DELETE BUTTON */}
-                    {isAdmin && (
-                      <button 
-                        className="admin-delete-btn"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          deleteCat(cat.id)
-                        }}
-                      >
-                        🗑️
-                      </button>
-                    )}
-                  </div>
-
-                  {/* CARD CONTENT */}
-                  <div className="card-content">
-                    <h3 className="cat-name">{cat.name}</h3>
-                    
-                    <div className="cat-breed-info">
-                      <span className="breed-name">{cat.breed}</span>
-                      <span className="breed-separator">•</span>
-                      <span className="cat-gender">{cat.gender}</span>
-                      <span className="breed-separator">•</span>
-                      <span className="cat-age">{cat.age}</span>
-                    </div>
-
-                    <div className="cat-color">
-                      🎨 {cat.color}
-                    </div>
-
-                    {/* BREEDER INFO */}
-                    <div className="breeder-mini">
-                      <div className="breeder-avatar">👤</div>
-                      <div className="breeder-details">
-                        <span className="breeder-name">{cat.breeder.name}</span>
-                        <div className="breeder-meta">
-                          <span className="breeder-rating">⭐ {cat.breeder.rating}</span>
-                          <span className="meta-separator">•</span>
-                          <span className="breeder-location">📍 {cat.breeder.location}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* HEALTH STATUS */}
-                    <div className="health-mini">
-                      {cat.health.hcmTested && cat.health.hcmResult === 'Negatywny' && (
-                        <span className="health-badge">❤️ HCM-</span>
-                      )}
-                      {cat.health.pkdTested && (
-                        <span className="health-badge">🧬 PKD-</span>
-                      )}
-                      {cat.health.vaccinated && (
-                        <span className="health-badge">💉 Szczepiony</span>
-                      )}
-                      {cat.health.microchipped && (
-                        <span className="health-badge">🔖 Chip</span>
-                      )}
-                    </div>
-
-                    {/* PERSONALITY TAGS */}
-                    <div className="personality-tags">
-                      {cat.personality.slice(0, 3).map((trait, idx) => (
-                        <span key={idx} className="personality-tag">
-                          {trait}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* STATS */}
-                    <div className="card-stats">
-                      <span className="stat">👁️ {cat.stats.views}</span>
-                      <span className="stat">❤️ {cat.stats.likes}</span>
-                      <span className="stat">💬 {cat.stats.inquiries}</span>
-                    </div>
-
-                    {/* PRICE & ACTIONS */}
-                    <div className="card-footer">
-                      <div className="price-section">
-                        <span className="price">{cat.priceFormatted}</span>
-                        {cat.availableForBreeding && (
-                          <span className="breeding-badge">🏆 Prawa hodowlane</span>
-                        )}
-                      </div>
-
-                      <div className="card-actions">
-                        <button 
-                          className="action-btn secondary"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleShare(cat)
-                          }}
-                        >
-                          🔗 Udostępnij
-                        </button>
-                        <button 
-                          className="action-btn primary"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleContactBreeder(cat.breeder)
-                          }}
-                        >
-                          💬 Kontakt
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* READY TO GO */}
-                    <div className="ready-info">
-                      {cat.readyToGo === 'Gotowy do odbioru' ? (
-                        <span className="ready-badge available">✅ {cat.readyToGo}</span>
-                      ) : (
-                        <span className="ready-badge pending">📅 {cat.readyToGo}</span>
-                      )}
-                    </div>
-
-                    {/* ADMIN QUICK ACTIONS */}
-                    {isAdmin && (
-                      <div className="admin-quick-actions">
-                        <button 
-                          className="admin-quick-btn"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            toggleFeatured(cat.id)
-                          }}
-                        >
-                          {cat.featured ? '⭐ Usuń wyróżnienie' : '⭐ Wyrózij'}
-                        </button>
-                        <button 
-                          className="admin-quick-btn"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            toggleVerified(cat.id)
-                          }}
-                        >
-                          {cat.verified ? '✓ Odweryfikuj' : '✓ Weryfikuj'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="no-results">
-              <div className="no-results-icon">🔍</div>
-              <h3 className="no-results-title">Brak wyników</h3>
-              <p className="no-results-text">
-                Nie znaleziono kotów spełniających kryteria wyszukiwania.
-                Spróbuj zmienić filtry lub wyszukiwane hasło.
-              </p>
-              <button 
-                className="reset-search-btn"
-                onClick={() => {
-                  setSearchQuery('')
-                  setSelectedBreed('all')
-                  setPriceRange([0, 50000])
-                }}
-              >
-                🔄 Resetuj wyszukiwanie
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* WHY CAT PURRE SECTION */}
-        <div className="why-section">
-          <h2 className="why-title">✨ Dlaczego CAT PURRE?</h2>
-          <div className="why-grid">
-            <div className="why-card">
-              <div className="why-icon">🏆</div>
-              <h3 className="why-card-title">Tylko Zweryfikowane Hodowle</h3>
-              <p className="why-card-text">
-                Współpracujemy wyłącznie z hodowcami zarejestrowanymi w FIFe, WCF i TICA.
-                Każda hodowla jest weryfikowana i posiada oficjalny prefix.
-              </p>
-            </div>
-
-            <div className="why-card">
-              <div className="why-icon">📜</div>
-              <h3 className="why-card-title">Pełne Rodowody</h3>
-              <p className="why-card-text">
-                Wszystkie koty posiadają oficjalne rodowody z międzynarodowych organizacji.
-                Minimum 5 pokoleń, często z tytułami championów.
-              </p>
-            </div>
-
-            <div className="why-card">
-              <div className="why-icon">🧬</div>
-              <h3 className="why-card-title">Testy Genetyczne</h3>
-              <p className="why-card-text">
-                HCM, PKD, FIV/FeLV i inne testy w zależności od rasy.
-                Gwarancja zdrowia 24-36 miesięcy.
-              </p>
-            </div>
-
-            <div className="why-card">
-              <div className="why-icon">💳</div>
-              <h3 className="why-card-title">Bezpieczne Transakcje</h3>
-              <p className="why-card-text">
-                Umowy kupna-sprzedaży, faktury VAT, możliwość płatności online.
-                Pełna transparentność i bezpieczeństwo.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* TRUST BADGES */}
-        <div className="trust-section">
-          <div className="trust-badges">
-            <div className="trust-badge">
-              <span className="trust-icon">🔒</span>
-              <span className="trust-text">Bezpieczne płatności</span>
-            </div>
-            <div className="trust-badge">
-              <span className="trust-icon">✅</span>
-              <span className="trust-text">Zweryfikowani hodowcy</span>
-            </div>
-            <div className="trust-badge">
-              <span className="trust-icon">🛡️</span>
-              <span className="trust-text">Gwarancja zdrowia</span>
-            </div>
-            <div className="trust-badge">
-              <span className="trust-icon">📞</span>
-              <span className="trust-text">Wsparcie 24/7</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-  // ====================================================================
-  // 👑 RENDER ADMIN PANEL - 10 FUNKCJI ADMIN
-  // ====================================================================
+    reports: {
+      financial: {
+        monthly: Function,
+        quarterly: Function,
+        annual: Function,
+        taxReport: Function
+      },
+      operational: {
+        breederPerformance: Function,
+        customerSatisfaction: Function,
+        platformHealth: Function
+      },
+      compliance: {
+        gdprReport: Function,
+        transactionLog: Function,
+        auditTrail: Function
+      }
+    }
+  },
   
-  const renderAdminPanel = () => {
-    if (!showAdminPanel) return null
-
-    const demoCatsCount = cats.filter(c => c.isDemoData).length
-    const realCatsCount = cats.filter(c => !c.isDemoData).length
-    const featuredCount = cats.filter(c => c.featured).length
-    const verifiedCount = cats.filter(c => c.verified).length
-
-    return (
-      <div className="admin-panel-overlay">
-        <div className="admin-panel-container">
-          <div className="admin-panel-header">
-            <h2 className="admin-panel-title">👑 Panel Administratora</h2>
-            <button className="admin-panel-close" onClick={() => setShowAdminPanel(false)}>✖️</button>
-          </div>
-
-          <div className="admin-panel-content">
-            {/* STATYSTYKI ADMIN */}
-            <div className="admin-stats-section">
-              <h3 className="admin-section-title">📊 Statystyki</h3>
-              <div className="admin-stats-grid">
-                <div className="admin-stat-card">
-                  <div className="admin-stat-icon">🐱</div>
-                  <div className="admin-stat-value">{totalCats}</div>
-                  <div className="admin-stat-label">Wszystkich kotów</div>
-                </div>
-                <div className="admin-stat-card demo">
-                  <div className="admin-stat-icon">🎭</div>
-                  <div className="admin-stat-value">{demoCatsCount}</div>
-                  <div className="admin-stat-label">Koty demo</div>
-                </div>
-                <div className="admin-stat-card real">
-                  <div className="admin-stat-icon">✅</div>
-                  <div className="admin-stat-value">{realCatsCount}</div>
-                  <div className="admin-stat-label">Prawdziwe koty</div>
-                </div>
-                <div className="admin-stat-card featured">
-                  <div className="admin-stat-icon">⭐</div>
-                  <div className="admin-stat-value">{featuredCount}</div>
-                  <div className="admin-stat-label">Wyróżnione</div>
-                </div>
-                <div className="admin-stat-card verified">
-                  <div className="admin-stat-icon">✓</div>
-                  <div className="admin-stat-value">{verifiedCount}</div>
-                  <div className="admin-stat-label">Zweryfikowane</div>
-                </div>
-                <div className="admin-stat-card breeders">
-                  <div className="admin-stat-icon">👥</div>
-                  <div className="admin-stat-value">{totalBreeders}</div>
-                  <div className="admin-stat-label">Hodowców</div>
-                </div>
-              </div>
-            </div>
-
-            {/* FUNKCJA 1: USUWANIE DEMO KOTÓW */}
-            <div className="admin-function-section">
-              <h3 className="admin-section-title">🗑️ Zarządzanie kotami demo</h3>
-              <div className="admin-function-card">
-                <p className="admin-function-desc">
-                  Usuń wszystkie koty demo ({demoCatsCount} sztuk) jednym kliknięciem.
-                  Ta operacja jest nieodwracalna!
-                </p>
-                <button 
-                  className="admin-btn danger"
-                  onClick={deleteAllDemoCats}
-                  disabled={demoCatsCount === 0}
-                >
-                  🗑️ Usuń wszystkie koty demo ({demoCatsCount})
-                </button>
-              </div>
-            </div>
-
-            {/* FUNKCJA 2: MASOWE OPERACJE */}
-            <div className="admin-function-section">
-              <h3 className="admin-section-title">⚡ Masowe operacje</h3>
-              <div className="admin-function-grid">
-                <button 
-                  className="admin-btn success"
-                  onClick={() => {
-                    setCats(cats.map(cat => ({ ...cat, verified: true })))
-                    showNotification('✅ Wszystkie koty zweryfikowane', '✓')
-                  }}
-                >
-                  ✓ Weryfikuj wszystkie
-                </button>
-                <button 
-                  className="admin-btn warning"
-                  onClick={() => {
-                    setCats(cats.map(cat => ({ ...cat, featured: false })))
-                    showNotification('⭐ Usunięto wszystkie wyróżnienia', '⭐')
-                  }}
-                >
-                  ⭐ Usuń wyróżnienia
-                </button>
-                <button 
-                  className="admin-btn info"
-                  onClick={() => {
-                    setCats(cats.map(cat => ({ 
-                      ...cat, 
-                      stats: { ...cat.stats, views: 0, likes: 0, shares: 0, inquiries: 0 }
-                    })))
-                    showNotification('📊 Zresetowano statystyki', '📊')
-                  }}
-                >
-                  📊 Resetuj statystyki
-                </button>
-                <button 
-                  className="admin-btn danger"
-                  onClick={() => {
-                    if (window.confirm('❌ Usunąć WSZYSTKIE koty?')) {
-                      setCats([])
-                      showNotification('🗑️ Usunięto wszystkie koty', '🗑️')
-                    }
-                  }}
-                >
-                  🗑️ Usuń wszystkie
-                </button>
-              </div>
-            </div>
-
-            {/* FUNKCJA 3: EKSPORT/IMPORT DANYCH */}
-            <div className="admin-function-section">
-              <h3 className="admin-section-title">💾 Eksport / Import</h3>
-              <div className="admin-function-grid">
-                <button 
-                  className="admin-btn info"
-                  onClick={() => {
-                    const dataStr = JSON.stringify(cats, null, 2)
-                    const dataBlob = new Blob([dataStr], { type: 'application/json' })
-                    const url = URL.createObjectURL(dataBlob)
-                    const link = document.createElement('a')
-                    link.href = url
-                    link.download = `catpurre-backup-${Date.now()}.json`
-                    link.click()
-                    showNotification('✅ Dane wyeksportowane', '💾')
-                  }}
-                >
-                  💾 Eksportuj JSON
-                </button>
-                <button 
-                  className="admin-btn info"
-                  onClick={() => {
-                    const csv = [
-                      ['ID', 'Nazwa', 'Rasa', 'Cena', 'Hodowca', 'Status'].join(','),
-                      ...cats.map(cat => [
-                        cat.id,
-                        cat.name,
-                        cat.breed,
-                        cat.price,
-                        cat.breeder.name,
-                        cat.status
-                      ].join(','))
-                    ].join('\n')
-                    const blob = new Blob([csv], { type: 'text/csv' })
-                    const url = URL.createObjectURL(blob)
-                    const link = document.createElement('a')
-                    link.href = url
-                    link.download = `catpurre-export-${Date.now()}.csv`
-                    link.click()
-                    showNotification('✅ CSV wyeksportowany', '📄')
-                  }}
-                >
-                  📄 Eksportuj CSV
-                </button>
-              </div>
-            </div>
-
-            {/* FUNKCJA 4: GENEROWANIE RAPORTÓW */}
-            <div className="admin-function-section">
-              <h3 className="admin-section-title">📈 Raporty</h3>
-              <div className="admin-report-card">
-                <div className="report-item">
-                  <span className="report-label">Najdroższy kot:</span>
-                  <span className="report-value">
-                    {cats.reduce((max, cat) => cat.price > max.price ? cat : max, cats[0])?.name || 'Brak'} 
-                    ({Math.max(...cats.map(c => c.price)).toLocaleString('pl-PL')} PLN)
-                  </span>
-                </div>
-                <div className="report-item">
-                  <span className="report-label">Najtańszy kot:</span>
-                  <span className="report-value">
-                    {cats.reduce((min, cat) => cat.price < min.price ? cat : min, cats[0])?.name || 'Brak'}
-                    ({Math.min(...cats.map(c => c.price)).toLocaleString('pl-PL')} PLN)
-                  </span>
-                </div>
-                <div className="report-item">
-                  <span className="report-label">Najpopularniejszy:</span>
-                  <span className="report-value">
-                    {cats.reduce((max, cat) => cat.stats.views > max.stats.views ? cat : max, cats[0])?.name || 'Brak'}
-                    ({Math.max(...cats.map(c => c.stats.views))} wyświetleń)
-                  </span>
-                </div>
-                <div className="report-item">
-                  <span className="report-label">Najpopularniejsza rasa:</span>
-                  <span className="report-value">
-                    {cats.reduce((acc, cat) => {
-                      acc[cat.breed] = (acc[cat.breed] || 0) + 1
-                      return acc
-                    }, {})}
-                    {Object.entries(cats.reduce((acc, cat) => {
-                      acc[cat.breed] = (acc[cat.breed] || 0) + 1
-                      return acc
-                    }, {})).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Brak'}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* FUNKCJA 5: LISTA WSZYSTKICH KOTÓW Z AKCJAMI */}
-            <div className="admin-function-section">
-              <h3 className="admin-section-title">📋 Lista wszystkich kotów</h3>
-              <div className="admin-cats-table">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Zdjęcie</th>
-                      <th>Nazwa</th>
-                      <th>Rasa</th>
-                      <th>Cena</th>
-                      <th>Status</th>
-                      <th>Akcje</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {cats.map(cat => (
-                      <tr key={cat.id} className={cat.isDemoData ? 'demo-row' : ''}>
-                        <td>{cat.id}</td>
-                        <td>
-                          <img src={cat.img} alt={cat.name} className="admin-table-img" />
-                        </td>
-                        <td>
-                          {cat.name}
-                          {cat.isDemoData && <span className="demo-tag">DEMO</span>}
-                        </td>
-                        <td>{cat.breed}</td>
-                        <td>
-                          <input 
-                            type="number" 
-                            value={cat.price}
-                            onChange={(e) => updateCatPrice(cat.id, parseInt(e.target.value))}
-                            className="admin-price-input"
-                          />
-                        </td>
-                        <td>
-                          <div className="status-badges">
-                            {cat.featured && <span className="mini-badge featured">⭐</span>}
-                            {cat.verified && <span className="mini-badge verified">✓</span>}
-                          </div>
-                        </td>
-                        <td>
-                          <div className="admin-table-actions">
-                            <button 
-                              className="admin-table-btn view"
-                              onClick={() => handleViewDetails(cat)}
-                              title="Zobacz"
-                            >
-                              👁️
-                            </button>
-                            <button 
-                              className="admin-table-btn edit"
-                              onClick={() => toggleFeatured(cat.id)}
-                              title="Wyróżnij"
-                            >
-                              ⭐
-                            </button>
-                            <button 
-                              className="admin-table-btn verify"
-                              onClick={() => toggleVerified(cat.id)}
-                              title="Weryfikuj"
-                            >
-                              ✓
-                            </button>
-                            <button 
-                              className="admin-table-btn delete"
-                              onClick={() => deleteCat(cat.id)}
-                              title="Usuń"
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* FUNKCJA 6-10: DODATKOWE FUNKCJE */}
-            <div className="admin-function-section">
-              <h3 className="admin-section-title">🎯 Dodatkowe funkcje</h3>
-              <div className="admin-advanced-grid">
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">📧</div>
-                  <h4 className="advanced-title">Email hodowcom</h4>
-                  <p className="advanced-desc">Wyślij masowego maila do wszystkich hodowców</p>
-                  <button className="admin-btn-small info">📧 Wyślij email</button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">📱</div>
-                  <h4 className="advanced-title">SMS marketing</h4>
-                  <p className="advanced-desc">Kampania SMS do zainteresowanych</p>
-                  <button className="admin-btn-small info">📱 Wyślij SMS</button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">🎨</div>
-                  <h4 className="advanced-title">Generuj promocje</h4>
-                  <p className="advanced-desc">Automatyczne promocje % off</p>
-                  <button 
-                    className="admin-btn-small success"
-                    onClick={() => {
-                      setCats(cats.map(cat => ({
-                        ...cat,
-                        price: Math.round(cat.price * 0.9),
-                        priceFormatted: `${Math.round(cat.price * 0.9).toLocaleString('pl-PL')} PLN`
-                      })))
-                      showNotification('🎉 -10% dla wszystkich!', '🎨')
-                    }}
-                  >
-                    🎨 -10% wszystko
-                  </button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">🔔</div>
-                  <h4 className="advanced-title">Push notification</h4>
-                  <p className="advanced-desc">Wyślij powiadomienie push</p>
-                  <button className="admin-btn-small warning">🔔 Wyślij push</button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">🤖</div>
-                  <h4 className="advanced-title">AI Opis</h4>
-                  <p className="advanced-desc">Generuj opisy kotów AI</p>
-                  <button className="admin-btn-small info">🤖 Generuj</button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">📊</div>
-                  <h4 className="advanced-title">Analytics</h4>
-                  <p className="advanced-desc">Dashboard analityczny</p>
-                  <button className="admin-btn-small info">📊 Otwórz</button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">💳</div>
-                  <h4 className="advanced-title">Płatności</h4>
-                  <p className="advanced-desc">Historia transakcji</p>
-                  <button className="admin-btn-small success">💳 Zobacz</button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">👥</div>
-                  <h4 className="advanced-title">Użytkownicy</h4>
-                  <p className="advanced-desc">Zarządzaj kontami</p>
-                  <button className="admin-btn-small info">👥 Zarządzaj</button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">⚙️</div>
-                  <h4 className="advanced-title">Ustawienia</h4>
-                  <p className="advanced-desc">Konfiguracja systemu</p>
-                  <button className="admin-btn-small warning">⚙️ Konfiguruj</button>
-                </div>
-
-                <div className="admin-advanced-card">
-                  <div className="advanced-icon">🔒</div>
-                  <h4 className="advanced-title">Logi systemu</h4>
-                  <p className="advanced-desc">Historia aktywności</p>
-                  <button className="admin-btn-small info">🔒 Pokaż logi</button>
-                </div>
-              </div>
-            </div>
-
-            {/* WYLOGUJ */}
-            <div className="admin-logout-section">
-              <button className="admin-btn danger" onClick={adminLogout}>
-                🔓 Wyloguj z panelu admina
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+  systemConfiguration: {
+    global Settings: {
+      siteName: String,
+      tagline: String,
+      maintenanceMode: Boolean,
+      allowRegistration: Boolean,
+      allowGuestBrowsing: Boolean,
+      moderationRequired: Boolean
+    },
+    
+    featureToggles: {
+      chat: Boolean,
+      videoCall: Boolean,
+      virtualTours: Boolean,
+      aiRecommendations: Boolean,
+      blockchain Verification: Boolean,
+      cryptoPayments: Boolean,
+      subscriptionModel: Boolean
+    },
+    
+    pricing: {
+      commission: {
+        standard: Number,
+        premium: Number,
+        vip: Number
+      },
+      subscription: {
+        breederBasic: Number,
+        breederPro: Number,
+        breederElite: Number,
+        buyerPremium: Number,
+        buyerVIP: Number
+      },
+      features: {
+        featured Listing: Number,
+        urgentListing: Number,
+        topPlacement: Number,
+        socialPromotion: Number
+      }
+    },
+    
+    integrations: {
+      payment: {
+        stripe: { enabled: Boolean, keys: Object },
+        paypal: { enabled: Boolean, keys: Object },
+        przelewy24: { enabled: Boolean, keys: Object },
+        crypto: { enabled: Boolean, wallets: Object }
+      },
+      email: {
+        sendgrid: { enabled: Boolean, apiKey: String },
+        mailchimp: { enabled: Boolean, apiKey: String }
+      },
+      sms: {
+        twilio: { enabled: Boolean, credentials: Object }
+      },
+      social: {
+        facebookPixel: String,
+        googleAnalytics: String,
+        googleTagManager: String
+      },
+      blockchain: {
+        ethereum: { enabled: Boolean, contract: String },
+        ipfs: { enabled: Boolean, gateway: String }
+      }
+    }
   }
-
-  // 🎯 MODAL SZCZEGÓŁÓW KOTA
-  const renderModal = () => {
-    if (!showModal || !selectedCat) return null
-
-    return (
-      <div className="modal-overlay" onClick={handleCloseModal}>
-        <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-          <button className="modal-close" onClick={handleCloseModal}>✖️</button>
-          
-          <div className="modal-content">
-            <div className="modal-left">
-              <div className="modal-gallery">
-                <img 
-                  src={selectedCat.img} 
-                  alt={selectedCat.name}
-                  className="modal-main-image"
-                />
-              </div>
-            </div>
-
-            <div className="modal-right">
-              <div className="modal-header">
-                <h2 className="modal-cat-name">{selectedCat.name}</h2>
-                <div className="modal-breed-line">
-                  <span className="modal-breed">{selectedCat.breed}</span>
-                  <span className="modal-separator">•</span>
-                  <span className="modal-color">{selectedCat.color}</span>
-                </div>
-              </div>
-
-              <div className="modal-price-box">
-                <span className="modal-price">{selectedCat.priceFormatted}</span>
-                {selectedCat.availableForBreeding && (
-                  <span className="breeding-rights">🏆 Z prawami hodowlanymi</span>
-                )}
-              </div>
-
-              <div className="modal-section">
-                <h3 className="section-title">📋 Podstawowe informacje</h3>
-                <div className="info-grid">
-                  <div className="info-item">
-                    <span className="info-label">Płeć</span>
-                    <span className="info-value">{selectedCat.gender}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label">Wiek</span>
-                    <span className="info-value">{selectedCat.age}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label">Status</span>
-                    <span className="info-value status-available">Dostępny</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label">Gotowy do odbioru</span>
-                    <span className="info-value">{selectedCat.readyToGo}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="modal-section">
-                <h3 className="section-title">📜 Rodowód</h3>
-                <div className="pedigree-details">
-                  <div className="pedigree-orgs">
-                    {selectedCat.pedigree.fife && <span className="pedigree-org-badge fife">FIFe</span>}
-                    {selectedCat.pedigree.wcf && <span className="pedigree-org-badge wcf">WCF</span>}
-                    {selectedCat.pedigree.tica && <span className="pedigree-org-badge tica">TICA</span>}
-                  </div>
-                  <div className="pedigree-stats">
-                    <span className="pedigree-stat">{selectedCat.pedigree.generations} pokoleń</span>
-                    <span className="pedigree-stat">{selectedCat.pedigree.champions} championów</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="modal-section">
-                <h3 className="section-title">🏥 Zdrowie i Testy</h3>
-                <div className="health-grid">
-                  <div className="health-item positive">
-                    <span className="health-icon">💉</span>
-                    <span className="health-text">Szczepiony</span>
-                  </div>
-                  <div className="health-item positive">
-                    <span className="health-icon">🔖</span>
-                    <span className="health-text">Chip</span>
-                  </div>
-                  {selectedCat.health.hcmTested && (
-                    <div className="health-item positive">
-                      <span className="health-icon">❤️</span>
-                      <span className="health-text">HCM {selectedCat.health.hcmResult}</span>
-                    </div>
-                  )}
-                  {selectedCat.health.pkdTested && (
-                    <div className="health-item positive">
-                      <span className="health-icon">🧬</span>
-                      <span className="health-text">PKD {selectedCat.health.pkdResult}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="health-guarantee">
-                  <span className="guarantee-icon">🛡️</span>
-                  <span className="guarantee-text">
-                    Gwarancja zdrowia <strong>{selectedCat.health.healthGuarantee}</strong>
-                  </span>
-                </div>
-              </div>
-
-              <div className="modal-section">
-                <h3 className="section-title">✨ Osobowość</h3>
-                <div className="personality-list">
-                  {selectedCat.personality.map((trait, idx) => (
-                    <span key={idx} className="personality-tag-large">{trait}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="modal-section breeder-section">
-                <h3 className="section-title">👤 Hodowca</h3>
-                <div className="breeder-card-full">
-                  <div className="breeder-header">
-                    <div className="breeder-avatar-large">👤</div>
-                    <div className="breeder-main-info">
-                      <h4 className="breeder-prefix">{selectedCat.breeder.name}</h4>
-                      <div className="breeder-owner">Właściciel: {selectedCat.breeder.owner}</div>
-                      <div className="breeder-rating-large">
-                        <span className="rating-stars">⭐⭐⭐⭐⭐</span>
-                        <span className="rating-value">{selectedCat.breeder.rating}</span>
-                        <span className="rating-count">({selectedCat.breeder.reviewsCount} opinii)</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="breeder-details-grid">
-                    <div className="breeder-detail">
-                      <span className="detail-icon">📍</span>
-                      <span className="detail-text">{selectedCat.breeder.location}</span>
-                    </div>
-                    <div className="breeder-detail">
-                      <span className="detail-icon">📞</span>
-                      <span className="detail-text">{selectedCat.breeder.phone}</span>
-                    </div>
-                    <div className="breeder-detail">
-                      <span className="detail-icon">📧</span>
-                      <span className="detail-text">{selectedCat.breeder.email}</span>
-                    </div>
-                    <div className="breeder-detail">
-                      <span className="detail-icon">🏛️</span>
-                      <span className="detail-text">{selectedCat.breeder.organization}</span>
-                    </div>
-                  </div>
-                  <button 
-                    className="contact-breeder-btn"
-                    onClick={() => handleContactBreeder(selectedCat.breeder)}
-                  >
-                    💬 Kontakt z hodowcą
-                  </button>
-                </div>
-              </div>
-
-              <div className="modal-actions">
-                <button 
-                  className="modal-action-btn favorite"
-                  onClick={() => toggleFavorite(selectedCat)}
-                >
-                  {favorites.some(f => f.id === selectedCat.id) ? '❤️ Ulubione' : '🤍 Dodaj do ulubionych'}
-                </button>
-                <button 
-                  className="modal-action-btn compare"
-                  onClick={() => handleAddToComparison(selectedCat)}
-                >
-                  ⚖️ Porównaj
-                </button>
-                <button 
-                  className="modal-action-btn share"
-                  onClick={() => handleShare(selectedCat)}
-                >
-                  🔗 Udostępnij
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+}
+const AI_FEATURES = {
+  catRecognition: {
+    uploadPhoto: Function,
+    identifyBreed: Function,  // rozpoznaje rasę z foto
+    confidenceScore: Number,
+    suggestedBreeds: Array,
+    explanation: String
+  },
+  
+  smartMatching: {
+    questionnaire: [
+      'Jaki masz styl życia?',
+      'Ile masz czasu?',
+      'Mieszkasz w...?',
+      'Doświadczenie z kotami?',
+      'Budget?',
+      'Alergicy w rodzinie?',
+      'Inne zwierzęta?'
+    ],
+    algorithm: 'ML model trained on 10k+ successful adoptions',
+    output: {
+      topMatches: Array, // top 5 ras
+      catSuggestions: Array, // konkretne koty
+      reasoning: String,
+      alternativeOptions: Array
+    }
+  },
+  
+  pricePredictor: {
+    input: { breed: String, age: Number, pedigree: Object, location: String },
+    output: { 
+      suggestedPrice: Number,
+      priceRange: Object,
+      marketAnalysis: String,
+      confidence: Number
+    },
+    basedOn: 'Historical sales data + current market trends'
+  },
+  
+  chattbot: {
+    name: 'CatBot',
+    capabilities: [
+      'Odpowiedzi na FAQ',
+      'Pomoc w wyborze rasy',
+      'Wyszukiwanie kotów',
+      'Status zamówienia',
+      'Routing do hodowcy',
+      'Podstawowe porady'
+    ],
+    languages: ['Polski', 'English'],
+    integration: 'OpenAI GPT-4 + custom training'
+  },
+  
+  virtualAssistant: {
+    name: 'MeowAssistant',
+    for: 'Kupujący po zakupie',
+    features: [
+      'Przypomnienia o szczepieniach',
+      'Kalendarz wizyt wet',
+      'Porady żywieniowe',
+      'Rozpoznawanie chorób (basic)',
+      'Trening i zachowanie',
+      'Połączenie z hodowcą'
+    ],
+    notifications: ['Push', 'Email', 'SMS']
   }
-
-  // ⚖️ RENDER COMPARISON
-  const renderComparison = () => {
-    if (!showComparison || comparisonCats.length === 0) return null
-
-    return (
-      <div className="comparison-panel">
-        <div className="comparison-header">
-          <h3 className="comparison-title">⚖️ Porównanie kotów ({comparisonCats.length}/3)</h3>
-          <button className="comparison-close" onClick={() => setShowComparison(false)}>✖️</button>
-        </div>
-
-        <div className="comparison-table">
-          <table className="compare-table">
-            <thead>
-              <tr>
-                <th className="compare-label">Kategoria</th>
-                {comparisonCats.map(cat => (
-                  <th key={cat.id} className="compare-cat-header">
-                    <img src={cat.img} alt={cat.name} className="compare-cat-img" />
-                    <span className="compare-cat-name">{cat.name}</span>
-                    <button 
-                      className="remove-compare-btn"
-                      onClick={() => handleRemoveFromComparison(cat.id)}
-                    >
-                      ✖️
-                    </button>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="label">Rasa</td>
-                {comparisonCats.map(cat => <td key={cat.id}>{cat.breed}</td>)}
-              </tr>
-              <tr>
-                <td className="label">Cena</td>
-                {comparisonCats.map(cat => <td key={cat.id} className="price">{cat.priceFormatted}</td>)}
-              </tr>
-              <tr>
-                <td className="label">Wiek</td>
-                {comparisonCats.map(cat => <td key={cat.id}>{cat.age}</td>)}
-              </tr>
-              <tr>
-                <td className="label">Kolor</td>
-                {comparisonCats.map(cat => <td key={cat.id}>{cat.color}</td>)}
-              </tr>
-              <tr>
-                <td className="label">Rodowód</td>
-                {comparisonCats.map(cat => (
-                  <td key={cat.id}>
-                    {cat.pedigree.fife && <span className="badge-mini fife">FIFe</span>}
-                    {cat.pedigree.wcf && <span className="badge-mini wcf">WCF</span>}
-                    {cat.pedigree.tica && <span className="badge-mini tica">TICA</span>}
-                  </td>
-                ))}
-              </tr>
-              <tr>
-                <td className="label">Osobowość</td>
-                {comparisonCats.map(cat => <td key={cat.id}>{cat.personality.join(', ')}</td>)}
-              </tr>
-              <tr>
-                <td className="label">Hodowca</td>
-                {comparisonCats.map(cat => <td key={cat.id}>{cat.breeder.name}</td>)}
-              </tr>
-              <tr>
-                <td className="label">Akcja</td>
-                {comparisonCats.map(cat => (
-                  <td key={cat.id}>
-                    <button 
-                      className="view-detail-btn"
-                      onClick={() => handleViewDetails(cat)}
-                    >
-                      👁️ Zobacz
-                    </button>
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    )
+}
+const WEB3_FEATURES = {
+  nftPedigrees: {
+    concept: 'Każdy rodowód jako NFT',
+    blockchain: 'Polygon (low fees)',
+    benefits: [
+      'Niezmienność danych',
+      'Łatwa weryfikacja autentyczności',
+      'Historia transferów',
+      'Międzynarodowa akceptacja',
+      'Nie można podrobić'
+    ],
+    meta {
+      catName: String,
+      breed: String,
+      birthDate: Date,
+      parents: Object,
+      champions: Array,
+      geneticTests: Object,
+      photos: [IPFS_hash],
+      breeder: String,
+      organization: String
+    },
+    minting: {
+      who: 'Hodowca po sprzedaży',
+      cost: '~$2 (płaci platform/hodowca)',
+      transfer: 'Automatyczny do kupującego',
+      wallet: 'Metamask / WalletConnect'
+    }
+  },
+  
+  cryptoPayments: {
+    accepted: ['BTC', 'ETH', 'USDT', 'USDC', 'MATIC'],
+    processor: 'CoinGate / Coinbase Commerce',
+    benefits: [
+      'Międzynarodowe płatności bez opłat wymian',
+      'Szybsze rozliczenia',
+      'Anonimowość (opcjonalna)',
+      'Lower fees'
+    ],
+    autoConversion: 'To PLN/EUR/USD'
+  },
+  
+  daoGovernance: {
+    concept: 'CAT PURRE DAO',
+    token: '$PURR',
+    purpose: 'Community governance',
+    voting: [
+      'Nowe funkcje platformy',
+      'Zmiany w fee',
+      'Weryfikacja hodowców',
+      'Charity initiatives',
+      'Breed additions'
+    ],
+    tokenomics: {
+      earn: ['Zakup kota', 'Sprzedaż kota', 'Recenzje', 'Referrals', 'Moderacja'],
+      spend: ['Premium features', 'Voting power', 'Exclusive listings', 'Discounts']
+    }
   }
-  // 🤖 RENDER AI CHAT
-  const renderAIChat = () => (
-    <div className={`ai-chat-widget ${showAIChat ? 'open' : ''}`}>
-      <div className="ai-chat-header">
-        <div className="ai-avatar">🤖</div>
-        <div className="ai-info">
-          <h4 className="ai-name">AI Doradca CAT PURRE</h4>
-          <span className="ai-status">🟢 Online • Odpowiada natychmiast</span>
-        </div>
-        <button className="ai-close" onClick={() => setShowAIChat(false)}>✖️</button>
-      </div>
-
-      <div className="ai-messages">
-        {aiMessages.map(msg => (
-          <div key={msg.id} className={`ai-message ${msg.sender}`}>
-            {msg.sender === 'ai' && <div className="msg-avatar">🤖</div>}
-            <div className="msg-bubble">
-              <p className="msg-text">{msg.text}</p>
-              {msg.suggestions && msg.suggestions.length > 0 && (
-                <div className="msg-suggestions">
-                  {msg.suggestions.map((sug, idx) => (
-                    <button 
-                      key={idx} 
-                      className="suggestion-btn"
-                      onClick={() => {
-                        setAiInput(sug)
-                        handleSendAIMessage()
-                      }}
-                    >
-                      {sug}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {msg.recommendedCats && msg.recommendedCats.length > 0 && (
-                <div className="recommended-cats-mini">
-                  <h5 className="rec-title">Polecane koty:</h5>
-                  <div className="rec-cats-grid">
-                    {msg.recommendedCats.map(catId => {
-                      const cat = cats.find(c => c.id === catId)
-                      return cat ? (
-                        <div 
-                          key={catId} 
-                          className="rec-cat-card"
-                          onClick={() => {
-                            handleViewDetails(cat)
-                            setShowAIChat(false)
-                          }}
-                        >
-                          <img src={cat.img} alt={cat.name} className="rec-cat-img" />
-                          <div className="rec-cat-info">
-                            <span className="rec-cat-name">{cat.name}</span>
-                            <span className="rec-cat-price">{cat.priceFormatted}</span>
-                          </div>
-                        </div>
-                      ) : null
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-            <span className="msg-time">
-              {new Date(msg.timestamp).toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
-            </span>
-          </div>
-        ))}
-        {aiTyping && (
-          <div className="ai-message ai">
-            <div className="msg-avatar">🤖</div>
-            <div className="msg-bubble typing">
-              <span className="typing-dot"></span>
-              <span className="typing-dot"></span>
-              <span className="typing-dot"></span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="ai-input-container">
-        <input
-          type="text"
-          className="ai-input"
-          placeholder="Zadaj pytanie AI Doradcy..."
-          value={aiInput}
-          onChange={(e) => setAiInput(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') handleSendAIMessage()
-          }}
-        />
-        <button className="ai-send-btn" onClick={handleSendAIMessage}>
-          ➤
-        </button>
-      </div>
-    </div>
-  )
-
-  // 🤖 FLOATING AI BUTTON
-  const renderFloatingAIButton = () => (
-    <button 
-      className="floating-ai-btn" 
-      onClick={() => setShowAIChat(!showAIChat)}
-      title="AI Doradca"
-    >
-      🤖
-      <span className="ai-pulse"></span>
-    </button>
-  )
-
-  // ❤️ RENDER FAVORITES PANEL
-  const renderFavoritesPanel = () => {
-    if (!showFavoritesPanel) return null
-
-    return (
-      <div className="favorites-panel">
-        <div className="favorites-header">
-          <h3 className="favorites-title">❤️ Ulubione ({favorites.length})</h3>
-          <button className="favorites-close" onClick={() => setShowFavoritesPanel(false)}>✖️</button>
-        </div>
-
-        <div className="favorites-tabs">
-          <button className="fav-tab active">❤️ Ulubione ({favorites.length})</button>
-          <button className="fav-tab">🕒 Ostatnio oglądane ({viewHistory.length})</button>
-        </div>
-
-        <div className="favorites-content">
-          {favorites.length > 0 ? (
-            <div className="favorites-grid">
-              {favorites.map(cat => (
-                <div key={cat.id} className="favorite-card" onClick={() => handleViewDetails(cat)}>
-                  <img src={cat.img} alt={cat.name} className="favorite-img" />
-                  <div className="favorite-info">
-                    <h4 className="favorite-name">{cat.name}</h4>
-                    <p className="favorite-breed">{cat.breed}</p>
-                    <p className="favorite-price">{cat.priceFormatted}</p>
-                  </div>
-                  <button 
-                    className="remove-favorite-btn"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      toggleFavorite(cat)
-                    }}
-                  >
-                    ❌
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="empty-favorites">
-              <div className="empty-icon">💔</div>
-              <p>Nie masz jeszcze ulubionych kotów</p>
-              <p className="empty-hint">Kliknij ❤️ na karcie kota aby dodać do ulubionych</p>
-            </div>
-          )}
-        </div>
-      </div>
-    )
+}
+const VR_AR_FEATURES = {
+  virtualCattery Visit: {
+    technology: 'WebXR / 360° video',
+    experience: [
+      'Wirtualny spacer po hodowli',
+      'Obejrzenie kotów w ich środowisku',
+      'Interakcja z hodowcą (avatar/video)',
+      'Zoom na detale',
+      'Pytania na żywo'
+    ],
+    devices: ['VR headset', 'Desktop', 'Mobile'],
+    recording: 'Hodowca nagrywa raz, pokazuje wielokrotnie'
+  },
+  
+  arCatPreview: {
+    technology: 'ARKit / ARCore',
+    feature: 'Zobacz kota w swoim domu',
+    howItWorks: [
+      'Wybierz kota',
+      'Kliknij "AR Preview"',
+      'Skieruj kamerę na podłogę',
+      'Kot pojawia się w 3D w twoim pokoju',
+      'Zobacz jak pasuje do przestrzeni'
+    ],
+    models: '3D model based on breed standard'
+  },
+  
+  virtualShowroom: {
+    concept: 'Metaverse cat show',
+    platform: 'Decentraland / Custom',
+    features: [
+      'Wirtualna wystawa kotów',
+      'Judging przez ekspertów',
+      'Networking między hodowcami',
+      'Shopping area',
+      'Educational seminars'
+    ]
   }
-
-  // 🔔 RENDER NOTIFICATIONS
-  const renderNotifications = () => (
-    <div className={`notifications-dropdown ${showNotifications ? 'open' : ''}`}>
-      <div className="notif-header">
-        <h4 className="notif-title">🔔 Powiadomienia ({unreadCount})</h4>
-        <button className="notif-close" onClick={() => setShowNotifications(false)}>✖️</button>
-      </div>
-
-      <div className="notif-list">
-        {notificationsList.length > 0 ? (
-          notificationsList.map(notif => (
-            <div 
-              key={notif.id} 
-              className={`notif-item ${notif.unread ? 'unread' : ''}`}
-              onClick={() => markAsRead(notif.id)}
-            >
-              <div className="notif-icon">{notif.icon}</div>
-              <div className="notif-content">
-                <p className="notif-text">{notif.text}</p>
-                <span className="notif-time">{notif.time}</span>
-              </div>
-              {notif.unread && <div className="notif-dot"></div>}
-            </div>
-          ))
-        ) : (
-          <div className="empty-notif">
-            <div className="empty-icon">🔕</div>
-            <p>Brak powiadomień</p>
-          </div>
-        )}
-      </div>
-
-      <div className="notif-footer">
-        <button className="notif-clear-btn" onClick={() => setNotificationsList([])}>
-          🗑️ Wyczyść wszystkie
-        </button>
-      </div>
-    </div>
-  )
-
-  // ====================================================================
-  // 🎯 MAIN RENDER - NAJWAŻNIEJSZE!
-  // ====================================================================
-
-  return (
-    <div className="App">
-      {/* HEADER NAV */}
-      <header className="app-header">
-        <div className="header-container">
-          <div className="logo-section">
-            <h1 className="app-logo">😻 CAT PURRE</h1>
-          </div>
-
-          <nav className="main-nav">
-            <button 
-              className={`nav-btn ${activeTab === 'home' ? 'active' : ''}`}
-              onClick={() => setActiveTab('home')}
-            >
-              🏠 Główna
-            </button>
-            <button 
-              className="nav-btn"
-              onClick={() => setShowFavoritesPanel(true)}
-            >
-              ❤️ Ulubione ({favorites.length})
-            </button>
-            <button 
-              className="nav-btn"
-              onClick={() => setShowComparison(true)}
-            >
-              ⚖️ Porównaj ({comparisonCats.length})
-            </button>
-            
-            {/* ADMIN LOGIN/PANEL BUTTON */}
-            {!isAdmin ? (
-              <div className="admin-login-inline">
-                <input
-                  type="password"
-                  className="admin-password-input"
-                  placeholder="Hasło admin..."
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') adminLogin()
-                  }}
-                />
-                <button className="nav-btn admin" onClick={adminLogin}>
-                  👑 Admin
-                </button>
-              </div>
-            ) : (
-              <button 
-                className="nav-btn admin active"
-                onClick={() => setShowAdminPanel(true)}
-              >
-                👑 Panel Admina
-              </button>
-            )}
-          </nav>
-
-          <div className="header-actions">
-            <button 
-              className="header-icon-btn"
-              onClick={() => setShowNotifications(!showNotifications)}
-            >
-              🔔
-              {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
-            </button>
-            <button 
-              className="header-icon-btn"
-              onClick={() => {
-                if (cartItems.length > 0) {
-                  alert(`🛒 Koszyk:\n\n${cartItems.map(cat => `${cat.name} - ${cat.priceFormatted}`).join('\n')}\n\nSuma: ${cartItems.reduce((sum, cat) => sum + cat.price, 0).toLocaleString('pl-PL')} PLN`)
-                } else {
-                  alert('🛒 Koszyk jest pusty')
-                }
-              }}
-            >
-              🛒 ({cartItems.length})
-            </button>
-            <button className="header-icon-btn">
-              👤 Konto
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* NOTIFICATIONS DROPDOWN */}
-      {renderNotifications()}
-
-      {/* MAIN CONTENT */}
-      <main className="app-main">
-        {activeTab === 'home' && renderHome()}
-      </main>
-
-      {/* MODAL */}
-      {renderModal()}
-
-      {/* ADMIN PANEL */}
-      {renderAdminPanel()}
-
-      {/* AI CHAT */}
-      {renderAIChat()}
-      {renderFloatingAIButton()}
-
-      {/* COMPARISON */}
-      {renderComparison()}
-
-      {/* FAVORITES PANEL */}
-      {renderFavoritesPanel()}
-
-      {/* FOOTER */}
-      <footer className="app-footer">
-        <div className="footer-content">
-          <div className="footer-main">
-            <div className="footer-logo">
-              <h3>😻 CAT PURRE</h3>
-              <p>Premium Marketplace Kotów Rasowych</p>
-            </div>
-            <div className="footer-section">
-              <h4>🔗 Linki</h4>
-              <a href="#">Regulamin</a>
-              <a href="#">Polityka Prywatności</a>
-              <a href="#">Kontakt</a>
-              <a href="#">FAQ</a>
-            </div>
-            <div className="footer-section">
-              <h4>🏛️ Organizacje</h4>
-              <a href="https://fifeweb.org" target="_blank" rel="noopener noreferrer">FIFe</a>
-              <a href="https://wcf-online.de" target="_blank" rel="noopener noreferrer">WCF</a>
-              <a href="https://tica.org" target="_blank" rel="noopener noreferrer">TICA</a>
-              <a href="https://fpl.pl" target="_blank" rel="noopener noreferrer">FPL</a>
-            </div>
-            <div className="footer-section">
-              <h4>📱 Social Media</h4>
-              <a href="#">Facebook</a>
-              <a href="#">Instagram</a>
-              <a href="#">YouTube</a>
-              <a href="#">TikTok</a>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>© 2025 CAT PURRE - Wszelkie prawa zastrzeżone</p>
-            <p className="footer-stats">
-              {totalCats} kotów • {totalBreeders} hodowców • {availableCats} dostępnych
-            </p>
-          </div>
-        </div>
-      </footer>
-
-      {/* STATUS INDICATOR */}
-      <div className={`status-indicator ${isOnline ? 'online' : 'offline'}`}>
-        {isOnline ? '🟢 Online' : '🔴 Offline'}
-      </div>
-
-      {/* ADMIN BADGE */}
-      {isAdmin && (
-        <div className="admin-badge-indicator">
-          👑 Tryb Administratora
-        </div>
-      )}
-
-      {/* QUICK STATS OVERLAY */}
-      {isAdmin && (
-        <div className="quick-stats-overlay">
-          <div className="quick-stat">🐱 {totalCats}</div>
-          <div className="quick-stat">⭐ {cats.filter(c => c.featured).length}</div>
-          <div className="quick-stat">✓ {cats.filter(c => c.verified).length}</div>
-          <div className="quick-stat">🎭 {cats.filter(c => c.isDemoData).length}</div>
-        </div>
-      )}
-    </div>
-  )
+}
+const SOCIAL_PLATFORM = {
+  catBook: {
+    description: 'Facebook dla kotów i hodowców',
+    features: {
+      profiles: {
+        catProfiles: {
+          fields: ['name', 'breed', 'birthday', 'owner', 'photos', 'videos', 'achievements'],
+          timeline: 'Posts od kota (pisane przez właściciela)',
+          friends: 'Inne koty',
+          followers: Number
+        },
+        breederPages: {
+          fields: ['cattery', 'breeds', 'gallery', 'reviews', 'news'],
+          posts: 'Updates, new litters, show results',
+          events: 'Open days, shows'
+        }
+      },
+      
+      feed: {
+        algorithm: 'Chronological + engagement',
+        content: [
+          'Nowe kocięta',
+          'Sukcesy z wystaw',
+          'Funny cat videos',
+          'Porady hodowlane',
+          'Before/after grooming',
+          'Birthday celebrations'
+        ],
+        interactions: ['Like', 'Love', 'Purr', 'Comment', 'Share']
+      },
+      
+      stories: {
+        duration: '24h',
+        content: 'Daily life, behind the scenes',
+        features: ['Filters', 'Stickers', 'Cat ears AR', 'Polls']
+      },
+      
+      liveStreaming: {
+        occasions: [
+          'Kittens playing',
+          'Grooming session',
+          'Vet visit',
+          'Show competition',
+          'Q&A with breeder'
+        ],
+        monetization: 'Tips/donations'
+      },
+      
+      groups: {
+        types: [
+          'Breed specific (np. "British Shorthair Lovers")',
+          'Local (np. "Koty Warszawa")',
+          'Topic (np. "Raw feeding")',
+          'Breeder network',
+          'First-time owners'
+        ],
+        features: ['Discussions', 'Polls', 'Events', 'File sharing']
+      },
+      
+      marketplace: {
+        notJustCats: [
+          'Cat accessories',
+          'Food',
+          'Toys',
+          'Used equipment',
+          'Services (grooming, sitting)'
+        ]
+      },
+      
+      events: {
+        types: [
+          'Cat shows',
+          'Breeder open days',
+          'Adoption events',
+          'Webinars',
+          'Meetups'
+        ],
+        features: ['RSVP', 'Reminders', 'Live updates']
+      }
+    }
+  },
+  
+  catTok: {
+    description: 'TikTok dla kotów',
+    format: 'Short vertical videos (15s-3min)',
+    content: [
+      'Funny cat moments',
+      'Grooming transformations',
+      'Kitten growing up (time-lapse)',
+      'Training tricks',
+      'Before/after adoption',
+      'Day in the life',
+      'Breed education',
+      'Show preparations'
+    ],
+    features: {
+      effects: ['Cat filters', 'Sound effects', 'Transitions'],
+      sounds: 'Library of cat sounds + music',
+      hashtags: '#MaineCoon #CatLife #KittenCuteness',
+      challenges: '#ShowMeYourCat #GroomingChallenge',
+      duets: 'Duet with other cats',
+      stitches: 'React to other videos'
+    },
+    algorithm: 'For You Page based on engagement',
+    monetization: {
+      creatorFund: 'Payment for views',
+      brandDeals: 'Cat food, toys companies',
+      live Gifts: 'Virtual gifts during live'
+    }
+  },
+  
+  influencerProgram: {
+    tiers: [
+      { name: 'Micro', followers: '1k-10k', perks: ['Badge', 'Early features'] },
+      { name: 'Rising', followers: '10k-50k', perks: ['Revenue share', 'Verification'] },
+      { name: 'Star', followers: '50k-100k', perks: ['Brand deals', 'Priority support'] },
+      { name: 'Celebrity', followers: '100k+', perks: ['Custom features', 'PR opportunities'] }
+    ],
+    verification: {
+      badge: '✓ Verified Breeder',
+      criteria: ['Active presence', 'Good reviews', 'Platform compliance']
+    }
+  }
+}
+const ECOMMERCE_EXPANSION = {
+  catShop: {
+    categories: [
+      {
+        name: 'Karma',
+        brands: ['Royal Canin', 'Hill\'s', 'Orijen', 'Acana', 'Applaws'],
+        features: ['Breed-specific', 'Age-specific', 'Subscription model']
+      },
+      {
+        name: 'Akcesoria',
+        items: ['Kuwety', 'Drapaki', 'Transportery', 'Zabawki', 'Legowiska']
+      },
+      {
+        name: 'Pielęgnacja',
+        items: ['Szczotki', 'Szampony', 'Maszynki', 'Nożyczki', 'Kosmetyki']
+      },
+      {
+        name: 'Zdrowie',
+        items: ['Suplementy', 'Witaminy', 'Odrobaczanie', 'Pchły/kleszcze']
+      },
+      {
+        name: 'Breeding',
+        items: ['Inkubatory', 'Wagi', 'Butelki', 'Mleko zastępcze', 'Rodowody']
+      }
+    ],
+    
+    subscriptionBoxes: {
+      name: 'PURRE BOX',
+      tiers: [
+        { name: 'Basic', price: 79, items: '4-5' },
+        { name: 'Premium', price: 139, items: '7-8' },
+        { name: 'Luxury', price: 249, items: '10+' }
+      ],
+      contents: ['Zabawki', 'Przysmaki', 'Akcesoria', 'Surprise item'],
+            customization: 'Based on cat breed, age, preferences',
+      frequency: ['Monthly', 'Quarterly'],
+      unboxing: 'Exclusive video content from partner brands'
+    },
+    
+    marketplace: {
+      thirdParty Sellers: {
+        enabled: true,
+        commission: '15%',
+        verification: 'Required',
+        categories: ['Handmade', 'Vintage', 'Custom items']
+      },
+      breederSupplies: {
+        bulkOrders: true,
+        businessPricing: true,
+        invoice: 'VAT invoices available'
+      }
+    }
+  },
+  
+  servicesMarketplace: {
+    categories: [
+      {
+        name: 'Opieka',
+        services: [
+          { type: 'Cat sitting', pricing: 'Per day', verification: 'Background check' },
+          { type: 'Walking service', pricing: 'Per visit', insurance: 'Required' },
+          { type: 'Daycare', pricing: 'Per day', facility: 'Inspected' }
+        ]
+      },
+      {
+        name: 'Grooming',
+        services: [
+          { type: 'Bath & brush', duration: '1-2h', mobile: true },
+          { type: 'Full grooming', duration: '2-3h', breeds: ['Persian', 'Maine Coon'] },
+          { type: 'Show preparation', duration: '3-4h', expert: true },
+          { type: 'Nail trimming', duration: '15min', walkIn: true }
+        ]
+      },
+      {
+        name: 'Weterynaria',
+        services: [
+          { type: 'Szczepienia', home: true, price: '150-200 PLN' },
+          { type: 'Chipowanie', home: true, price: '80-120 PLN' },
+          { type: 'Konsultacja online', duration: '30min', price: '100 PLN' },
+          { type: 'Testy genetyczne', lab: 'Partner labs', turnaround: '2-3 weeks' }
+        ],
+        partners: ['Idexx', 'Laboklin', 'MyDogDNA']
+      },
+      {
+        name: 'Trening',
+        services: [
+          { type: 'Podstawowy trening', sessions: '4-8', topics: ['Litter', 'Scratching', 'Biting'] },
+          { type: 'Behavioral consultation', expert: 'Feline behaviorist', price: '300-500 PLN' },
+          { type: 'Clicker training', sessions: '6-10', skills: ['Tricks', 'Agility'] }
+        ]
+      },
+      {
+        name: 'Fotografia',
+        services: [
+          { type: 'Portfolio shoot', photos: '20-30', usage: 'Breeding portfolio' },
+          { type: 'Show photography', onSite: true, delivery: '48h' },
+          { type: 'Lifestyle session', photos: '50+', location: 'Home/outdoor' },
+          { type: 'Video production', duration: '2-5min', purpose: 'Cattery promo' }
+        ]
+      },
+      {
+        name: 'Transport',
+        services: [
+          { type: 'Local delivery', range: '50km', price: 'From 100 PLN' },
+          { type: 'Nationwide', insurance: 'Included', tracking: 'Real-time' },
+          { type: 'International', documentation: 'Handled', customs: 'Assistance' },
+          { type: 'Airport pickup/delivery', available: '24/7', price: 'Variable' }
+        ]
+      },
+      {
+        name: 'Konsultacje',
+        services: [
+          { type: 'Breeding consultation', expert: 'Senior breeder', price: '200-400 PLN/h' },
+          { type: 'Nutrition planning', expert: 'Feline nutritionist', includes: 'Meal plan' },
+          { type: 'Show preparation', expert: 'Judge/Handler', topics: ['Grooming', 'Presentation'] },
+          { type: 'Cattery setup', expert: 'Experienced breeder', includes: 'Business plan' }
+        ]
+      }
+    ],
+    
+    booking: {
+      calendar: 'Integrated calendar system',
+      availability: 'Real-time',
+      payment: 'Escrow system',
+      cancellation: 'Policy per provider',
+      insurance: 'Optional add-on',
+      reviews: 'Mandatory after service'
+    },
+    
+    professionalProfiles: {
+      verification: {
+        required: ['ID verification', 'Background check', 'Insurance proof'],
+        optional: ['Certifications', 'References', 'Portfolio']
+      },
+      portfolio: {
+        photos: 'Unlimited',
+        videos: 'Up to 10',
+        certificates: 'Scan uploads',
+        reviews: 'From platform + external'
+      },
+      pricing: {
+        commission: '18%',
+        withdrawal: 'Weekly/Monthly',
+        minimumPayout: '100 PLN',
+        methods: ['Bank transfer', 'PayPal', 'Revolut']
+      }
+    }
+  },
+  
+  advertisingPlatform: {
+    forBreeders: {
+      spotlightListing: {
+        position: 'Top of search results',
+        duration: ['3 days', '7 days', '14 days', '30 days'],
+        price: { 3: 49, 7: 89, 14: 149, 30: 249 },
+        analytics: 'Views, clicks, inquiries'
+      },
+      featuredBanner: {
+        position: 'Homepage hero',
+        format: '1920x600px',
+        duration: '24h/48h/7days',
+        price: { '24h': 299, '48h': 499, '7d': 999 },
+        targeting: 'By breed interest'
+      },
+      socialMediaBoost: {
+        platforms: ['Facebook', 'Instagram', 'TikTok'],
+        targeting: 'Demographics + interests',
+        budget: 'Custom',
+        management: 'Self-service or managed'
+      },
+      emailCampaigns: {
+        database: 'Opt-in users',
+        segmentation: ['By breed preference', 'By location', 'By budget'],
+        templates: 'Professional designs',
+        analytics: 'Open rate, click rate, conversions'
+      }
+    },
+    
+    forBrands: {
+      displayAds: {
+        formats: ['Banner', 'Sidebar', 'Native', 'Video'],
+        targeting: 'Cat owners demographics',
+        pricing: 'CPM/CPC/CPA',
+        minBudget: '1000 PLN/month'
+      },
+      sponsoredContent: {
+        types: ['Articles', 'Videos', 'Guides', 'Reviews'],
+        disclosure: 'Clearly marked as sponsored',
+        approval: 'Editorial review',
+        pricing: 'Per piece or package'
+      },
+      productPlacement: {
+        locations: ['Cat profiles', 'Breeder pages', 'Articles', 'Videos'],
+        integration: 'Natural placement',
+        tracking: 'UTM + conversion'
+      },
+      affiliateProgram: {
+        commission: '5-15%',
+        tracking: '90-day cookie',
+        payments: 'Monthly',
+        materials: 'Banners, links, widgets'
+      }
+    }
+  },
+  
+  premiumSubscriptions: {
+    forBuyers: {
+      basic: {
+        name: 'CAT LOVER',
+        price: '0 PLN/month',
+        features: [
+          'Browse all cats',
+          'Save 10 favorites',
+          'Basic search filters',
+          'Chat with breeders',
+          'Email notifications'
+        ]
+      },
+      premium: {
+        name: 'CAT ENTHUSIAST',
+        price: '29 PLN/month',
+        features: [
+          'All Basic features',
+          'Unlimited favorites',
+          'Advanced search + alerts',
+          'Priority support',
+          'Video calls with breeders',
+          'Price drop notifications',
+          'Exclusive deals (5-10% off)',
+          'Ad-free experience',
+          'Early access to new litters',
+          'Monthly newsletter with tips'
+        ]
+      },
+      vip: {
+        name: 'CAT CONNOISSEUR',
+        price: '99 PLN/month',
+        features: [
+          'All Premium features',
+          'Personal cat consultant',
+          'VIP hotline 24/7',
+          'Home visits from breeders',
+          'Concierge service (transport, setup)',
+          'Lifetime support after purchase',
+          'Access to exclusive breeders',
+          'Show tickets & backstage access',
+          'Quarterly gift box',
+          'Community events invitations'
+        ]
+      }
+    },
+    
+    forBreeders: {
+      starter: {
+        name: 'HOBBY BREEDER',
+        price: '99 PLN/month',
+        features: [
+          '5 active listings',
+          'Basic analytics',
+          'Standard support',
+          'Commission: 8%',
+          'Profile page',
+          'Chat system',
+          'Contract templates (basic)'
+        ]
+      },
+      professional: {
+        name: 'PRO BREEDER',
+        price: '299 PLN/month',
+        features: [
+          '20 active listings',
+          'Advanced analytics',
+          'Priority support',
+          'Commission: 5%',
+          'Enhanced profile + verification badge',
+          'Video calls',
+          'Contract templates (advanced)',
+          'Auto-responders',
+          'Litter management',
+          'Waiting list system',
+          'Monthly performance report',
+          '1 free spotlight listing/month'
+        ]
+      },
+      elite: {
+        name: 'ELITE CATTERY',
+        price: '599 PLN/month',
+        features: [
+          'Unlimited listings',
+          'Premium analytics + insights',
+          'Dedicated account manager',
+          'Commission: 3%',
+          'Custom cattery website',
+          'Professional photography (1x/year)',
+          'All contract types + e-signature',
+          'CRM integration',
+          'Marketing automation',
+          'API access',
+          'White-label option',
+          'Featured cattery badge',
+          '4 free spotlight listings/month',
+          'Social media management tools',
+          'Priority placement in search'
+        ]
+      }
+    }
+  }
+}
+const INTEGRATIONS = {
+  paymentGateways: {
+    stripe: {
+      features: ['Cards', 'Apple Pay', 'Google Pay', 'BLIK', 'Bank transfers'],
+      countries: 'Worldwide',
+      fees: '1.4% + 1 PLN European cards',
+      settlement: 'T+2',
+      recurring: true,
+      refunds: true,
+      disputes: 'Automated handling'
+    },
+    przelewy24: {
+      features: ['Polish banks', 'BLIK', 'PayPo', 'Installments'],
+      popularity: 'Most popular in Poland',
+      fees: '1.9% + 0 PLN',
+      settlement: 'T+1',
+      mobilApp: true
+    },
+    paypal: {
+      features: ['PayPal balance', 'Cards', 'Bank'],
+      international: true,
+      fees: '3.4% + 1.35 PLN',
+      buyerProtection: 'Strong',
+      crypto: 'Crypto checkout available'
+    },
+    crypto: {
+      coinbase: {
+        coins: ['BTC', 'ETH', 'USDC', 'USDT'],
+        fees: '1%',
+        settlement: 'Next day to bank',
+        volatility: 'Auto-conversion option'
+      },
+      metamask: {
+        directWallet: true,
+        chains: ['Ethereum', 'Polygon', 'BSC'],
+        gasOptimization: true
+      }
+    },
+    escrow: {
+      provider: 'Stripe Connect / Custom',
+      flow: [
+        'Buyer pays to escrow',
+        'Breeder notified',
+        'Cat delivered',
+        'Buyer confirms receipt (72h)',
+        'Payment released to breeder',
+        'Platform fee deducted'
+      ],
+      disputes: 'Mediation process',
+      insurance: 'Optional add-on'
+    }
+  },
+  
+  shippingProviders: {
+    localCouriers: [
+      {
+        name: 'InPost',
+        service: 'Courier',
+        petFriendly: true,
+        tracking: true,
+        insurance: 'Up to 10,000 PLN'
+      },
+      {
+        name: 'DPD',
+        service: 'Premium delivery',
+        petFriendly: true,
+        temperature: 'Climate controlled',
+        handlingFee: '50 PLN'
+      },
+      {
+        name: 'Dedicated pet transport',
+        companies: ['PetMove', 'AnimalTransport.pl'],
+        features: ['Door to door', 'Professional carriers', 'Vet on call'],
+        pricing: 'Custom quotes'
+      }
+    ],
+    international: [
+      {
+        name: 'PetExpress',
+        coverage: 'EU + UK',
+        documentation: 'Full assistance',
+        pricing: 'From 500 EUR',
+        includes: ['Pet passport', 'Health certificate', 'Customs']
+      },
+      {
+        name: 'Animal Air Transport',
+        coverage: 'Worldwide',
+        iata: true,
+        includes: ['Flight booking', 'Crate', 'Quarantine assistance'],
+        pricing: 'From 2000 USD'
+      }
+    ]
+  },
+  
+  veterinaryNetworks: {
+    partners: [
+      {
+        name: 'VetNet Poland',
+        clinics: 500+,
+        services: ['Vaccinations', 'Microchipping', 'Health certificates', 'Emergency'],
+        discount: '10% for platform users',
+        booking: 'Integrated calendar'
+      },
+      {
+        name: 'Medivet',
+        locations: 'Nationwide',
+        specialization: 'Cat specialists',
+        services: ['Genetic testing', 'Breeding consultations', 'Pre-purchase exams'],
+        partnership: 'Preferred provider'
+      },
+      {
+        name: 'Telemedicine',
+        provider: 'VetChat24',
+        availability: '24/7',
+        format: 'Video/chat',
+        pricing: '79 PLN per consultation',
+        included: 'For VIP members'
+      }
+    ],
+    
+    testingLabs: [
+      {
+        name: 'Laboklin',
+        location: 'Germany',
+        tests: ['HCM', 'PKD', 'PRA', 'SMA', 'Blood type', 'DNA profile'],
+        turnaround: '10-14 days',
+        discount: '15% bulk orders'
+      },
+      {
+        name: 'MyCatDNA',
+        location: 'Finland',
+        test: 'Comprehensive genetic panel',
+        breeds: 'All major breeds',
+        diseases: '40+ genetic diseases',
+        turnaround: '3-4 weeks',
+        price: '599 PLN'
+      },
+      {
+        name: 'UC Davis VGL',
+        location: 'USA',
+        tests: ['DNA profiling', 'Parentage verification', 'Genetic diseases'],
+        reputation: 'Gold standard',
+        turnaround: '2-3 weeks'
+      }
+    ]
+  },
+  
+  organizationAPIs: {
+    fife: {
+      integration: 'Pending partnership',
+      features: [
+        'Pedigree verification',
+        'Breeder lookup',
+        'Show results',
+        'Title confirmations'
+      ],
+      access: 'Requires FIFe approval'
+    },
+    wcf: {
+      integration: 'Under negotiation',
+      database: 'Cattery registry',
+      verification: 'Real-time'
+    },
+    tica: {
+      integration: 'API available',
+      endpoints: [
+        '/breeder/verify',
+        '/pedigree/lookup',
+        '/show/results',
+        '/cat/registration'
+      ],
+      auth: 'OAuth 2.0',
+      documentation: 'Full API docs'
+    }
+  },
+  
+  socialMedia: {
+    facebook: {
+      integration: ['Login', 'Share', 'Pixel', 'Marketplace sync'],
+      features: [
+        'Auto-post new listings to FB page',
+        'Sync events',
+        'Import reviews',
+        'FB Shops integration'
+      ]
+    },
+    instagram: {
+      integration: ['Share', 'Instagram Shopping', 'Stories API'],
+      features: [
+        'Auto-post to IG',
+        'Tag products',
+        'Swipe-up links (for verified)',
+        'Reels integration'
+      ]
+    },
+    tiktok: {
+      integration: ['Share', 'TikTok For Business'],
+      features: [
+        'Cross-post to TikTok',
+        'Shopping integration (coming)',
+        'Hashtag campaigns',
+        'Creator marketplace'
+      ]
+    },
+    youtube: {
+      integration: ['Embed', 'Upload API'],
+      features: [
+        'Auto-upload cattery videos',
+        'Livestream shows',
+        'Monetization split',
+        'Community posts'
+      ]
+    }
+  },
+  
+  crmSystems: {
+    builtin: {
+      name: 'CAT PURRE CRM',
+      features: [
+        'Contact management',
+        'Lead tracking',
+        'Communication history',
+        'Automated follow-ups',
+        'Tags and segments',
+        'Deal pipeline',
+        'Task management',
+        'Email templates',
+        'SMS campaigns',
+        'Reporting'
+      ]
+    },
+    external: [
+      {
+        name: 'HubSpot',
+        integration: 'Zapier',
+        syncFields: ['Contacts', 'Deals', 'Notes'],
+        direction: 'Bidirectional'
+      },
+      {
+        name: 'Salesforce',
+        integration: 'REST API',
+        useCase: 'Enterprise breeders',
+        customObjects: 'Cats, Litters, Shows'
+      }
+    ]
+  },
+  
+  analyticsTools: {
+    google: {
+      analytics: {
+        version: 'GA4',
+        tracking: ['Page views', 'Events', 'Conversions', 'User flow'],
+        ecommerce: 'Enhanced ecommerce tracking'
+      },
+      tagManager: {
+        tags: ['All marketing pixels', 'Event tracking', 'Form submissions'],
+        triggers: 'Custom event triggers'
+      },
+      searchConsole: {
+        seo: 'Performance monitoring',
+        keywords: 'Organic search queries',
+        indexing: 'Coverage reports'
+      }
+    },
+    
+    heatmaps: {
+      tool: 'Hotjar',
+      features: ['Heatmaps', 'Session recordings', 'Surveys', 'Feedback'],
+      insights: 'User behavior analysis'
+    },
+    
+    custom: {
+      name: 'CAT PURRE Analytics',
+      dashboards: [
+        'Platform overview',
+        'Breeder performance',
+        'Cat listing analytics',
+        'User journey',
+        'Conversion funnels',
+        'Revenue analytics',
+        'Marketing attribution'
+      ],
+      export: 'CSV, Excel, PDF',
+      api: 'REST API for custom integrations'
+    }
+  },
+  
+  marketingAutomation: {
+    email: {
+      provider: 'SendGrid + Mailchimp',
+      campaigns: [
+        {
+          trigger: 'New user registration',
+          sequence: ['Welcome', 'Profile completion', 'First search tips', 'Featured cats'],
+          timing: ['Immediate', 'Day 1', 'Day 3', 'Day 7']
+        },
+        {
+          trigger: 'Cat favorited',
+          sequence: ['Reminder', 'Similar cats', 'Price drop alert'],
+          timing: ['Day 2', 'Day 5', 'When applicable']
+        },
+        {
+          trigger: 'Abandoned inquiry',
+          sequence: ['Follow-up', 'Testimonials', 'Special offer'],
+          timing: ['6 hours', 'Day 1', 'Day 3']
+        },
+        {
+          trigger: 'Purchase completed',
+          sequence: ['Thank you', 'Setup guide', 'Care tips', 'Review request', 'Upsells'],
+          timing: ['Immediate', 'Day 1', 'Week 1', 'Month 1', 'Month 2']
+        }
+      ],
+      personalization: 'Name, breed preference, location',
+      abTesting: true
+    },
+    
+    sms: {
+      provider: 'Twilio',
+      useCases: [
+        'Appointment reminders',
+        'Price drop alerts',
+        'New litter notifications',
+        'Verification codes',
+        'Order status updates'
+      ],
+      optIn: 'Required',
+      frequency: 'Max 2/week'
+    },
+    
+    push: {
+      provider: 'OneSignal',
+      platforms: ['Web', 'iOS', 'Android'],
+      segments: 'By breed interest, budget, activity',
+      timing: 'Smart delivery optimization'
+    }
+  }
+}
+const LEGAL_COMPLIANCE = {
+  gdpr: {
+    dataProtection: {
+      officer: 'Designated DPO',
+      lawfulBasis: ['Consent', 'Contract', 'Legitimate interest'],
+      dataMinimization: true,
+      storageLimit: 'Max 10 years for transactions',
+      encryption: 'At rest and in transit'
+    },
+    
+    userRights: {
+      access: 'Download all personal data',
+      rectification: 'Edit profile anytime',
+      erasure: 'Right to be forgotten',
+      portability: 'Export data in machine-readable format',
+      objection: 'Opt-out of marketing',
+      automatedDecision: 'Opt-out of AI matching'
+    },
+    
+    consents: {
+      registration: 'Terms & Privacy Policy',
+      marketing: 'Separate opt-in',
+      cookies: 'Cookie banner with granular controls',
+      thirdParty: 'Explicit consent for data sharing'
+    },
+    
+    breachProtocol: {
+      detection: 'Automated monitoring',
+      notification: 'Within 72 hours to authority',
+      userNotification: 'If high risk',
+      documentation: 'Full incident log'
+    }
+  },
+  
+  animalWelfare: {
+    compliance: [
+      'Ustawa o ochronie zwierząt (Poland)',
+      'EU Animal Welfare Directive',
+      'CITES (for exotic breeds)'
+    ],
+    
+    breeders Requirements: {
+      registration: 'Proper business registration',
+      facilities: 'Minimum standards',
+      veterinaryCare: 'Regular vet checks',
+      breeding Frequency: 'Max litters per year per female',
+      age Restrictions: 'Min breeding age, max breeding age',
+      documentation: 'Full health and lineage records'
+    },
+    
+    platformRules: {
+      prohibited: [
+        'Unregistered breeders',
+        'Backyard breeding',
+        'Kittens under 12 weeks',
+        'Sick or injured cats',
+        'Banned breeds (if applicable)',
+        'Declawed cats (against welfare)'
+      ],
+      required: [
+        'Health certificate',
+        'Vaccinations up to date',
+        'Microchip',
+        'Pedigree or registration papers',
+        'Veterinary examination before sale'
+      ]
+    },
+    
+    reportingSystem: {
+      hotline: '24/7 animal welfare hotline',
+      partnership: 'Local animal welfare organizations',
+      investigation: 'Dedicated team',
+      enforcement: 'Account suspension, legal action if needed'
+    }
+  },
+  
+  consumerProtection: {
+    rightOfWithdrawal: {
+      period: '14 days',
+      conditions: 'Cat must be in same condition',
+      refund: 'Full refund within 14 days',
+      exceptions: 'Living animals (special rules apply)'
+    },
+    
+    warranty: {
+      legal: '2 years for defects (applies to genetic issues)',
+      breeder: 'Extended health guarantee in contract',
+      disputes: 'Mediation before court'
+    },
+    
+    priceTransparency: {
+      display: 'All costs upfront',
+      fees: 'Platform fee clearly stated',
+      additionalCosts: 'Transport, accessories optional',
+      noHiddenFees: 'Zero tolerance policy'
+    }
+  },
+  
+  taxation: {
+    poland: {
+      vat: {
+        breeders: 'VAT if business registered',
+        platform: '23% VAT on services',
+        invoices: 'Automatic generation',
+        reporting: 'JPK_FA for businesses'
+      },
+      income: {
+        breeders: 'Personal income or business tax',
+        platform: 'CIT or PIT depending on structure',
+        reporting: 'Annual tax returns'
+      }
+    },
+    
+    international: {
+      vatMoss: 'For EU sales',
+      withholding: 'For international breeders',
+      compliance: 'Per-country regulations'
+    },
+    
+    automation: {
+      calculations: 'Automatic VAT calculation',
+      invoicing: 'Auto-generated compliant invoices',
+      reporting: 'Export for accountants',
+      integration: 'ifirma, InFakt, WFirma'
+    }
+  },
+  
+  security: {
+    infrastructure: {
+      hosting: 'AWS / Google Cloud / Azure',
+      ddos: 'Cloudflare protection',
+      firewall: 'WAF enabled',
+      backups: 'Hourly incremental, daily full',
+      redundancy: 'Multi-region',
+      uptime: '99.9% SLA'
+    },
+    
+    application: {
+      authentication: 'OAuth 2.0 + JWT',
+      passwordPolicy: 'Min 8 chars, complexity requirements',
+      mfa: 'Optional 2FA via SMS/authenticator app',
+      sessionManagement: 'Timeout after 30min inactivity',
+      apiSecurity: 'Rate limiting, API keys, HMAC signatures'
+    },
+    
+     {
+      encryption: {
+        transit: 'TLS 1.3',
+        rest: 'AES-256',
+        database: 'Encrypted columns for PII',
+        files: 'Encrypted storage'
+      },
+      access Control: {
+        principle: 'Least privilege',
+        rbac: 'Role-based access control',
+        audit: 'Full audit trail',
+        review: 'Quarterly access review'
+      }
+    },
+    
+    payments: {
+      pciDss: 'Level 1 compliance (via Stripe)',
+      tokenization: 'No card data stored',
+      fraud Detection: 'ML-based fraud prevention',
+      chargebacks: 'Automated handling'
+    },
+    
+    incidentResponse: {
+      plan: 'Documented IR plan',
+      team: 'Dedicated security team',
+      drills: 'Quarterly simulations',
+      communication: 'Clear escalation path'
+    }
+  },
+  
+  intellectualProperty: {
+    platform: {
+      trademark: 'CAT PURRE ® (registered)',
+      copyright: 'All platform code and design',
+      patents: 'Pending for AI matching algorithm'
+    },
+    
+    userContent: {
+      ownership: 'User retains rights to photos/videos',
+      license: 'User grants platform license to display',
+      removal: 'User can request removal anytime',
+      infringement: 'DMCA takedown procedure'
+    },
+    
+    breederContent: {
+      catteryNames: 'Protected as trademarks',
+      photos: 'Watermarking available',
+      pedigrees: 'Confidential information protected',
+      contracts: 'Templates copyrighted'
+    }
+  }
+}
+const GAMIFICATION = {
+  achievementSystem: {
+    forBuyers: [
+      {
+        name: 'First Purr',
+        condition: 'Register account',
+        reward: '50 points',
+        badge: '🐱'
+      },
+      {
+        name: 'Cat Curious',
+        condition: 'View 10 cat profiles',
+        reward: '100 points',
+        badge: '👀'
+      },
+      {
+        name: 'Breed Expert',
+        condition: 'Read all 20 breed guides',
+        reward: '500 points',
+        badge: '📚'
+      },
+      {
+        name: 'Happy Owner',
+        condition: 'Purchase first cat',
+        reward: '1000 points + 10% next purchase',
+        badge: '🏆'
+      },
+      {
+        name: 'Review Master',
+        condition: 'Write 5 detailed reviews',
+        reward: '300 points',
+        badge: '✍️'
+      },
+      {
+        name: 'Community Helper',
+        condition: 'Help 10 users in forum',
+        reward: '400 points',
+        badge: '🤝'
+      },
+      {
+        name: 'Social Butterfly',
+        condition: 'Share 20 cats',
+        reward: '200 points',
+        badge: '🦋'
+      },
+      {
+        name: 'Cat Collector',
+        condition: 'Own 3+ cats from platform',
+        reward: 'VIP status for 1 month',
+        badge: '👑'
+      }
+    ],
+    
+    forBreeders: [
+      {
+        name: 'New Cattery',
+        condition: 'Complete cattery profile',
+        reward: '100 points',
+        badge: '🏠'
+      },
+      {
+        name: 'First Sale',
+        condition: 'Sell first cat',
+        reward: '500 points + Featured listing',
+        badge: '💰'
+      },
+      {
+        name: 'Fast Responder',
+        condition: 'Maintain <2h avg response time for month',
+        reward: '300 points + Response time badge',
+        badge: '⚡'
+      },
+      {
+        name: 'Customer Satisfaction',
+        condition: 'Achieve 4.8+ rating with 10+ reviews',
+        reward: '1000 points + Verified Excellence badge',
+        badge: '⭐'
+      },
+      {
+        name: 'Show Champion',
+        condition: 'Cat wins show title',
+        reward: '800 points + Champion breeder badge',
+        badge: '🏅'
+      },
+      {
+        name: 'Prolific Breeder',
+        condition: 'Sell 50+ cats',
+        reward: '2000 points + Hall of Fame',
+        badge: '🌟'
+      },
+      {
+        name: 'Perfect Record',
+        condition: '100% satisfaction rate (50+ sales)',
+        reward: '5000 points + Lifetime discount on fees',
+        badge: '💎'
+      },
+      {
+        name: 'Mentor',
+        condition: 'Help 5 new breeders succeed',
+        reward: '1500 points + Mentor badge',
+        badge: '👨‍🏫'
+      }
+    ],
+    
+    pointsRedemption: {
+      catalog: [
+        { item: '5% discount voucher', points: 500 },
+        { item: '1 month Premium subscription', points: 1000 },
+        { item: 'Professional photo shoot', points: 2000 },
+        { item: 'Featured listing (7 days)', points: 1500 },
+        { item: 'Custom cattery website', points: 5000 },
+        { item: 'Charity donation in your name', points: 1000 },
+        { item: 'Show tickets (pair)', points: 800 },
+        { item: 'Exclusive merchandise', points: 1200 }
+      ],
+      transfer: 'Points can be gifted to other users',
+      expiration: '2 years'
+    }
+  },
+  
+  leaderboards: {
+    categories: [
+      {
+        name: 'Top Breeders (Monthly)',
+        metric: 'Sales + rating',
+        prize: 'Featured in newsletter + 1 month free Pro'
+      },
+      {
+        name: 'Most Active Community Members',
+        metric: 'Forum posts + helpful votes',
+        prize: 'Community Champion badge + merch'
+      },
+      {
+        name: 'Best Photography',
+        metric: 'User votes on cat photos',
+        prize: 'Professional editing service'
+      },
+      {
+        name: 'Rising Star Breeders',
+        metric: 'Growth rate (new breeders)',
+        prize: 'Mentorship program + spotlight'
+      }
+    ],
+    reset: 'Monthly',
+    allTime: 'Hall of Fame preserved'
+  },
+  
+  challenges: {
+    seasonal: [
+      {
+        name: 'Summer Kitten Quest',
+        period: 'June-August',
+        task: 'Adopt a kitten, share progress photos',
+        reward: 'Summer swag pack + bonus points'
+      },
+      {
+        name: 'Holiday Helper',
+        period: 'December',
+        task: 'Help 3 users find perfect cat',
+        reward: 'Charity donation + premium month'
+      }
+    ],
+    
+    weekly: [
+      {
+        name: 'Photo Friday',
+        task: 'Share best cat photo',
+        reward: 'Weekly winner gets featured + 100 points'
+      },
+      {
+        name: 'Wisdom Wednesday',
+        task: 'Share breeding/care tip',
+        reward: 'Most helpful gets spotlight + 150 points'
+      }
+    ],
+    
+    community: [
+      {
+        name: 'Referral Rockstar',
+        task: 'Refer 5 friends',
+        reward: '500 points per friend + bonus at 5'
+      },
+      {
+        name: 'Review Rally',
+        task: 'Write detailed reviews',
+        reward: 'Points per review + bonus for quality'
+      }
+    ]
+  },
+  
+  loyaltyProgram: {
+    tiers: [
+      {
+        name: 'Bronze',
+        requirement: '0-999 points',
+        benefits: ['Basic features', 'Birthday discount 5%']
+      },
+      {
+        name: 'Silver',
+        requirement: '1000-4999 points',
+        benefits: ['10% off services', 'Priority support', 'Early litter access']
+      },
+      {
+        name: 'Gold',
+        requirement: '5000-9999 points',
+        benefits: ['15% off', 'VIP support', 'Exclusive events', 'Free shipping']
+      },
+      {
+        name: 'Platinum',
+        requirement: '10000+ points',
+        benefits: ['20% off', 'Dedicated concierge', 'Lifetime warranty', 'All features unlocked']
+      }
+    ],
+    anniversary: 'Bonus points each year',
+    retention: 'Special offers for inactive users'
+  }
+}
+const MOBILE_APP = {
+  platforms: ['iOS', 'Android'],
+  technology: 'React Native / Flutter',
+  
+  features: {
+    core: [
+      'Browse cats (optimized mobile view)',
+      'Advanced search with filters',
+      'Swipe interface (Tinder-style)',
+      'Real-time chat',
+      'Video calls',
+      'Push notifications',
+      'Favorites sync',
+      'Profile management'
+    ],
+    
+    unique: [
+      {
+        name: 'AR Cat Preview',
+        description: 'See cat in your home using AR',
+        technology: 'ARKit / ARCore'
+      },
+      {
+        name: 'Cat Scanner',
+        description: 'Take photo → identify breed → find similar',
+        technology: 'TensorFlow Lite'
+      },
+      {
+        name: 'Voice Search',
+        description: '"Find me a blue British Shorthair under 5000 PLN"',
+        technology: 'Speech-to-text + NLP'
+      },
+      {
+        name: 'Geolocation Finder',
+        description: 'Find breeders and cats near you',
+        map: 'Google Maps / Apple Maps'
+      },
+      {
+        name: 'Offline Mode',
+        description: 'Browse previously viewed cats offline',
+        storage: 'Local cache'
+      },
+      {
+        name: 'Barcode Scanner',
+        description: 'Scan microchip number → verify cat',
+        technology: 'Camera + QR/barcode reader'
+      }
+    ],
+    
+    breeder: [
+      'Manage listings on-the-go',
+      'Respond to inquiries',
+      'Upload photos/videos from phone',
+      'Mobile analytics dashboard',
+      'Schedule appointments',
+      'Digital contracts with mobile signature',
+      'Live streaming from cattery'
+    ],
+    
+    social: [
+      'In-app social feed',
+      'Stories (24h)',
+      'Share to external social media',
+      'Follow breeders',
+      'Like and comment',
+      'Direct messaging'
+    ],
+    
+    utilities: [
+      'Vaccination reminder calendar',
+      'Vet appointment booking',
+      'Expense tracker for cat ownership',
+      'Care tips and guides',
+      'Emergency vet finder',
+      'Pet insurance integration'
+    ]
+  },
+  
+  uiux: {
+    design: 'Modern, clean, cat-themed',
+    colors: ['Primary: Cat Purre Purple', 'Secondary: Warm Orange', 'Accents: Pastels'],
+    typography: 'Custom font + system fonts',
+    animations: 'Smooth, playful transitions',
+    accessibility: ['VoiceOver support', 'Dynamic text', 'High contrast mode']
+  },
+  
+  performance: {
+    launchTime: '< 2 seconds',
+    imageCaching: 'Aggressive caching strategy',
+    dataUsage: 'Optimized for mobile data',
+    batteryLife: 'Efficient background tasks',
+    crashRate: 'Target < 0.1%'
+  },
+  
+  monetization: {
+    appStore: 'Free download',
+    inAppPurchases: ['Premium subscription', 'Point packs', 'Ad removal'],
+    ads: 'Non-intrusive banner ads for free users',
+    commissions: 'Same as web platform'
+  },
+  
+  launch: {
+    mvp: 'Q2 2026',
+    regions: 'Poland first → EU → Global',
+    marketing: ['App Store Optimization', 'Influencer partnerships', 'Launch promo'],
+    beta: 'Invite-only beta for top users'
+  }
+}
+const ROADMAP = {
+  2026: {
+    q1: [
+      'Platform launch (web)',
+      'First 50 verified breeders',
+      '20 breeds database complete',
+      'Basic chat & contracts',
+      'Payment integration'
+    ],
+    q2: [
+      'Mobile app launch (iOS + Android)',
+      'AI matching system v1',
+      'Video calls integration',
+      'Expand to 100+ breeders',
+      'First marketing campaign'
+    ],
+    q3: [
+      'Social features (CatBook)',
+      'E-commerce expansion (shop)',
+      'Services marketplace',
+      'Advanced analytics for breeders',
+      '1000+ active listings'
+    ],
+    q4: [
+      'International expansion (EU)',
+      'Blockchain pedigrees pilot',
+      'Virtual cattery tours',
+      'Premium subscription launch',
+      'Break-even point'
+    ]
+  },
+  
+  2027: {
+    goals: [
+      'Market leader in Poland',
+      'Expand to 10 EU countries',
+      'Launch CatTok (TikTok competitor)',
+      'NFT pedigrees mainstream',
+      'AI breeding recommendations',
+      'Partnerships with major organizations (FIFe, TICA)',
+      '10,000+ cats sold',
+      'Profitability'
+    ]
+  },
+  
+  2028: {
+    goals: [
+      'Global expansion (NA, Asia)',
+      'Metaverse cat shows',
+      'DAO governance launch',
+      'White-label solution for organizations',
+      'Acquisition of competitors',
+      'IPO preparation',
+      '100,000+ active users'
+    ]
+  },
+  
+  20292030: {
+    vision: [
+      'THE global platform for pedigreed cats',
+      'Integrate all breeds worldwide',
+      'AI-powered breeding program optimizer',
+      'Genetic disease elimination through data',
+      'Virtual reality cattery experiences',
+      'Mainstream crypto adoption in pet industry',
+      'Change how people find and buy cats forever'
+    ]
+  },
+  
+  moonshots: [
+    'Cloning service partnership (controversial but possible)',
+    'Genetic customization (color, pattern selection)',
+    'Cat health insurance built-in',
+    'Lifetime cat tracking & health monitoring',
+    'AI virtual cat companions (for those who can\'t have real ones)',
+    'Space program cats (first cat in space via our platform 😹)'
+  ]
+}
+const TECH_STACK = {
+  frontend: {
+    web: {
+      framework: 'React 18+ with Next.js 14',
+      styling: 'Tailwind CSS + Styled Components',
+      state: 'Redux Toolkit + React Query',
+      forms: 'React Hook Form + Zod validation',
+      routing: 'Next.js App Router',
+      animations: 'Framer Motion',
+      ui Library: 'Shadcn/ui + Custom components'
+    },
+    mobile: {
+      framework: 'React Native / Flutter',
+      navigation: 'React Navigation',
+      state: 'Redux / Riverpod',
+      storage: 'AsyncStorage / SQLite',
+      push: 'Firebase Cloud Messaging'
+    }
+  },
+  
+  backend: {
+    api: {
+      framework: 'Node.js with Express / NestJS',
+      alternative: 'Python with FastAPI',
+      architecture: 'RESTful + GraphQL',
+      documentation: 'Swagger/OpenAPI',
+      validation: 'Joi / Zod',
+      rateLimit: 'Express rate limit + Redis'
+    },
+    database: {
+      primary: 'PostgreSQL 15+',
+      caching: 'Redis',
+      search: 'Elasticsearch / Algolia',
+      fileStorage: 'AWS S3 / Google Cloud Storage',
+      cdn: 'Cloudflare / CloudFront'
+    },
+    authentication: {
+      strategy: 'JWT + Refresh tokens',
+      oauth: 'Google, Facebook, Apple',
+      mfa: 'TOTP (authenticator apps)',
+      sessions: 'Redis-based session store'
+    },
+    realtime: {
+      chat: 'Socket.io / WebSockets',
+      notifications: 'Server-Sent Events',
+      liveUpdates: 'Redis Pub/Sub'
+    }
+  },
+  
+  infrastructure: {
+    hosting: {
+      compute: 'AWS EC2 / ECS / Lambda',
+      alternative: 'Google Cloud Run / App Engine',
+      container: 'Docker + Kubernetes',
+      orchestration: 'K8s with Helm charts'
+    },
+    ci cd: {
+      pipeline: 'GitHub Actions / GitLab CI',
+      testing: 'Jest, Cypress, Playwright',
+      deployment: 'Blue-green deployments',
+      monitoring: 'Automatic rollbacks on errors'
+    },
+    monitoring: {
+      apm: 'New Relic / Datadog',
+      errors: 'Sentry',
+      logs: 'ELK Stack (Elasticsearch, Logstash, Kibana)',
+      uptime: 'Pingdom / UptimeRobot',
+      analytics: 'Mixpanel + Google Analytics 4'
+    },
+    security: {
+      firewall: 'Cloudflare WAF',
+      ddos: 'Cloudflare DDoS protection',
+      scanning: 'Snyk for dependencies',
+      secrets: 'AWS Secrets Manager / Vault',
+      compliance: 'SOC 2 Type II (goal)'
+    }
+  },
+  
+  ai ml: {
+    matching: {
+      model: 'Collaborative filtering + content-based',
+      framework: 'TensorFlow / PyTorch',
+      training: 'Continuous learning from user interactions'
+    },
+    imageRecognition: {
+      breed: 'Custom CNN trained on cat breeds',
+      moderation: 'Pre-trained models + fine-tuning',
+      quality: 'Image quality assessment'
+    },
+    nlp: {
+      chatbot: 'GPT-4 API + fine-tuned prompts',
+      sentiment: 'Analyze reviews and feedback',
+      translation: 'Multi-language support'
+    },
+    recommendations: {
+      cats: 'Hybrid recommendation system',
+      products: 'Amazon Personalize style',
+      breeders: 'Based on preferences + past behavior'
+    }
+  },
+  
+  thirdParty: {
+    communications: {
+      email: 'SendGrid',
+      sms: 'Twilio',
+      push: 'OneSignal / Firebase',
+      videoCall: 'Twilio Video / Agora'
+    },
+    payments: {
+      gateway: 'Stripe',
+      local: 'Przelewy24',
+      crypto: 'Coinbase Commerce',
+      invoicing: 'Stripe Invoicing'
+    },
+    other: {
+      maps: 'Google Maps API',
+      translation: 'DeepL API',
+      cdn: 'Cloudflare',
+      analytics: 'Google Analytics 4 + Mixpanel',
+      ab Testing: 'Optimizely / VWO'
+    }
+  },
+  
+  development: {
+    versionControl: 'Git + GitHub',
+    project Management: 'Jira / Linear',
+    documentation: 'Notion / Confluence',
+    design: 'Figma',
+    api Testing: 'Postman / Insomnia',
+    collaboration: 'Slack / Discord'
+  }
 }
 
-// ====================================================================
-// 🎯 EXPORT - KONIEC APLIKACJI
-// ====================================================================
-
-export default App
