@@ -536,148 +536,126 @@ function App() {
   ])
 
   // 🏛️ ORGANIZACJE FELINOLOGICZNE W POLSCE
-  const [organizations] = useState([
-    {
-      id: 'fife',
-      name: 'FIFe',
-      fullName: 'Fédération Internationale Féline',
-      logo: '🏆',
-      country: 'Międzynarodowa',
-      polishMember: 'FPL (Felinologia Polska)',
-      description: 'Największa międzynarodowa organizacja felinologiczna',
-      website: 'www.fifeweb.org'
-    },
-    {
-      id: 'wcf',
-      name: 'WCF',
-      fullName: 'World Cat Federation',
-      logo: '🌍',
-      country: 'Międzynarodowa',
-      polishMember: 'WCF Poland',
-      description: 'Międzynarodowa federacja hodowców kotów',
-      website: 'www.wcf-online.de'
-    },
-    {
-      id: 'tica',
-      name: 'TICA',
-      fullName: 'The International Cat Association',
-      logo: '🌟',
-      country: 'USA / Międzynarodowa',
-      polishMember: 'TICA Poland Region',
-      description: 'Największa amerykańska organizacja genetyczna kotów',
-      website: 'www.tica.org'
-    },
-    {
-      id: 'fpl',
-      name: 'FPL',
-      fullName: 'Felinologia Polska Licencjonowana',
-      logo: '🇵🇱',
-      country: 'Polska',
-      polishMember: 'Członek FIFe',
-      description: 'Polska organizacja, członek FIFe',
-      website: 'www.fpl.pl'
-    }
-  ])
+const [organizations] = useState([
+  {
+    id: 'fife',
+    name: 'FIFe',
+    fullName: 'Fédération Internationale Féline',
+    logo: '🏆',
+    country: 'Międzynarodowa',
+    polishMember: 'FPL (Felinologia Polska)',
+    description: 'Największa międzynarodowa organizacja felinologiczna',
+    website: 'www.fifeweb.org'
+  },
+  {
+    id: 'wcf',
+    name: 'WCF',
+    fullName: 'World Cat Federation',
+    logo: '🌍',
+    country: 'Międzynarodowa',
+    polishMember: 'WCF Poland',
+    description: 'Międzynarodowa federacja hodowców kotów',
+    website: 'www.wcf-online.de'
+  },
+  {
+    id: 'tica',
+    name: 'TICA',
+    fullName: 'The International Cat Association',
+    logo: '🌟',
+    country: 'USA / Międzynarodowa',
+    polishMember: 'TICA Poland Region',
+    description: 'Największa amerykańska organizacja genetyczna kotów',
+    website: 'www.tica.org'
+  },
+  {
+    id: 'fpl',
+    name: 'FPL',
+    fullName: 'Felinologia Polska Licencjonowana',
+    logo: '🇵🇱',
+    country: 'Polska',
+    polishMember: 'Członek FIFe',
+    description: 'Polska organizacja, członek FIFe',
+    website: 'www.fpl.pl'
+  }
+])
 
-      // 🆕 KOTY 6-25 (KONTYNUACJA BAZY)
-    {
-      id: 6,
-      name: 'SIBERIAN FOREST Snowy',
-      breed: 'Siberian',
-      color: 'Silver Tabby',
-      gender: 'Samiec',
-      birthDate: '2024-04-20',
-      age: '8 miesięcy',
-      price: 4900,
-      priceFormatted: '4 900 PLN',
-      availableForBreeding: false,
-      img: 'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=800',
-      gallery: [
-        'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=800'
-      ],
-      breeder: {
-        name: '*PL Siberian Forest',
-        prefix: 'Siberian Forest',
-        owner: 'Ewa Krajewska',
-        rating: 4.94,
-        reviewsCount: 167,
-        location: 'Łódź, Łódzkie',
-        address: 'ul. Piotrkowska 156, 90-001 Łódź',
-        phone: '+48 606 789 012',
-        email: 'forest@siberian.pl',
-        website: 'www.siberianforest.pl',
-        responseTime: '< 5 godzin',
-        verified: true,
-        memberSince: '2019',
-        totalCatsSold: 78,
-        activeLitters: 1,
-        organization: 'FIFe / FPL',
-        description: 'Hodowla Kotów Syberyjskich. Koty hypoalergiczne, idealne dla alergików. Linia tradycyjna rosyjska.'
-      },
-      pedigree: {
-        fife: true,
-        wcf: true,
-        tica: false,
-        fifeNumber: 'PL*SIBFOR-SIB-2024-0123',
-        wcfNumber: 'WCF-PL-SIB-2024-0089',
-        registeredIn: 'FPL + WCF Poland',
-        generations: 5,
-        champions: 7
-      },
-      parents: {
-        father: {
-          name: "IC Siberian Forest Ivan Veliki",
-          title: 'International Champion',
-          color: 'Silver Tabby',
-          import: 'Import Rosja'
-        },
-        mother: {
-          name: "CH Siberian Forest Natasha",
-          title: 'Champion FIFe',
-          color: 'Silver Tabby'
-        }
-      },
-      health: {
-        vaccinated: true,
-        vaccinationDate: '2024-11-30',
-        dewormed: true,
-        microchipped: true,
-        microchipNumber: '616093900678901',
-        vetChecked: true,
-        hcmTested: true,
-        hcmResult: 'Negatywny (rodzice)',
-        pkdTested: true,
-        pkdResult: 'N/N',
-        fivFelvTested: true,
-        fivFelvResult: 'Negatywny',
-        healthCertificate: true,
-        healthGuarantee: '24 miesiące',
-        veterinarian: 'Dr wet. Michał Nowicki - Vet Clinic Łódź'
-      },
-      stats: {
-        views: 3890,
-        likes: 945,
-        shares: 56,
-        inquiries: 14,
-        lastUpdated: '2024-12-19'
-      },
-      personality: ['Przyjazny', 'Towarzyski', 'Hypoalergiczny', 'Inteligentny'],
-      specialFeatures: ['Hypoallergenic coat', 'Russian import line', 'Forest cat', 'Great with allergies'],
-      included: ['Rodowód FIFe+WCF', 'Chip', 'Paszport', 'Szczepienia', 'Starter pack'],
-      readyToGo: '2025-01-10',
-      delivery: {
-        personal: true,
-        shipping: true,
-        shippingCost: '380 PLN',
-        meetingLocation: 'Łódź Piotrkowska'
-      },
-      videos: [],
-      featured: false,
+// 🐱 BAZA KOTÓW (rozszerzona)
+const [cats, setCats] = useState([
+  // ... TU POWINNY BYĆ KOTY 1-5 ...
+  // (nie usuwaj ich!)
+  
+  // 🆕 KOTY 6-25 (KONTYNUACJA BAZY)
+  {
+    id: 6,
+    name: 'SIBERIAN FOREST Snowy',
+    breed: 'Siberian',
+    color: 'Silver Tabby',
+    gender: 'Samiec',
+    birthDate: '2024-04-20',
+    age: '8 miesięcy',
+    price: 4900,
+    priceFormatted: '4 900 PLN',
+    availableForBreeding: false,
+    img: 'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=800',
+    gallery: [
+      'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=800'
+    ],
+    breeder: {
+      name: '*PL Siberian Forest',
+      prefix: 'Siberian Forest',
+      owner: 'Ewa Krajewska',
+      rating: 4.94,
+      reviewsCount: 167,
+      location: 'Łódź, Łódzkie',
+      address: 'ul. Piotrkowska 156, 90-001 Łódź',
+      phone: '+48 606 789 012',
+      email: 'forest@siberian.pl',
+      website: 'www.siberianforest.pl',
+      responseTime: '< 5 godzin',
       verified: true,
-      urgent: false,
-      status: 'available'
+      memberSince: '2019',
+      totalCatsSold: 78,
+      activeLitters: 1,
+      organization: 'FIFe / FPL',
+      description: 'Hodowla Kotów Syberyjskich. Koty hypoalergiczne, idealne dla alergików. Linia tradycyjna rosyjska.'
     },
-    {
+    pedigree: {
+      fife: true,
+      wcf: true,
+      tica: false,
+      fifeNumber: 'PL*SIBFOR-SIB-2024-0123',
+      wcfNumber: 'WCF-PL-SIB-2024-0089',
+      registeredIn: 'FPL + WCF Poland',
+      generations: 5,
+      champions: 7
+    },
+    parents: {
+      father: {
+        name: "IC Siberian Forest Ivan Veliki",
+        title: 'International Champion',
+        color: 'Silver Tabby',
+        import: 'Import Rosja'
+      },
+      mother: {
+        name: "CH Siberian Forest Natasha",
+        title: 'Champion FIFe',
+        color: 'Silver Tabby'
+      }
+    },
+    health: {
+      vaccinated: true,
+      dewormed: true,
+      veterinaryExam: true,
+      microchip: true,
+      passport: true,
+      healthGuarantee: '2 lata',
+      geneticTests: ['PKD negative', 'HCM negative']
+    },
+    personality: ['Łagodny', 'Towarzyski', 'Inteligentny'],
+    specialFeatures: ['Hipoalergiczny', 'Duży rozmiar', 'Piękne futro'],
+    status: 'available',
+    featured: false
+  }
       id: 7,
       name: 'SPHYNX ELITE Royal King',
       breed: 'Sphynx',
