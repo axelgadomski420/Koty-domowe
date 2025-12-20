@@ -1,7 +1,6 @@
 console.log('React starting...');
 import { useState, useEffect } from 'react'
 import './App.css'
-import { cats } from './data/cats';
 
 function App() {
   // 🔥 STATE MANAGEMENT - KOMPLETNY
