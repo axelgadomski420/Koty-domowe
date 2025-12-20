@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Slider from "./Slider/Slider";
-import logo from "../../assets/cat-purre-logo.png";
+import logo from "https://ibb.co/SXTB9kpP";
 
 const federations = [
   {
