@@ -1,0 +1,155 @@
+const mongoose = require("mongoose");
+
+const catListingSchema = new mongoose.Schema(
+  {
+    // Właściciel ogłoszenia (hodowca)
+    breederId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+
+    // Podstawowe dane ogłoszenia
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 120
+    },
+    description: {
+      type: String,
+      required: true,
+      maxlength: 5000
+    },
+
+    // Dane kota
+    breed: {
+      type: String,
+      required: true,
+      index: true
+    },
+    lineage: {
+      type: String, // nazwa linii / przydomek hodowli
+      default: ""
+    },
+    pedigreeNumber: {
+      type: String,
+      default: ""
+    },
+
+    purpose: {
+      type: String,
+      enum: ["PET", "BREEDING", "SHOW"],
+      default: "PET",
+      index: true
+    },
+
+    sex: {
+      type: String,
+      enum: ["MALE", "FEMALE"],
+      required: true
+    },
+
+    birthDate: {
+      type: Date,
+      required: true
+    },
+
+    isNeutered: {
+      type: Boolean,
+      default: false
+    },
+
+    color: {
+      type: String,
+      default: ""
+    },
+
+    // Zdrowie
+    healthStatus: {
+      type: String,
+      default: "" // np. "Zaszczepiony, odrobaczony, książeczka zdrowia"
+    },
+    vaccinations: {
+      type: [String],
+      default: []
+    },
+    tests: {
+      type: [String], // np. "FIV/FeLV negative"
+      default: []
+    },
+
+    // Lokalizacja
+    country: {
+      type: String,
+      required: true,
+      index: true
+    },
+    city: {
+      type: String,
+      required: true,
+      index: true
+    },
+
+    // Cena
+    price: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    currency: {
+      type: String,
+      default: "PLN"
+    },
+
+    // Media
+    photos: {
+      type: [String],
+      default: []
+    },
+    videos: {
+      type: [String],
+      default: []
+    },
+
+    // Status ogłoszenia
+    status: {
+      type: String,
+      enum: ["DRAFT", "PUBLISHED", "RESERVED", "SOLD", "ARCHIVED"],
+      default: "DRAFT",
+      index: true
+    },
+
+    // AI / meta
+    aiDescriptionGenerated: {
+      type: Boolean,
+      default: false
+    },
+    viewsCount: {
+      type: Number,
+      default: 0
+    },
+    favoritesCount: {
+      type: Number,
+      default: 0
+    },
+
+    // Powiązania biznesowe
+    featuredUntil: {
+      type: Date, // do kiedy ogłoszenie jest wyróżnione (monetyzacja)
+      default: null
+    }
+  },
+  {
+    timestamps: true
+  }
+);
+
+// Wirtualny wiek w tygodniach (przydatne w API)
+catListingSchema.virtual("ageWeeks").get(function () {
+  if (!this.birthDate) return null;
+  const diffMs = Date.now() - this.birthDate.getTime();
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24 * 7));
+});
+
+module.exports = mongoose.model("CatListing", catListingSchema);
