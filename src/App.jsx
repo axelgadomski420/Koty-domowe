@@ -390,7 +390,6 @@ const [organizations] = useState([
 ])
 
 // 🐱 BAZA KOTÓW (rozszerzona)
-const [cats, setCats] = useState([
   // ... TU POWINNY BYĆ KOTY 1-5 ...
   // (nie usuwaj ich!)
   
