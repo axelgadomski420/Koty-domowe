@@ -389,8 +389,6 @@ const [cats, setCats] = useState([
   }
 ])
 
-  // 🐱 PRAWDZIWA BAZA KOTÓW RASOWYCH Z POLSKICH HODOWLI
-const [cats, setCats] = useState([
   {
     id: 1,
     name: 'GOLDEN SUPREME Luna',
