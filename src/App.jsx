@@ -4585,5 +4585,4 @@ const ExtraActions = ({ cat, openContract, openReviewModal }) => {
     </div>
   );
 };  // ← DODAJ ŚREDNIK!
-
 export default App;
