@@ -4437,7 +4437,6 @@ const renderMap = () => {
       </div>
     </div>
   );
-};
 
 // GŁÓWNY RETURN funkcji App
 return (
