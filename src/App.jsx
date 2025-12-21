@@ -142,7 +142,7 @@ const BreederDashboard = {
     inbox: Array,
     chatSystem: Function,
     autoResponder: Function,
-    canned Responses: Array,
+    cannedResponses: Array,        // ✅ POPRAWIONE - usunięto spację
     emailTemplates: Array,
     bulkMessaging: Function
   },
@@ -161,6 +161,7 @@ const BreederDashboard = {
     payoutSettings: Object
   }
 }
+
 const AdminPanel = {
   userManagement: {
     allUsers: Function, // paginacja, filtry, search
@@ -246,7 +247,7 @@ const AdminPanel = {
     customReports: Function
   },
   
-  breeds Management: {
+  breedsManagement: {              // ✅ POPRAWIONE - usunięto spację
     allBreeds: Array,
     addBreed: Function,
     editBreed: Function,
