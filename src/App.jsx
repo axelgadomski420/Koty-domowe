@@ -3187,4 +3187,1441 @@ const TECH_STACK = {
     collaboration: 'Slack / Discord'
   }
 }
+// ====================================================================
+// 🆕 DODAJ TO DO App.jsx (PO ISTNIEJĄCYCH FUNKCJACH, PRZED return)
+// ====================================================================
+
+  // ====================================================================
+  // 1️⃣ FORMULARZ DODAWANIA KOTA (dla hodowców)
+  // ====================================================================
+  
+  const handleAddNewCat = () => {
+    if (!isBreeder) {
+      showNotification('Musisz być zarejestrowanym hodowcą aby dodać kota', '⚠️')
+      return
+    }
+    setShowAddCatForm(true)
+  }
+
+  const handleNewCatFormChange = (field, value) => {
+    setNewCatForm({ ...newCatForm, [field]: value })
+  }
+
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files)
+    const imageUrls = files.map(file => URL.createObjectURL(file))
+    setNewCatForm({ ...newCatForm, images: [...newCatForm.images, ...imageUrls] })
+  }
+
+  const submitNewCat = () => {
+    // Walidacja
+    if (!newCatForm.name || !newCatForm.breed || !newCatForm.price) {
+      showNotification('Wypełnij wszystkie wymagane pola!', '❌')
+      return
+    }
+
+    const newCat = {
+      id: Date.now(),
+      name: newCatForm.name,
+      breed: newCatForm.breed,
+      gender: newCatForm.gender,
+      age: newCatForm.age,
+      color: newCatForm.color,
+      price: parseInt(newCatForm.price),
+      priceFormatted: `${parseInt(newCatForm.price).toLocaleString('pl-PL')} PLN`,
+      img: newCatForm.images[0] || 'https://via.placeholder.com/800x600',
+      description: newCatForm.description,
+      breeder: breederProfile,
+      pedigree: newCatForm.pedigree,
+      health: newCatForm.health,
+      personality: newCatForm.personality,
+      availableForBreeding: newCatForm.availableForBreeding,
+      readyToGo: newCatForm.readyToGo,
+      status: 'available',
+      featured: false,
+      verified: false,
+      isDemoData: false,
+      stats: {
+        views: 0,
+        likes: 0,
+        shares: 0,
+        inquiries: 0
+      }
+    }
+
+    setCats([newCat, ...cats])
+    setShowAddCatForm(false)
+    showNotification('✅ Kot został dodany!', '🎉')
+    
+    // Reset form
+    setNewCatForm({
+      name: '', breed: '', gender: '', age: '', color: '', price: '',
+      description: '', images: [], pedigree: { fife: false, wcf: false, tica: false, generations: 0, champions: 0 },
+      health: { vaccinated: false, microchipped: false, hcmTested: false, hcmResult: '', pkdTested: false, pkdResult: '', healthGuarantee: '30 dni' },
+      personality: [], availableForBreeding: false, readyToGo: '', location: ''
+    })
+  }
+
+  // ====================================================================
+  // 2️⃣ SYSTEM PŁATNOŚCI (Stripe-like)
+  // ====================================================================
+  
+  const handleBuyNow = (cat) => {
+    setSelectedPaymentCat(cat)
+    setPaymentAmount(cat.price)
+    setShowPaymentModal(true)
+    setPaymentStep(1)
+  }
+
+  const processPayment = () => {
+    // Walidacja danych karty
+    if (!paymentData.cardNumber || !paymentData.cardName || !paymentData.expiryDate || !paymentData.cvv) {
+      showNotification('Wypełnij wszystkie dane karty!', '❌')
+      return
+    }
+
+    setPaymentStatus('processing')
+    showNotification('Przetwarzanie płatności...', '💳')
+
+    // Symulacja płatności
+    setTimeout(() => {
+      setPaymentStatus('success')
+      
+      const transaction = {
+        id: `TXN-${Date.now()}`,
+        catId: selectedPaymentCat.id,
+        catName: selectedPaymentCat.name,
+        amount: paymentAmount,
+        date: new Date().toISOString(),
+        status: 'completed',
+        method: paymentMethod
+      }
+      
+      setTransactionHistory([transaction, ...transactionHistory])
+      showNotification('✅ Płatność zakończona sukcesem!', '🎉')
+      
+      // Wyślij potwierdzenie emailem (symulacja)
+      setTimeout(() => {
+        showNotification(`📧 Potwierdzenie wysłane na ${paymentData.email}`, '✅')
+      }, 1000)
+
+      setPaymentStep(3)
+    }, 2000)
+  }
+
+  const closePaymentModal = () => {
+    setShowPaymentModal(false)
+    setPaymentStep(1)
+    setPaymentStatus('pending')
+    setPaymentData({
+      cardNumber: '', cardName: '', expiryDate: '', cvv: '',
+      email: '', phone: '', address: '', city: '', postalCode: ''
+    })
+  }
+
+  // ====================================================================
+  // 3️⃣ SUBSKRYPCJE (Premium dla hodowców)
+  // ====================================================================
+  
+  const handleSubscribe = (planId) => {
+    const plan = subscriptionPlans.find(p => p.id === planId)
+    setSubscriptionPlan(planId)
+    setShowSubscriptionModal(true)
+    showNotification(`Wybrano plan: ${plan.name}`, '💎')
+  }
+
+  const confirmSubscription = () => {
+    const plan = subscriptionPlans.find(p => p.id === subscriptionPlan)
+    
+    setSubscriptionStatus('active')
+    const endDate = new Date()
+    endDate.setMonth(endDate.getMonth() + 1)
+    setSubscriptionEndDate(endDate)
+    setSubscriptionFeatures(plan.features)
+    
+    showNotification(`✅ Aktywowano ${plan.name}!`, '🎉')
+    setShowSubscriptionModal(false)
+    
+    // Jeśli nie jest hodowcą, ustaw jako hodowca
+    if (!isBreeder) {
+      setIsBreeder(true)
+      setBreederProfile({
+        id: `br-${Date.now()}`,
+        name: '*MOJA HODOWLA',
+        owner: 'Użytkownik',
+        location: 'Polska',
+        phone: '+48 000 000 000',
+        email: 'kontakt@hodowla.pl',
+        organization: 'FIFe - FPL',
+        rating: 5.0,
+        reviewsCount: 0,
+        verified: planId !== 'basic',
+        memberSince: new Date().getFullYear().toString(),
+        totalSold: 0
+      })
+    }
+  }
+
+  const cancelSubscription = () => {
+    if (window.confirm('Czy na pewno chcesz anulować subskrypcję?')) {
+      setSubscriptionStatus('cancelled')
+      setSubscriptionPlan(null)
+      showNotification('Subskrypcja została anulowana', '💔')
+    }
+  }
+
+  // ====================================================================
+  // 4️⃣ KALENDARZ REZERWACJI
+  // ====================================================================
+  
+  const handleBookVisit = (cat) => {
+    setSelectedCat(cat)
+    setShowCalendar(true)
+  }
+
+  const confirmAppointment = () => {
+    if (!selectedDate || !selectedTime || !visitType) {
+      showNotification('Wybierz datę, godzinę i typ wizyty!', '❌')
+      return
+    }
+
+    const appointment = {
+      id: Date.now(),
+      catId: selectedCat.id,
+      catName: selectedCat.name,
+      breederName: selectedCat.breeder.name,
+      date: selectedDate,
+      time: selectedTime,
+      type: visitType,
+      status: 'confirmed'
+    }
+
+    setAppointments([appointment, ...appointments])
+    showNotification('✅ Wizyta zarezerwowana!', '📅')
+    setShowCalendar(false)
+    setSelectedDate(null)
+    setSelectedTime(null)
+  }
+
+  // ====================================================================
+  // 5️⃣ MESSENGER (Chat 1:1 z hodowcą)
+  // ====================================================================
+  
+  const sendMessage = () => {
+    if (!messageInput.trim() || !activeConversation) return
+
+    const newMessage = {
+      id: Date.now(),
+      text: messageInput,
+      sender: 'user',
+      timestamp: Date.now()
+    }
+
+    const updatedConversation = {
+      ...activeConversation,
+      messages: [...activeConversation.messages, newMessage],
+      lastMessage: messageInput,
+      lastMessageTime: Date.now()
+    }
+
+    setConversations(conversations.map(conv => 
+      conv.id === activeConversation.id ? updatedConversation : conv
+    ))
+    setActiveConversation(updatedConversation)
+    setMessageInput('')
+
+    // Symulacja odpowiedzi hodowcy
+    setTimeout(() => {
+      const breederReply = {
+        id: Date.now(),
+        text: 'Dziękuję za wiadomość! Odpowiem wkrótce.',
+        sender: 'breeder',
+        timestamp: Date.now()
+      }
+      
+      const updatedConv = {
+        ...updatedConversation,
+        messages: [...updatedConversation.messages, breederReply],
+        lastMessage: breederReply.text,
+        lastMessageTime: Date.now(),
+        unread: updatedConv.unread + 1
+      }
+      
+      setConversations(conversations.map(conv => 
+        conv.id === activeConversation.id ? updatedConv : conv
+      ))
+      setActiveConversation(updatedConv)
+      setUnreadMessages(unreadMessages + 1)
+      showNotification(`💬 Nowa wiadomość od ${activeConversation.breederName}`, '💬')
+    }, 2000)
+  }
+
+  // ====================================================================
+  // 6️⃣ SYSTEM RECENZJI
+  // ====================================================================
+  
+  const openReviewModal = (cat) => {
+    setReviewForm({ ...reviewForm, catId: cat.id, breederId: cat.breeder.id })
+    setShowReviewModal(true)
+  }
+
+  const submitReview = () => {
+    if (!reviewForm.title || !reviewForm.comment) {
+      showNotification('Wypełnij tytuł i treść recenzji!', '❌')
+      return
+    }
+
+    const newReview = {
+      id: Date.now(),
+      ...reviewForm,
+      author: 'Użytkownik',
+      date: new Date().toISOString(),
+      verified: true
+    }
+
+    setReviews([newReview, ...reviews])
+    showNotification('✅ Recenzja dodana!', '⭐')
+    setShowReviewModal(false)
+    setReviewForm({ rating: 5, title: '', comment: '', catId: null, breederId: null, photos: [] })
+  }
+
+  // ====================================================================
+  // 7️⃣ UMOWY ELEKTRONICZNE
+  // ====================================================================
+  
+  const openContract = (cat) => {
+    const contract = {
+      id: `CONTRACT-${Date.now()}`,
+      catId: cat.id,
+      catName: cat.name,
+      breederName: cat.breeder.name,
+      buyerName: 'Kupujący',
+      price: cat.price,
+      date: new Date().toISOString(),
+      terms: `
+UMOWA SPRZEDAŻY KOTA RASOWEGO
+
+§1 Przedmiot umowy
+Hodowca ${cat.breeder.name} sprzedaje kota ${cat.name} rasy ${cat.breed}.
+
+§2 Cena
+Cena sprzedaży wynosi ${cat.priceFormatted}.
+
+§3 Gwarancja zdrowia
+Hodowca gwarantuje że kot jest zdrowy przez ${cat.health.healthGuarantee} od daty sprzedaży.
+
+§4 Dokumenty
+Kot posiada:
+- Rodowód ${cat.pedigree.fife ? 'FIFe' : cat.pedigree.wcf ? 'WCF' : 'TICA'}
+- Chip: ${cat.health.microchipped ? 'TAK' : 'NIE'}
+- Szczepienia: ${cat.health.vaccinated ? 'TAK' : 'NIE'}
+
+§5 Prawa hodowlane
+${cat.availableForBreeding ? 'Kot sprzedawany Z prawami hodowlanymi' : 'Kot sprzedawany BEZ praw hodowlanych'}
+
+§6 Postanowienia końcowe
+Umowa została zawarta w dniu ${new Date().toLocaleDateString('pl-PL')}.
+      `
+    }
+    
+    setSelectedContract(contract)
+    setShowContractModal(true)
+  }
+
+  const signContract = () => {
+    if (!signatureData) {
+      showNotification('Najpierw złóż podpis!', '❌')
+      return
+    }
+
+    setContractSigned(true)
+    showNotification('✅ Umowa podpisana elektronicznie!', '📜')
+    
+    // Zapisz umowę
+    setTimeout(() => {
+      showNotification('📧 Umowa wysłana na email', '✅')
+      setShowContractModal(false)
+    }, 1500)
+  }
+
+  // ====================================================================
+  // 8️⃣ NEWSLETTER
+  // ====================================================================
+  
+  const subscribeNewsletter = () => {
+    if (!newsletterEmail || !newsletterEmail.includes('@')) {
+      showNotification('Podaj prawidłowy adres email!', '❌')
+      return
+    }
+
+    setNewsletterSubscribed(true)
+    localStorage.setItem('newsletter_subscribed', 'true')
+    showNotification('✅ Zapisano do newslettera!', '📧')
+    setShowNewsletterPopup(false)
+  }
+
+  const closeNewsletterPopup = () => {
+    setShowNewsletterPopup(false)
+    localStorage.setItem('newsletter_closed', 'true')
+  }
+
+  // ====================================================================
+  // 9️⃣ PANEL HODOWCY - Statystyki
+  // ====================================================================
+  
+  const openBreederDashboard = () => {
+    if (!isBreeder) {
+      showNotification('Musisz być hodowcą!', '⚠️')
+      return
+    }
+
+    // Oblicz statystyki
+    const myCats = cats.filter(c => c.breeder?.id === breederProfile?.id)
+    const totalViews = myCats.reduce((sum, cat) => sum + cat.stats.views, 0)
+    const totalLikes = myCats.reduce((sum, cat) => sum + cat.stats.likes, 0)
+    const totalRevenue = myCats.filter(c => c.status === 'sold').reduce((sum, cat) => sum + cat.price, 0)
+
+    setBreederStats({
+      totalCats: myCats.length,
+      soldCats: myCats.filter(c => c.status === 'sold').length,
+      revenue: totalRevenue,
+      averageRating: breederProfile?.rating || 0,
+      totalReviews: reviews.filter(r => r.breederId === breederProfile?.id).length,
+      activeListings: myCats.filter(c => c.status === 'available').length,
+      pendingOrders: 0,
+      totalViews,
+      totalLikes
+    })
+
+    setShowBreederDashboard(true)
+  }
+
+  // ====================================================================
+  // 🔟 MAPA HODOWLI (Locations)
+  // ====================================================================
+  
+  const openMap = () => {
+    setShowMap(true)
+    
+    // Symulacja pobierania hodowli z mapy
+    const breeders = cats.map(cat => ({
+      id: cat.breeder.id,
+      name: cat.breeder.name,
+      location: cat.breeder.location,
+      coords: { 
+        lat: 52.2297 + (Math.random() - 0.5) * 2, 
+        lng: 21.0122 + (Math.random() - 0.5) * 2 
+      },
+      catsCount: cats.filter(c => c.breeder.id === cat.breeder.id).length
+    }))
+    
+    setNearbyBreeders(breeders)
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: FORMULARZ DODAWANIA KOTA
+  // ====================================================================
+  
+  const renderAddCatForm = () => {
+    if (!showAddCatForm) return null
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowAddCatForm(false)}>
+        <div className="add-cat-form-container" onClick={(e) => e.stopPropagation()}>
+          <div className="form-header">
+            <h2>➕ Dodaj nowego kota</h2>
+            <button className="close-btn" onClick={() => setShowAddCatForm(false)}>✖️</button>
+          </div>
+
+          <div className="form-content">
+            <div className="form-section">
+              <h3>Podstawowe informacje</h3>
+              <input
+                type="text"
+                placeholder="Imię kota *"
+                value={newCatForm.name}
+                onChange={(e) => handleNewCatFormChange('name', e.target.value)}
+                className="form-input"
+              />
+              <select
+                value={newCatForm.breed}
+                onChange={(e) => handleNewCatFormChange('breed', e.target.value)}
+                className="form-select"
+              >
+                <option value="">Wybierz rasę *</option>
+                {breedsData.filter(b => b.id !== 'all').map(breed => (
+                  <option key={breed.id} value={breed.name}>{breed.emoji} {breed.name}</option>
+                ))}
+              </select>
+              <select
+                value={newCatForm.gender}
+                onChange={(e) => handleNewCatFormChange('gender', e.target.value)}
+                className="form-select"
+              >
+                <option value="">Płeć *</option>
+                <option value="Samiec">Samiec</option>
+                <option value="Samica">Samica</option>
+              </select>
+              <input
+                type="text"
+                placeholder="Wiek (np. 3 miesiące) *"
+                value={newCatForm.age}
+                onChange={(e) => handleNewCatFormChange('age', e.target.value)}
+                className="form-input"
+              />
+              <input
+                type="text"
+                placeholder="Kolor umaszczenia *"
+                value={newCatForm.color}
+                onChange={(e) => handleNewCatFormChange('color', e.target.value)}
+                className="form-input"
+              />
+              <input
+                type="number"
+                placeholder="Cena (PLN) *"
+                value={newCatForm.price}
+                onChange={(e) => handleNewCatFormChange('price', e.target.value)}
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-section">
+              <h3>Opis</h3>
+              <textarea
+                placeholder="Opisz swojego kota..."
+                value={newCatForm.description}
+                onChange={(e) => handleNewCatFormChange('description', e.target.value)}
+                className="form-textarea"
+                rows="4"
+              />
+            </div>
+
+            <div className="form-section">
+              <h3>Zdjęcia</h3>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="form-file"
+              />
+              <div className="image-preview">
+                {newCatForm.images.map((img, idx) => (
+                  <img key={idx} src={img} alt={`Preview ${idx}`} className="preview-img" />
+                ))}
+              </div>
+            </div>
+
+            <div className="form-section">
+              <h3>Rodowód</h3>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={newCatForm.pedigree.fife}
+                  onChange={(e) => handleNewCatFormChange('pedigree', { ...newCatForm.pedigree, fife: e.target.checked })}
+                />
+                FIFe
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={newCatForm.pedigree.wcf}
+                  onChange={(e) => handleNewCatFormChange('pedigree', { ...newCatForm.pedigree, wcf: e.target.checked })}
+                />
+                WCF
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={newCatForm.pedigree.tica}
+                  onChange={(e) => handleNewCatFormChange('pedigree', { ...newCatForm.pedigree, tica: e.target.checked })}
+                />
+                TICA
+              </label>
+            </div>
+
+            <div className="form-section">
+              <h3>Zdrowie</h3>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={newCatForm.health.vaccinated}
+                  onChange={(e) => handleNewCatFormChange('health', { ...newCatForm.health, vaccinated: e.target.checked })}
+                />
+                Szczepiony
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={newCatForm.health.microchipped}
+                  onChange={(e) => handleNewCatFormChange('health', { ...newCatForm.health, microchipped: e.target.checked })}
+                />
+                Chip
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={newCatForm.health.hcmTested}
+                  onChange={(e) => handleNewCatFormChange('health', { ...newCatForm.health, hcmTested: e.target.checked })}
+                />
+                Test HCM
+              </label>
+            </div>
+
+            <button className="submit-btn" onClick={submitNewCat}>
+              ✅ Dodaj kota
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+    // ====================================================================
+  // 🎨 RENDER: MODAL PŁATNOŚCI
+  // ====================================================================
+  
+  const renderPaymentModal = () => {
+    if (!showPaymentModal || !selectedPaymentCat) return null
+
+    return (
+      <div className="modal-overlay" onClick={closePaymentModal}>
+        <div className="payment-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="payment-header">
+            <h2>💳 Płatność</h2>
+            <button className="close-btn" onClick={closePaymentModal}>✖️</button>
+          </div>
+
+          {/* KROK 1: Wybór metody */}
+          {paymentStep === 1 && (
+            <div className="payment-step">
+              <div className="payment-summary">
+                <img src={selectedPaymentCat.img} alt={selectedPaymentCat.name} className="payment-cat-img" />
+                <div className="payment-cat-info">
+                  <h3>{selectedPaymentCat.name}</h3>
+                  <p>{selectedPaymentCat.breed}</p>
+                  <p className="payment-amount">{selectedPaymentCat.priceFormatted}</p>
+                </div>
+              </div>
+
+              <h3>Wybierz metodę płatności</h3>
+              <div className="payment-methods">
+                <div 
+                  className={`payment-method ${paymentMethod === 'card' ? 'active' : ''}`}
+                  onClick={() => setPaymentMethod('card')}
+                >
+                  <span className="method-icon">💳</span>
+                  <span>Karta płatnicza</span>
+                </div>
+                <div 
+                  className={`payment-method ${paymentMethod === 'blik' ? 'active' : ''}`}
+                  onClick={() => setPaymentMethod('blik')}
+                >
+                  <span className="method-icon">📱</span>
+                  <span>BLIK</span>
+                </div>
+                <div 
+                  className={`payment-method ${paymentMethod === 'transfer' ? 'active' : ''}`}
+                  onClick={() => setPaymentMethod('transfer')}
+                >
+                  <span className="method-icon">🏦</span>
+                  <span>Przelew</span>
+                </div>
+                <div 
+                  className={`payment-method ${paymentMethod === 'apple' ? 'active' : ''}`}
+                  onClick={() => setPaymentMethod('apple')}
+                >
+                  <span className="method-icon">🍎</span>
+                  <span>Apple Pay</span>
+                </div>
+              </div>
+
+              <button className="payment-next-btn" onClick={() => setPaymentStep(2)}>
+                Dalej →
+              </button>
+            </div>
+          )}
+
+          {/* KROK 2: Dane płatności */}
+          {paymentStep === 2 && (
+            <div className="payment-step">
+              <h3>Dane płatności</h3>
+              
+              {paymentMethod === 'card' && (
+                <div className="payment-form">
+                  <input
+                    type="text"
+                    placeholder="Numer karty"
+                    value={paymentData.cardNumber}
+                    onChange={(e) => setPaymentData({ ...paymentData, cardNumber: e.target.value })}
+                    className="payment-input"
+                    maxLength="19"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Imię i nazwisko"
+                    value={paymentData.cardName}
+                    onChange={(e) => setPaymentData({ ...paymentData, cardName: e.target.value })}
+                    className="payment-input"
+                  />
+                  <div className="payment-row">
+                    <input
+                      type="text"
+                      placeholder="MM/RR"
+                      value={paymentData.expiryDate}
+                      onChange={(e) => setPaymentData({ ...paymentData, expiryDate: e.target.value })}
+                      className="payment-input half"
+                      maxLength="5"
+                    />
+                    <input
+                      type="text"
+                      placeholder="CVV"
+                      value={paymentData.cvv}
+                      onChange={(e) => setPaymentData({ ...paymentData, cvv: e.target.value })}
+                      className="payment-input half"
+                      maxLength="3"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {paymentMethod === 'blik' && (
+                <div className="payment-form">
+                  <input
+                    type="text"
+                    placeholder="Kod BLIK"
+                    className="payment-input blik-code"
+                    maxLength="6"
+                  />
+                  <p className="payment-hint">Wpisz 6-cyfrowy kod z aplikacji bankowej</p>
+                </div>
+              )}
+
+              <h3>Dane kontaktowe</h3>
+              <div className="payment-form">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={paymentData.email}
+                  onChange={(e) => setPaymentData({ ...paymentData, email: e.target.value })}
+                  className="payment-input"
+                />
+                <input
+                  type="tel"
+                  placeholder="Telefon"
+                  value={paymentData.phone}
+                  onChange={(e) => setPaymentData({ ...paymentData, phone: e.target.value })}
+                  className="payment-input"
+                />
+                <input
+                  type="text"
+                  placeholder="Adres dostawy"
+                  value={paymentData.address}
+                  onChange={(e) => setPaymentData({ ...paymentData, address: e.target.value })}
+                  className="payment-input"
+                />
+                <div className="payment-row">
+                  <input
+                    type="text"
+                    placeholder="Miasto"
+                    value={paymentData.city}
+                    onChange={(e) => setPaymentData({ ...paymentData, city: e.target.value })}
+                    className="payment-input half"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Kod pocztowy"
+                    value={paymentData.postalCode}
+                    onChange={(e) => setPaymentData({ ...paymentData, postalCode: e.target.value })}
+                    className="payment-input half"
+                  />
+                </div>
+              </div>
+
+              <div className="payment-actions">
+                <button className="payment-back-btn" onClick={() => setPaymentStep(1)}>
+                  ← Wstecz
+                </button>
+                <button className="payment-pay-btn" onClick={processPayment}>
+                  Zapłać {selectedPaymentCat.priceFormatted}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* KROK 3: Potwierdzenie */}
+          {paymentStep === 3 && paymentStatus === 'success' && (
+            <div className="payment-step success">
+              <div className="success-icon">✅</div>
+              <h2>Płatność zakończona!</h2>
+              <p>Dziękujemy za zakup</p>
+              <div className="success-details">
+                <p><strong>{selectedPaymentCat.name}</strong></p>
+                <p>{selectedPaymentCat.priceFormatted}</p>
+                <p>ID transakcji: TXN-{Date.now()}</p>
+              </div>
+              <button className="payment-close-btn" onClick={closePaymentModal}>
+                Zamknij
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: MODAL SUBSKRYPCJI
+  // ====================================================================
+  
+  const renderSubscriptionModal = () => {
+    if (!showSubscriptionModal) return null
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowSubscriptionModal(false)}>
+        <div className="subscription-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="subscription-header">
+            <h2>💎 Plany subskrypcji</h2>
+            <button className="close-btn" onClick={() => setShowSubscriptionModal(false)}>✖️</button>
+          </div>
+
+          <div className="subscription-plans">
+            {subscriptionPlans.map(plan => (
+              <div 
+                key={plan.id} 
+                className={`subscription-plan ${plan.recommended ? 'recommended' : ''} ${subscriptionPlan === plan.id ? 'selected' : ''}`}
+                onClick={() => setSubscriptionPlan(plan.id)}
+              >
+                {plan.recommended && <div className="recommended-badge">Polecane</div>}
+                <h3 className="plan-name">{plan.name}</h3>
+                <div className="plan-price">
+                  <span className="price">{plan.price} PLN</span>
+                  <span className="period">/ {plan.period}</span>
+                </div>
+                <ul className="plan-features">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx}>✓ {feature}</li>
+                  ))}
+                </ul>
+                <button 
+                  className="plan-select-btn"
+                  onClick={() => handleSubscribe(plan.id)}
+                >
+                  Wybierz plan
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {subscriptionPlan && (
+            <div className="subscription-confirm">
+              <button className="confirm-subscription-btn" onClick={confirmSubscription}>
+                Potwierdź subskrypcję
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: KALENDARZ WIZYT
+  // ====================================================================
+  
+  const renderCalendar = () => {
+    if (!showCalendar) return null
+
+    const dates = Array.from({ length: 14 }, (_, i) => {
+      const date = new Date()
+      date.setDate(date.getDate() + i + 1)
+      return date
+    })
+
+    const timeSlots = [
+      '09:00', '10:00', '11:00', '12:00', '13:00',
+      '14:00', '15:00', '16:00', '17:00', '18:00'
+    ]
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowCalendar(false)}>
+        <div className="calendar-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="calendar-header">
+            <h2>📅 Zarezerwuj wizytę</h2>
+            <button className="close-btn" onClick={() => setShowCalendar(false)}>✖️</button>
+          </div>
+
+          <div className="calendar-content">
+            <div className="visit-types">
+              <h3>Wybierz typ wizyty</h3>
+              <div className="visit-types-grid">
+                {visitTypes.map(type => (
+                  <div
+                    key={type.id}
+                    className={`visit-type ${visitType === type.id ? 'active' : ''}`}
+                    onClick={() => setVisitType(type.id)}
+                  >
+                    <span className="visit-icon">{type.icon}</span>
+                    <h4>{type.name}</h4>
+                    <p>{type.description}</p>
+                    <div className="visit-meta">
+                      <span>⏱️ {type.duration}</span>
+                      {type.price > 0 && <span>💰 {type.price} PLN</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="date-selection">
+              <h3>Wybierz datę</h3>
+              <div className="dates-grid">
+                {dates.map(date => (
+                  <div
+                    key={date.toISOString()}
+                    className={`date-item ${selectedDate?.toDateString() === date.toDateString() ? 'active' : ''}`}
+                    onClick={() => setSelectedDate(date)}
+                  >
+                    <span className="day">{date.toLocaleDateString('pl-PL', { weekday: 'short' })}</span>
+                    <span className="date">{date.getDate()}</span>
+                    <span className="month">{date.toLocaleDateString('pl-PL', { month: 'short' })}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {selectedDate && (
+              <div className="time-selection">
+                <h3>Wybierz godzinę</h3>
+                <div className="time-slots">
+                  {timeSlots.map(time => (
+                    <button
+                      key={time}
+                      className={`time-slot ${selectedTime === time ? 'active' : ''}`}
+                      onClick={() => setSelectedTime(time)}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedDate && selectedTime && visitType && (
+              <div className="appointment-summary">
+                <h3>Podsumowanie</h3>
+                <div className="summary-details">
+                  <p><strong>Kot:</strong> {selectedCat?.name}</p>
+                  <p><strong>Typ wizyty:</strong> {visitTypes.find(t => t.id === visitType)?.name}</p>
+                  <p><strong>Data:</strong> {selectedDate.toLocaleDateString('pl-PL')}</p>
+                  <p><strong>Godzina:</strong> {selectedTime}</p>
+                </div>
+                <button className="confirm-appointment-btn" onClick={confirmAppointment}>
+                  Potwierdź rezerwację
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: MESSENGER
+  // ====================================================================
+  
+  const renderMessenger = () => {
+    if (!showMessenger) return null
+
+    return (
+      <div className="messenger-container">
+        <div className="messenger-header">
+          <h3>💬 Wiadomości</h3>
+          <button className="close-btn" onClick={() => setShowMessenger(false)}>✖️</button>
+        </div>
+
+        <div className="messenger-content">
+          <div className="conversations-list">
+            {conversations.length === 0 ? (
+              <div className="no-conversations">
+                <p>Brak konwersacji</p>
+              </div>
+            ) : (
+              conversations.map(conv => (
+                <div
+                  key={conv.id}
+                  className={`conversation-item ${activeConversation?.id === conv.id ? 'active' : ''}`}
+                  onClick={() => setActiveConversation(conv)}
+                >
+                  <div className="conv-avatar">{conv.breederAvatar}</div>
+                  <div className="conv-info">
+                    <h4>{conv.breederName}</h4>
+                    <p>{conv.lastMessage}</p>
+                  </div>
+                  {conv.unread > 0 && (
+                    <span className="unread-badge">{conv.unread}</span>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {activeConversation && (
+            <div className="chat-window">
+              <div className="chat-header">
+                <h4>{activeConversation.breederName}</h4>
+              </div>
+
+              <div className="messages-list">
+                {activeConversation.messages.length === 0 ? (
+                  <div className="no-messages">
+                    <p>Rozpocznij konwersację</p>
+                  </div>
+                ) : (
+                  activeConversation.messages.map(msg => (
+                    <div key={msg.id} className={`message ${msg.sender}`}>
+                      <div className="message-bubble">
+                        <p>{msg.text}</p>
+                        <span className="message-time">
+                          {new Date(msg.timestamp).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="message-input-container">
+                <input
+                  type="text"
+                  placeholder="Napisz wiadomość..."
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') sendMessage()
+                  }}
+                  className="message-input"
+                />
+                <button className="send-btn" onClick={sendMessage}>
+                  ➤
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: PANEL HODOWCY (Dashboard)
+  // ====================================================================
+  
+  const renderBreederDashboard = () => {
+    if (!showBreederDashboard) return null
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowBreederDashboard(false)}>
+        <div className="breeder-dashboard" onClick={(e) => e.stopPropagation()}>
+          <div className="dashboard-header">
+            <h2>📊 Panel Hodowcy</h2>
+            <button className="close-btn" onClick={() => setShowBreederDashboard(false)}>✖️</button>
+          </div>
+
+          <div className="dashboard-content">
+            <div className="dashboard-stats-grid">
+              <div className="dashboard-stat">
+                <span className="stat-icon">🐱</span>
+                <span className="stat-value">{breederStats.totalCats}</span>
+                <span className="stat-label">Wszystkich kotów</span>
+              </div>
+              <div className="dashboard-stat">
+                <span className="stat-icon">✅</span>
+                <span className="stat-value">{breederStats.soldCats}</span>
+                <span className="stat-label">Sprzedanych</span>
+              </div>
+              <div className="dashboard-stat">
+                <span className="stat-icon">💰</span>
+                <span className="stat-value">{breederStats.revenue.toLocaleString('pl-PL')} PLN</span>
+                <span className="stat-label">Przychód</span>
+              </div>
+              <div className="dashboard-stat">
+                <span className="stat-icon">⭐</span>
+                <span className="stat-value">{breederStats.averageRating}</span>
+                <span className="stat-label">Średnia ocena</span>
+              </div>
+              <div className="dashboard-stat">
+                <span className="stat-icon">👁️</span>
+                <span className="stat-value">{breederStats.totalViews}</span>
+                <span className="stat-label">Wyświetleń</span>
+              </div>
+              <div className="dashboard-stat">
+                <span className="stat-icon">❤️</span>
+                <span className="stat-value">{breederStats.totalLikes}</span>
+                <span className="stat-label">Polubień</span>
+              </div>
+            </div>
+
+            <div className="dashboard-actions">
+              <button className="dashboard-action-btn" onClick={handleAddNewCat}>
+                ➕ Dodaj nowego kota
+              </button>
+              <button className="dashboard-action-btn" onClick={() => setShowSubscriptionModal(true)}>
+                💎 Zarządzaj subskrypcją
+              </button>
+              <button className="dashboard-action-btn">
+                📧 Newsletter do klientów
+              </button>
+            </div>
+
+            {subscriptionStatus === 'active' && (
+              <div className="subscription-info">
+                <h3>Aktywna subskrypcja</h3>
+                <p>Plan: {subscriptionPlans.find(p => p.id === subscriptionPlan)?.name}</p>
+                <p>Odnawia się: {subscriptionEndDate?.toLocaleDateString('pl-PL')}</p>
+                <button className="cancel-subscription-btn" onClick={cancelSubscription}>
+                  Anuluj subskrypcję
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: MODAL RECENZJI
+  // ====================================================================
+  
+  const renderReviewModal = () => {
+    if (!showReviewModal) return null
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowReviewModal(false)}>
+        <div className="review-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="review-header">
+            <h2>⭐ Dodaj recenzję</h2>
+            <button className="close-btn" onClick={() => setShowReviewModal(false)}>✖️</button>
+          </div>
+
+          <div className="review-content">
+            <div className="rating-input">
+              <label>Ocena:</label>
+              <div className="stars">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <span
+                    key={star}
+                    className={`star ${reviewForm.rating >= star ? 'active' : ''}`}
+                    onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                  >
+                    ⭐
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <input
+              type="text"
+              placeholder="Tytuł recenzji"
+              value={reviewForm.title}
+              onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })}
+              className="review-input"
+            />
+
+            <textarea
+              placeholder="Napisz swoją recenzję..."
+              value={reviewForm.comment}
+              onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
+              className="review-textarea"
+              rows="6"
+            />
+
+            <button className="submit-review-btn" onClick={submitReview}>
+              Wyślij recenzję
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: MODAL UMOWY
+  // ====================================================================
+  
+  const renderContractModal = () => {
+    if (!showContractModal || !selectedContract) return null
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowContractModal(false)}>
+        <div className="contract-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="contract-header">
+            <h2>📜 Umowa sprzedaży</h2>
+            <button className="close-btn" onClick={() => setShowContractModal(false)}>✖️</button>
+          </div>
+
+          <div className="contract-content">
+            <div className="contract-text">
+              <pre>{selectedContract.terms}</pre>
+            </div>
+
+            {!contractSigned && (
+              <div className="signature-section">
+                <h3>Podpis elektroniczny</h3>
+                <input
+                  type="text"
+                  placeholder="Wpisz swoje imię i nazwisko"
+                  onChange={(e) => setSignatureData(e.target.value)}
+                  className="signature-input"
+                />
+                <button className="sign-btn" onClick={signContract}>
+                  ✍️ Podpisz umowę
+                </button>
+              </div>
+            )}
+
+            {contractSigned && (
+              <div className="contract-signed">
+                <div className="signed-icon">✅</div>
+                <h3>Umowa podpisana!</h3>
+                <p>Kopia została wysłana na Twój email</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: NEWSLETTER POPUP
+  // ====================================================================
+  
+  const renderNewsletterPopup = () => {
+    if (!showNewsletterPopup) return null
+
+    return (
+      <div className="newsletter-popup">
+        <button className="newsletter-close" onClick={closeNewsletterPopup}>✖️</button>
+        <div className="newsletter-content">
+          <h3>📧 Zapisz się do newslettera</h3>
+          <p>Bądź na bieżąco z nowymi kotami!</p>
+          <input
+            type="email"
+            placeholder="Twój email"
+            value={newsletterEmail}
+            onChange={(e) => setNewsletterEmail(e.target.value)}
+            className="newsletter-input"
+          />
+          <button className="newsletter-btn" onClick={subscribeNewsletter}>
+            Zapisz się
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // ====================================================================
+  // 🎨 RENDER: MAPA HODOWLI
+  // ====================================================================
+  
+  const renderMap = () => {
+    if (!showMap) return null
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowMap(false)}>
+        <div className="map-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="map-header">
+            <h2>🗺️ Hodowle w Polsce</h2>
+            <button className="close-btn" onClick={() => setShowMap(false)}>✖️</button>
+          </div>
+
+          <div className="map-container">
+            <div className="map-placeholder">
+              <p>🗺️ Mapa hodowli</p>
+              <p className="map-hint">Symulacja mapy - w pełnej wersji integracja z Google Maps</p>
+            </div>
+
+            <div className="breeders-list">
+              <h3>Hodowle w okolicy</h3>
+              {nearbyBreeders.map(breeder => (
+                <div key={breeder.id} className="breeder-item">
+                  <h4>{breeder.name}</h4>
+                  <p>📍 {breeder.location}</p>
+                  <p>🐱 {breeder.catsCount} kotów</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+    // ====================================================================
+  // 🎨 DODAJ DO GŁÓWNEGO RETURN (przed </div> zamykającym App)
+  // ====================================================================
+
+  // W sekcji header-actions dodaj nowe przyciski:
+  
+  // Znajdź to w kodzie:
+  // <div className="header-actions">
+  //   <button className="header-icon-btn" onClick={() => setShowNotifications(!showNotifications)}>
+  //     🔔 {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
+  //   </button>
+  
+  // I DODAJ PO TYM:
+  
+  <button 
+    className="header-icon-btn"
+    onClick={() => setShowMessenger(!showMessenger)}
+  >
+    💬 {unreadMessages > 0 && <span className="notif-badge">{unreadMessages}</span>}
+  </button>
+
+  {isBreeder && (
+    <button 
+      className="header-icon-btn breeder-btn"
+      onClick={openBreederDashboard}
+    >
+      📊 Panel
+    </button>
+  )}
+
+  {!isBreeder && (
+    <button 
+      className="header-icon-btn premium-btn"
+      onClick={() => setShowSubscriptionModal(true)}
+    >
+      💎 Premium
+    </button>
+  )}
+
+  // ====================================================================
+  // W sekcji cat-card dodaj przycisk "Kup teraz" i inne akcje
+  // ====================================================================
+  
+  // Znajdź w kodzie renderHome():
+  // <div className="card-actions">
+  //   <button className="action-btn secondary" onClick={(e) => { ... }}>
+  //     🔗 Udostępnij
+  //   </button>
+  //   <button className="action-btn primary" onClick={(e) => { ... }}>
+  //     💬 Kontakt
+  //   </button>
+  // </div>
+  
+  // ZASTĄP TO:
+  
+  <div className="card-actions">
+    <button 
+      className="action-btn buy-now"
+      onClick={(e) => {
+        e.stopPropagation()
+        handleBuyNow(cat)
+      }}
+    >
+      💳 Kup teraz
+    </button>
+    <button 
+      className="action-btn secondary"
+      onClick={(e) => {
+        e.stopPropagation()
+        handleBookVisit(cat)
+      }}
+    >
+      📅 Umów wizytę
+    </button>
+    <button 
+      className="action-btn secondary"
+      onClick={(e) => {
+        e.stopPropagation()
+        handleContactBreeder(cat.breeder)
+      }}
+    >
+      💬 Napisz
+    </button>
+  </div>
+
+  // Po card-actions dodaj:
+  <div className="card-extra-actions">
+    <button 
+      className="extra-action-btn"
+      onClick={(e) => {
+        e.stopPropagation()
+        openContract(cat)
+      }}
+    >
+      📜 Umowa
+    </button>
+    <button 
+      className="extra-action-btn"
+      onClick={(e) => {
+        e.stopPropagation()
+        openReviewModal(cat)
+      }}
+    >
+      ⭐ Recenzja
+    </button>
+  </div>
+
+  // ====================================================================
+  // W sekcji hero-main dodaj przycisk "Zostań hodowcą" i "Mapa"
+  // ====================================================================
+  
+  // Znajdź <div className="hero-stats"> i PRZED NIM dodaj:
+  
+  <div className="hero-cta">
+    {!isBreeder && (
+      <button 
+        className="cta-btn primary"
+        onClick={() => setShowSubscriptionModal(true)}
+      >
+        🌟 Zostań hodowcą
+      </button>
+    )}
+    {isBreeder && (
+      <button 
+        className="cta-btn primary"
+        onClick={handleAddNewCat}
+      >
+        ➕ Dodaj kota
+      </button>
+    )}
+    <button 
+      className="cta-btn secondary"
+      onClick={openMap}
+    >
+      🗺️ Mapa hodowli
+    </button>
+  </div>
+
+  // ====================================================================
+  // NA KOŃCU return(), PRZED zamykającym </div>, DODAJ WSZYSTKIE RENDERY:
+  // ====================================================================
+  
+  return (
+    <div className="App">
+      {/* ... existing header ... */}
+      
+      {/* ... existing content ... */}
+      
+      {/* 🆕 NOWE MODAŁY I KOMPONENTY */}
+      {renderAddCatForm()}
+      {renderPaymentModal()}
+      {renderSubscriptionModal()}
+      {renderCalendar()}
+      {renderMessenger()}
+      {renderBreederDashboard()}
+      {renderReviewModal()}
+      {renderContractModal()}
+      {renderNewsletterPopup()}
+      {renderMap()}
+      
+      {/* ... existing footer ... */}
+    </div>
+  )
+}
+
+export default App
 
