@@ -4587,8 +4587,6 @@ return (
     {renderMap()}
       </div>
   );
-}
-
 export default App;
 
 
