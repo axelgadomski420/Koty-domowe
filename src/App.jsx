@@ -1092,7 +1092,7 @@ Przysługuje Panu/Pani prawo dostępu, poprawy, usunięcia danych.
       id: 'contract_breeding_v2',
       name: 'Umowa Sprzedaży z Prawami Hodowlanymi',
       extends: 'standard',
-      additional Sections: [
+      additionalSections: [
         'Zobowiązania hodowlane',
         'Prefix usage',
         'Współpraca przy miecie',
