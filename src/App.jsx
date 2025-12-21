@@ -1577,7 +1577,7 @@ const WEB3_FEATURES = {
       'Międzynarodowa akceptacja',
       'Nie można podrobić'
     ],
-    meta {
+    meta: {
       catName: String,
       breed: String,
       birthDate: Date,
