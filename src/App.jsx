@@ -4403,70 +4403,43 @@ Umowa została zawarta w dniu ${new Date().toLocaleDateString('pl-PL')}.
   }
 
   // ====================================================================
-  // 🎨 RENDER: MAPA HODOWLI
-  // ====================================================================
-  
-  const renderMap = () => {
-    if (!showMap) return null
+  // WEWNĄTRZ funkcji App, przed return:
 
-    return (
-      <div className="modal-overlay" onClick={() => setShowMap(false)}>
-        <div className="map-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="map-header">
-            <h2>🗺️ Hodowle w Polsce</h2>
-            <button className="close-btn" onClick={() => setShowMap(false)}>✖️</button>
+// 🎨 RENDER: MAPA HODOWLI
+const renderMap = () => {
+  if (!showMap) return null;
+
+  return (
+    <div className="modal-overlay" onClick={() => setShowMap(false)}>
+      <div className="map-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="map-header">
+          <h2>🗺️ Hodowle w Polsce</h2>
+          <button className="close-btn" onClick={() => setShowMap(false)}>✖️</button>
+        </div>
+
+        <div className="map-container">
+          <div className="map-placeholder">
+            <p>🗺️ Mapa hodowli</p>
+            <p className="map-hint">Symulacja mapy - w pełnej wersji integracja z Google Maps</p>
           </div>
 
-          <div className="map-container">
-            <div className="map-placeholder">
-              <p>🗺️ Mapa hodowli</p>
-              <p className="map-hint">Symulacja mapy - w pełnej wersji integracja z Google Maps</p>
-            </div>
-
-            <div className="breeders-list">
-              <h3>Hodowle w okolicy</h3>
-              {nearbyBreeders.map(breeder => (
-                <div key={breeder.id} className="breeder-item">
-                  <h4>{breeder.name}</h4>
-                  <p>📍 {breeder.location}</p>
-                  <p>🐱 {breeder.catsCount} kotów</p>
-                </div>
-              ))}
-            </div>
+          <div className="breeders-list">
+            <h3>Hodowle w okolicy</h3>
+            {nearbyBreeders.map(breeder => (
+              <div key={breeder.id} className="breeder-item">
+                <h4>{breeder.name}</h4>
+                <p>📍 {breeder.location}</p>
+                <p>🐱 {breeder.catsCount} kotów</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    )
-  }
-    // ====================================================================
-  // Przed końcem funkcji App, po wszystkich funkcjach pomocniczych, dodaj:
-
-const ExtraActions = ({ cat, openContract, openReviewModal }) => {
-  return (
-    <div className="card-extra-actions">
-      <button 
-        className="extra-action-btn"
-        onClick={(e) => {
-          e.stopPropagation();
-          openContract(cat);
-        }}
-      >
-        📜 Umowa
-      </button>
-      <button 
-        className="extra-action-btn"
-        onClick={(e) => {
-          e.stopPropagation();
-          openReviewModal(cat);
-        }}
-      >
-        ⭐ Recenzja
-      </button>
     </div>
   );
 };
 
-// GŁÓWNY RETURN
+// GŁÓWNY RETURN funkcji App
 return (
   <div className="App">
     <header>
@@ -4533,7 +4506,7 @@ return (
       {/* Karty kotów */}
       {cats.map(cat => (
         <div key={cat.id} className="cat-card">
-          {/* ... zawartość karty ... */}
+          {/* zawartość karty */}
           
           <div className="card-actions">
             <button 
@@ -4585,9 +4558,34 @@ return (
     {renderContractModal()}
     {renderNewsletterPopup()}
     {renderMap()}
-      </div>
+  </div>
+);
+}
+
+// POZA funkcją App - osobny komponent
+const ExtraActions = ({ cat, openContract, openReviewModal }) => {
+  return (
+    <div className="card-extra-actions">
+      <button 
+        className="extra-action-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          openContract(cat);
+        }}
+      >
+        📜 Umowa
+      </button>
+      <button 
+        className="extra-action-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          openReviewModal(cat);
+        }}
+      >
+        ⭐ Recenzja
+      </button>
+    </div>
   );
+};
+
 export default App;
-
-
-
