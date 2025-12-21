@@ -4584,6 +4584,6 @@ const ExtraActions = ({ cat, openContract, openReviewModal }) => {
       </button>
     </div>
   );
-}
+};  // ← DODAJ ŚREDNIK!
 
 export default App;
