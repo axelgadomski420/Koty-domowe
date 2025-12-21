@@ -1219,7 +1219,7 @@ Przysługuje Panu/Pani prawo dostępu, poprawy, usunięcia danych.
       storage: 'Encrypted cloud storage (AWS/Azure/Google)',
       backup: 'Daily encrypted backups',
       retention: '10 years mandatory',
-      audit Trail: {
+      auditTrail: {
         logged: [
           'Document created',
           'Document viewed',
