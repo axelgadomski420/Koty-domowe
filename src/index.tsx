@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './styles.css'; // To importuje Twój styl Apple
 import App from './App'; // To importuje główną aplikację
+import './styles.css';
 
 // Znajdź element w HTML, do którego podepniemy aplikację
 const rootElement = document.getElementById('root');
