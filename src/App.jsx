@@ -26,9 +26,18 @@ const Foundation = {
     }
   }
 };
-namespace Models {
+// ==========================================
+// Poprawiona sekcja Models (JS zamiast TS)
+// ==========================================
 
-  export enum VerificationStatus {
+const Models = {
+  VerificationStatus: {
+    PENDING: 'PENDING',
+    VERIFIED: 'VERIFIED',
+    REJECTED: 'REJECTED'
+  }
+};
+
     Pending = 'pending',
     Verified = 'verified',
     Rejected = 'rejected',
