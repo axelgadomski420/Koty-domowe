@@ -5,8 +5,7 @@ const ClientRegistration = {
     email: String,
     phone: String,
     birthDate: Date,
-    pesel: String, // opcjonalne dla płatności
-    nip: String // opcjonalne dla faktur VAT
+    pesel: String, // opcjonalnedlapłatnościnip: String // opcjonalne dla faktur VAT
   },
   address: {
     street: String,
@@ -29,8 +28,7 @@ const ClientRegistration = {
   verification: {
     emailVerified: Boolean,
     phoneVerified: Boolean,
-    identityVerified: Boolean, // dla zakupów hodowlanych
-    documentScan: String // ID/paszport dla premium
+    identityVerified: Boolean, // dlazakupówhodowlanychdocumentScan: String // ID/paszport dla premium
   },
   subscription: {
     type: ['free', 'premium', 'vip'],
@@ -48,21 +46,17 @@ const BreederRegistration = {
     secondaryPhone: String
   },
   breeding: {
-    prefix: String, // *PL Golden British
-    organization: ['FIFe', 'WCF', 'TICA', 'CFA'],
+    prefix: String, // *PLGoldenBritishorganization: ['FIFe', 'WCF', 'TICA', 'CFA'],
     registrationNumber: String,
     registrationDate: Date,
-    activeBreeds: [String], // maksymalnie 5 ras
-    experienceYears: Number,
+    activeBreeds: [String], // maksymalnie 5rasexperienceYears: Number,
     totalCatsSold: Number,
     activeLitters: Number
   },
   verification: {
     prefixVerification: {
       status: ['pending', 'verified', 'rejected'],
-      documents: [String], // skany dokumentów
-      verifiedBy: ObjectId, // admin ID
-      verifiedDate: Date
+      documents: [String], // skanydokumentówverifiedBy: ObjectId, // adminIDverifiedDate: Date
     },
     visitVerification: {
       status: ['pending', 'scheduled', 'completed'],
@@ -99,8 +93,7 @@ const BreederRegistration = {
   },
   pricing: {
     subscriptionPlan: ['basic', 'pro', 'elite'],
-    commissionRate: Number, // 3-8% zależnie od planu
-    monthlyFee: Number,
+    commissionRate: Number, // 3-8% zależnieodplanumonthlyFee: Number,
     activeListings: Number,
     maxListings: Number
   },
@@ -142,8 +135,7 @@ const BreederDashboard = {
     inbox: Array,
     chatSystem: Function,
     autoResponder: Function,
-    cannedResponses: Array,        // ✅ POPRAWIONE - usunięto spację
-    emailTemplates: Array,
+    cannedResponses: Array,        // ✅ POPRAWIONE - usuniętospacjęemailTemplates: Array,
     bulkMessaging: Function
   },
   contracts: {
@@ -164,8 +156,7 @@ const BreederDashboard = {
 
 const AdminPanel = {
   userManagement: {
-    allUsers: Function, // paginacja, filtry, search
-    verifyBreeder: Function,
+    allUsers: Function, // paginacja, filtry, searchverifyBreeder: Function,
     suspendUser: Function,
     deleteUser: Function,
     sendWarning: Function,
@@ -194,11 +185,7 @@ const AdminPanel = {
   },
   
   demoDataManagement: {
-    createDemoCats: Function, // generowanie kotów demo
-    populateDatabase: Function, // 100, 500, 1000 kotów
-    deleteDemoCats: Function, // masowe usuwanie
-    resetDemoData: Function, // reset do stanu początkowego
-    importFromCSV: Function,
+    createDemoCats: Function, // generowaniekotówdemopopulateDatabase: Function, // 100, 500, 1000kotówdeleteDemoCats: Function, // masoweusuwanieresetDemoData: Function, // resetdostanupoczątkowegoimportFromCSV: Function,
     exportToCSV: Function,
     demoToggle: Boolean // pokazuj/ukryj demo
   },
@@ -247,8 +234,7 @@ const AdminPanel = {
     customReports: Function
   },
   
-  breedsManagement: {              // ✅ POPRAWIONE - usunięto spację
-    allBreeds: Array,
+  breedsManagement: {              // ✅ POPRAWIONE - usuniętospacjęallBreeds: Array,
     addBreed: Function,
     editBreed: Function,
     breedStandards: Function,
@@ -490,8 +476,7 @@ const COMPLETE_BREEDS_DATABASE = [
     name: 'Scottish Fold',
     origin: 'Szkocja',
     category: 'Krótkoszerstne/Długoszerstne',
-    fife: false, // banned
-    wcf: true,
+    fife: false, // bannedwcf: true,
     tica: true,
     cfa: true,
     controversy: 'Gen folded ears - osteochondrodysplasia',
@@ -720,8 +705,7 @@ const COMPLETE_BREEDS_DATABASE = [
       tests: ['HCM', 'PRA-b'],
       lifespan: '12-20 lat'
     },
-    priceRange: { min: 15000, max: 50000 }, // F1-F2 bardzo drogie
-    popularity: 6.0,
+    priceRange: { min: 15000, max: 50000 }, // F1-F2bardzodrogiepopularity: 6.0,
     legal: 'Sprawdź lokalne przepisy - zabronione w niektórych krajach/stanach',
     goodWith: ['Doświadczeni właściciele', 'Duże przestrzenie'],
     activityLevel: 'Ekstremalnie wysoka',
@@ -931,10 +915,10 @@ własność kota wraz z pełnym rodowodem i dokumentacją weterynaryjną.
             'paymentDeadline'
           ],
           content: `
-Strony ustalają cenę kota na kwotę: {price} {currency}.
+Stronyustalającenękotanakwotę: {price} {currency}.
 Kupujący zobowiązuje się do zapłaty:
 - Zaliczka: {advancePayment} {currency} - wpłacona dnia {advanceDate}
-- Pozostała kwota: {remainingPayment} {currency} - termin płatności: {paymentDeadline}
+- Pozostałakwota: {remainingPayment} {currency} - terminpłatności: {paymentDeadline}
 Płatność: {paymentMethod}
           `
         },
@@ -942,7 +926,7 @@ Płatność: {paymentMethod}
           title: 'Wydanie Kota',
           fields: ['deliveryDate', 'deliveryPlace', 'deliveryMethod'],
           content: `
-Kot zostanie wydany Kupującemu w dniu: {deliveryDate}
+KotzostaniewydanyKupującemuwdniu: {deliveryDate}
 Miejsce: {deliveryPlace}
 Sposób: {deliveryMethod}
 
@@ -962,7 +946,7 @@ W chwili odbioru Kupujący otrzymuje:
 1. Sprzedający gwarantuje, że kot w chwili sprzedaży jest zdrowy,
    wolny od chorób zakaźnych i pasożytów.
    
-2. Gwarancja zdrowia: 24 miesiące od daty zakupu na wady genetyczne
+2. Gwarancjazdrowia: 24 miesiące od daty zakupu na wady genetyczne
    wykryte przez licencjonowanego weterynarza.
    
 3. Kupujący zobowiązany jest do przeprowadzenia badania weterynaryjnego
@@ -993,7 +977,7 @@ W chwili odbioru Kupujący otrzymuje:
     - Kupujący otrzymuje pełny rodowód hodowlany
     - Kupujący ma prawo do wykorzystania kota w hodowli
     - Obowiązek zgłoszenia miotu do odpowiedniej organizacji
-    - Dodatkowa opłata: {breedingFee} PLN
+    - Dodatkowaopłata: {breedingFee} PLN
     
 ☐ PRAWA HODOWLANE Z OGRANICZENIAMI
     - Maksymalnie {maxLitters} miotów
@@ -1264,11 +1248,9 @@ const ADVANCED_ADMIN_FEATURES = {
         quick: ['10 kotów', '50 kotów', '100 kotów'],
         custom: {
           count: Number,
-          breeds: [String], // wybór ras
-          priceRange: { min: Number, max: Number },
+          breeds: [String], // wybórraspriceRange: { min: Number, max: Number },
           organizations: [String],
-          locations: [String], // miasta
-          withPhotos: Boolean,
+          locations: [String], // miastawithPhotos: Boolean,
           withPedigrees: Boolean,
           realisticData: Boolean // AI-generated realistic data
         }
@@ -1305,8 +1287,7 @@ const ADVANCED_ADMIN_FEATURES = {
         deleteByLocation: Function
       },
       complete: {
-        resetToFactory: Function, // kasuje wszystko oprócz adminów
-        keepAdmins: Boolean,
+        resetToFactory: Function, // kasujewszystkoopróczadminówkeepAdmins: Boolean,
         keepSettings: Boolean,
         confirm: 'TYPE: DELETE-EVERYTHING'
       }
@@ -1323,7 +1304,7 @@ const ADVANCED_ADMIN_FEATURES = {
         partial: Function
       },
       api: {
-        from OtherPlatform: Function,
+        fromOtherPlatform: Function,
         credentials: Object
       }
     },
@@ -1350,7 +1331,7 @@ const ADVANCED_ADMIN_FEATURES = {
       autoActions: {
         flag: Boolean,
         quarantine: Boolean,
-        notify Admin: Boolean,
+        notifyAdmin: Boolean,
         notifyBreeder: Boolean
       },
       mlModel: 'TensorFlow image recognition + NLP'
@@ -1359,8 +1340,7 @@ const ADVANCED_ADMIN_FEATURES = {
     manualReview: {
       queue: Array,
       prioritize: ['High risk', 'Reported', 'New breeders'],
-      assign To: ObjectId, // admin/moderator
-      sla: '24 hours',
+      assignTo: ObjectId, // admin/moderatorsla: '24 hours',
       actions: [
         'Approve',
         'Approve with edits',
@@ -1393,7 +1373,7 @@ const ADVANCED_ADMIN_FEATURES = {
     }
   },
   
-  analytics Dashboard: {
+  analyticsDashboard: {
     realtime: {
       activeUsers: Number,
       ongoingChats: Number,
@@ -1456,7 +1436,7 @@ const ADVANCED_ADMIN_FEATURES = {
   },
   
   systemConfiguration: {
-    global Settings: {
+    globalSettings: {
       siteName: String,
       tagline: String,
       maintenanceMode: Boolean,
@@ -1470,7 +1450,7 @@ const ADVANCED_ADMIN_FEATURES = {
       videoCall: Boolean,
       virtualTours: Boolean,
       aiRecommendations: Boolean,
-      blockchain Verification: Boolean,
+      blockchainVerification: Boolean,
       cryptoPayments: Boolean,
       subscriptionModel: Boolean
     },
@@ -1489,7 +1469,7 @@ const ADVANCED_ADMIN_FEATURES = {
         buyerVIP: Number
       },
       features: {
-        featured Listing: Number,
+        featuredListing: Number,
         urgentListing: Number,
         topPlacement: Number,
         socialPromotion: Number
@@ -1525,8 +1505,7 @@ const ADVANCED_ADMIN_FEATURES = {
 const AI_FEATURES = {
   catRecognition: {
     uploadPhoto: Function,
-    identifyBreed: Function,  // rozpoznaje rasę z foto
-    confidenceScore: Number,
+    identifyBreed: Function,  // rozpoznajerasęzfotoconfidenceScore: Number,
     suggestedBreeds: Array,
     explanation: String
   },
@@ -1543,9 +1522,7 @@ const AI_FEATURES = {
     ],
     algorithm: 'ML model trained on 10k+ successful adoptions',
     output: {
-      topMatches: Array, // top 5 ras
-      catSuggestions: Array, // konkretne koty
-      reasoning: String,
+      topMatches: Array, // top 5rascatSuggestions: Array, // konkretnekotyreasoning: String,
       alternativeOptions: Array
     }
   },
@@ -1649,7 +1626,7 @@ const WEB3_FEATURES = {
   }
 }
 const VR_AR_FEATURES = {
-  virtualCattery Visit: {
+  virtualCatteryVisit: {
     technology: 'WebXR / 360° video',
     experience: [
       'Wirtualny spacer po hodowli',
@@ -1794,7 +1771,7 @@ const SOCIAL_PLATFORM = {
     monetization: {
       creatorFund: 'Payment for views',
       brandDeals: 'Cat food, toys companies',
-      live Gifts: 'Virtual gifts during live'
+      liveGifts: 'Virtual gifts during live'
     }
   },
   
@@ -1851,7 +1828,7 @@ const ECOMMERCE_EXPANSION = {
     },
     
     marketplace: {
-      thirdParty Sellers: {
+      thirdPartySellers: {
         enabled: true,
         commission: '15%',
         verification: 'Required',
@@ -2497,12 +2474,12 @@ const LEGAL_COMPLIANCE = {
       'CITES (for exotic breeds)'
     ],
     
-    breeders Requirements: {
+    breedersRequirements: {
       registration: 'Proper business registration',
       facilities: 'Minimum standards',
       veterinaryCare: 'Regular vet checks',
-      breeding Frequency: 'Max litters per year per female',
-      age Restrictions: 'Min breeding age, max breeding age',
+      breedingFrequency: 'Max litters per year per female',
+      ageRestrictions: 'Min breeding age, max breeding age',
       documentation: 'Full health and lineage records'
     },
     
@@ -2608,7 +2585,7 @@ const LEGAL_COMPLIANCE = {
         database: 'Encrypted columns for PII',
         files: 'Encrypted storage'
       },
-      access Control: {
+      accessControl: {
         principle: 'Least privilege',
         rbac: 'Role-based access control',
         audit: 'Full audit trail',
@@ -2619,7 +2596,7 @@ const LEGAL_COMPLIANCE = {
     payments: {
       pciDss: 'Level 1 compliance (via Stripe)',
       tokenization: 'No card data stored',
-      fraud Detection: 'ML-based fraud prevention',
+      fraudDetection: 'ML-based fraud prevention',
       chargebacks: 'Automated handling'
     },
     
@@ -3065,7 +3042,7 @@ const TECH_STACK = {
       forms: 'React Hook Form + Zod validation',
       routing: 'Next.js App Router',
       animations: 'Framer Motion',
-      ui Library: 'Shadcn/ui + Custom components'
+      uiLibrary: 'Shadcn/ui + Custom components'
     },
     mobile: {
       framework: 'React Native / Flutter',
@@ -3112,7 +3089,7 @@ const TECH_STACK = {
       container: 'Docker + Kubernetes',
       orchestration: 'K8s with Helm charts'
     },
-    ci cd: {
+    cicd: {
       pipeline: 'GitHub Actions / GitLab CI',
       testing: 'Jest, Cypress, Playwright',
       deployment: 'Blue-green deployments',
@@ -3134,7 +3111,7 @@ const TECH_STACK = {
     }
   },
   
-  ai ml: {
+  aiml: {
     matching: {
       model: 'Collaborative filtering + content-based',
       framework: 'TensorFlow / PyTorch',
@@ -3175,16 +3152,16 @@ const TECH_STACK = {
       translation: 'DeepL API',
       cdn: 'Cloudflare',
       analytics: 'Google Analytics 4 + Mixpanel',
-      ab Testing: 'Optimizely / VWO'
+      abTesting: 'Optimizely / VWO'
     }
   },
   
   development: {
     versionControl: 'Git + GitHub',
-    project Management: 'Jira / Linear',
+    projectManagement: 'Jira / Linear',
     documentation: 'Notion / Confluence',
     design: 'Figma',
-    api Testing: 'Postman / Insomnia',
+    apiTesting: 'Postman / Insomnia',
     collaboration: 'Slack / Discord'
   }
 }
@@ -3328,7 +3305,7 @@ const TECH_STACK = {
     const plan = subscriptionPlans.find(p => p.id === planId)
     setSubscriptionPlan(planId)
     setShowSubscriptionModal(true)
-    showNotification(`Wybrano plan: ${plan.name}`, '💎')
+    showNotification(`Wybranoplan: ${plan.name}`, '💎')
   }
 
   const confirmSubscription = () => {
@@ -3958,7 +3935,7 @@ Umowa została zawarta w dniu ${new Date().toLocaleDateString('pl-PL')}.
               <div className="success-details">
                 <p><strong>{selectedPaymentCat.name}</strong></p>
                 <p>{selectedPaymentCat.priceFormatted}</p>
-                <p>ID transakcji: TXN-{Date.now()}</p>
+                <p>IDtransakcji: TXN-{Date.now()}</p>
               </div>
               <button className="payment-close-btn" onClick={closePaymentModal}>
                 Zamknij
@@ -4279,7 +4256,7 @@ Umowa została zawarta w dniu ${new Date().toLocaleDateString('pl-PL')}.
               <div className="subscription-info">
                 <h3>Aktywna subskrypcja</h3>
                 <p>Plan: {subscriptionPlans.find(p => p.id === subscriptionPlan)?.name}</p>
-                <p>Odnawia się: {subscriptionEndDate?.toLocaleDateString('pl-PL')}</p>
+                <p>Odnawiasię: {subscriptionEndDate?.toLocaleDateString('pl-PL')}</p>
                 <button className="cancel-subscription-btn" onClick={cancelSubscription}>
                   Anuluj subskrypcję
                 </button>
