@@ -2608,10 +2608,11 @@ const LEGAL_COMPLIANCE = {
       drills: 'Quarterly simulations',
       communication: 'Clear escalation path'
     }
-  },
-  
-  intellectualProperty: {
-    platform: {
+}
+
+const intellectualProperty = {  // ✅ POPRAWNIE
+  platform: {
+
       trademark: 'CAT PURRE ® (registered)',
       copyright: 'All platform code and design',
       patents: 'Pending for AI matching algorithm'
