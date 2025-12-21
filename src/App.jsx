@@ -4523,27 +4523,30 @@ Umowa została zawarta w dniu ${new Date().toLocaleDateString('pl-PL')}.
     </button>
   </div>
 
-  // Po card-actions dodaj:
-  <div className="card-extra-actions">
-    <button 
-      className="extra-action-btn"
-      onClick={(e) => {
-        e.stopPropagation()
-        openContract(cat)
-      }}
-    >
-      📜 Umowa
-    </button>
-    <button 
-      className="extra-action-btn"
-      onClick={(e) => {
-        e.stopPropagation()
-        openReviewModal(cat)
-      }}
-    >
-      ⭐ Recenzja
-    </button>
-  </div>
+  const ExtraActions = ({ cat, openContract, openReviewModal }) => {
+  return (
+    <div className="card-extra-actions">
+      <button 
+        className="extra-action-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          openContract(cat);
+        }}
+      >
+        📜 Umowa
+      </button>
+      <button 
+        className="extra-action-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          openReviewModal(cat);
+        }}
+      >
+        ⭐ Recenzja
+      </button>
+    </div>
+  );
+};
 
   // ====================================================================
   // W sekcji hero-main dodaj przycisk "Zostań hodowcą" i "Mapa"
