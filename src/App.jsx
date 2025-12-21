@@ -4560,7 +4560,6 @@ return (
     {renderMap()}
   </div>
 );
-}
 
 // POZA funkcją App - osobny komponent
 const ExtraActions = ({ cat, openContract, openReviewModal }) => {
