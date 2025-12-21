@@ -14,35 +14,18 @@
 // MARK: - 1. FOUNDATION & UTILITIES
 // ==========================================
 
-namespace Foundation {
-
-  export type UUID = string;
-  export type ISODate = string;
-  export type URLString = string;
-
-  /**
-   * Swift-style Result type for robust error handling.
-   */
-  export type Result<T, E = Error> = 
-    | { success: true; value: T } 
-    | { success: false; error: E };
-
-  export class Logger {
-    static log(category: string, message: string, metadata?: any): void {
+const Foundation = {
+  Logger: class {
+    static log(category, message, metadata) {
       const timestamp = new Date().toISOString();
       console.log(`[${timestamp}] [${category.toUpperCase()}] ${message}`, metadata || '');
     }
 
-    static error(category: string, error: Error): void {
+    static error(category, error) {
       console.error(`[${category.toUpperCase()}] CRITICAL FAILURE:`, error.message);
     }
   }
-}
-
-// ==========================================
-// MARK: - 2. CORE DATA MODELS (Interfaces)
-// ==========================================
-
+};
 namespace Models {
 
   export enum VerificationStatus {
