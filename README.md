@@ -1,55 +1,39 @@
-# Pet Care
-### A pet adoption website
 
-## Features
-- **User Adoption Features:**
-Initiate and personalize donation campaigns for individual pets.
-Adoption seekers can submit adoption requests for pets.
-Users can add their pets to the adoption listing.
-Ability to manage and update pet adoption listings.
+***
 
-- **Paws for a Cause:**
-Users can initiate donation campaigns for specific pets.
-Each pet can have its own dedicated fundraising campaign.
-Donation campaigns can be shared via social media for increased visibility.
+# 🐱 CAT PURRE
 
-- **Secure Transactions with Stripe:**
-Integration with Stripe for secure payment processing.
-Users can make donations using MasterCard and VisaCard.
-Secure and encrypted transactions for financial transactions.
+**CAT PURRE** to elitarny ekosystem cyfrowy nowej generacji, dedykowany etycznej hodowli i adopcji kotów rasowych. Aplikacja łączy zaawansowaną technologię z luksusowym designem inspirowanym stylem Apple, tworząc bezpieczną przestrzeń dla profesjonalnych hodowców oraz świadomych przyszłych opiekunów.
 
-- **User Dashboards:**
-Users have personalized dashboards displaying their added pets.
-Access to a payment history section, showing donation and adoption transactions.
-Ability to track ongoing donation campaigns initiated by the user.
+W odróżnieniu od zwykłych portali ogłoszeniowych, CAT PURRE stawia na **dobrostan zwierząt** i **weryfikację genetyczną**, wykorzystując sztuczną inteligencję do idealnego dopasowania kota do stylu życia właściciela.
 
-- **Admin Dashboard:**
-Admins can view and manage all adoption requests, accepting or rejecting as necessary.
-Ability to pause or resume ongoing donation campaigns.
-Access to a comprehensive payment history, displaying all transactions on the platform.
+### 🌟 Kluczowe Funkcje (The "Big 13")
 
-- **Pet Profiles:**
-Detailed profiles for each pet, including images, descriptions, and health information. Adopters can view and inquire about pets directly through the platform.
+Aplikacja opiera się na 13 filarach innowacji:
 
-- **Security and Privacy:**
-Robust authentication and authorization mechanisms to ensure user data security.
-User data protection and adherence to privacy regulations.
+1.  **🧠 Neural Matchmaking Engine** – Algorytm AI analizujący osobowość użytkownika i temperament rasy, by znaleźć idealne dopasowanie (np. kot aktywny vs. spokojny domator).
+2.  **🩺 TeleHealth** – Zintegrowane wideokonsultacje z weterynarzami bezpośrednio w aplikacji.
+3.  **🧬 Genome Tracker** – Szczegółowa analiza rodowodu i ryzyk genetycznych (np. HCM, PKD) dla zapewnienia zdrowia pokoleń.
+4.  **🧊 AR View Room** – Technologia Rozszerzonej Rzeczywistości (AR), pozwalająca "zobaczyć" kota w swoim salonie przed adopcją.
+5.  **🛡️ Secure Escrow** – System bezpiecznych płatności, który zamraża środki do momentu potwierdzonego odbioru zwierzęcia.
+6.  **📊 Smart Litter Integration** – Współpraca z inteligentnymi kuwetami IoT do monitorowania zdrowia nerek w czasie rzeczywistym.
+7.  **🏆 Breeder Score Card** – Transparentny system oceny hodowli oparty na twardych danych, a nie tylko opiniach.
+8.  **🥗 NutriPlan AI** – Automatyczne generowanie planów żywieniowych dostosowanych do wieku, wagi i rasy kota.
+9.  **🚨 Amber Alert Pet** – System powiadomień geolokalizacyjnych, mobilizujący społeczność w przypadku zaginięcia pupila.
+10. **📦 Global Logistics** – Kalkulator transportu międzynarodowego z automatycznym sprawdzaniem wymogów prawnych (paszporty, szczepienia).
+11. **🎓 Breeder Academy** – Platforma edukacyjna i certyfikacyjna podnosząca standardy w branży felinologicznej.
+12. **💬 Szyfrowany Czat** – Bezpieczna komunikacja z automatycznym tłumaczeniem, ułatwiająca transakcje międzynarodowe.
+13. **🤝 Social Pride** – Zamknięte społeczności dla właścicieli konkretnych ras (np. grupa Maine Coon).
 
-- **Search and Filter Functionality:**
-Users can search for pets based on various criteria such as type, breed, location, etc.
-Filters for narrowing down donation campaigns based on urgency, popularity, etc.
+### 🛠 Technologia i Design
 
-- **Responsive Design:**
-Ensures a user-friendly experience on various devices, including mobile phones and tablets.
+Projekt został zrealizowany w architekturze **"Mobile-First"**, zapewniając płynność działania na każdym urządzeniu.
 
-## Used technologies
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
-![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
-![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![DaisyUI](https://img.shields.io/badge/daisyui-5A0EF8?style=for-the-badge&logo=daisyui&logoColor=white)
-![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)
+*   **Design System "Midnight Gold":** Minimalistyczny interfejs wykorzystujący głęboką czerń, szkło (Glassmorphism) i złote akcenty, budujący poczucie prestiżu.
+*   **Frontend:** React 18 + TypeScript (gwarancja stabilności i szybkości dzięki silnikowi Vite).
+*   **Bezpieczeństwo:** Weryfikacja tożsamości hodowców i szyfrowanie danych medycznych.
 
-### Visit my website
-- https://pet-care-1622a.web.app
+***
+*CAT PURRE to nie tylko aplikacja – to nowy standard w świecie felinologii.*
+
+Źródła
