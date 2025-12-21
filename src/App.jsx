@@ -2632,7 +2632,6 @@ const intellectualProperty = {  // ✅ POPRAWNIE
       contracts: 'Templates copyrighted'
     }
   }
-}
 const GAMIFICATION = {
   achievementSystem: {
     forBuyers: [
