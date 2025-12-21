@@ -2578,9 +2578,11 @@ const LEGAL_COMPLIANCE = {
       apiSecurity: 'Rate limiting, API keys, HMAC signatures'
     },
     
-     {
-      encryption: {
-        transit: 'TLS 1.3',
+       },
+  
+  security: {  // ✅ POPRAWNIE - dodaj nazwę
+    encryption: {
+      transit: 'TLS 1.3',
         rest: 'AES-256',
         database: 'Encrypted columns for PII',
         files: 'Encrypted storage'
