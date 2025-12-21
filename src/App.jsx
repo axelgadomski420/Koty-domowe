@@ -2194,7 +2194,7 @@ const INTEGRATIONS = {
     partners: [
       {
         name: 'VetNet Poland',
-        clinics: 500+,
+        clinics: 500,
         services: ['Vaccinations', 'Microchipping', 'Health certificates', 'Emergency'],
         discount: '10% for platform users',
         booking: 'Integrated calendar'
