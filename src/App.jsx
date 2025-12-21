@@ -4439,91 +4439,9 @@ Umowa została zawarta w dniu ${new Date().toLocaleDateString('pl-PL')}.
     )
   }
     // ====================================================================
-  // 🎨 DODAJ DO GŁÓWNEGO RETURN (przed </div> zamykającym App)
-  // ====================================================================
+  // Przed końcem funkcji App, po wszystkich funkcjach pomocniczych, dodaj:
 
-  // W sekcji header-actions dodaj nowe przyciski:
-  
-  // Znajdź to w kodzie:
-  // <div className="header-actions">
-  //   <button className="header-icon-btn" onClick={() => setShowNotifications(!showNotifications)}>
-  //     🔔 {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
-  //   </button>
-  
-  // I DODAJ PO TYM:
-  
-  <button 
-    className="header-icon-btn"
-    onClick={() => setShowMessenger(!showMessenger)}
-  >
-    💬 {unreadMessages > 0 && <span className="notif-badge">{unreadMessages}</span>}
-  </button>
-
-  {isBreeder && (
-    <button 
-      className="header-icon-btn breeder-btn"
-      onClick={openBreederDashboard}
-    >
-      📊 Panel
-    </button>
-  )}
-
-  {!isBreeder && (
-    <button 
-      className="header-icon-btn premium-btn"
-      onClick={() => setShowSubscriptionModal(true)}
-    >
-      💎 Premium
-    </button>
-  )}
-
-  // ====================================================================
-  // W sekcji cat-card dodaj przycisk "Kup teraz" i inne akcje
-  // ====================================================================
-  
-  // Znajdź w kodzie renderHome():
-  // <div className="card-actions">
-  //   <button className="action-btn secondary" onClick={(e) => { ... }}>
-  //     🔗 Udostępnij
-  //   </button>
-  //   <button className="action-btn primary" onClick={(e) => { ... }}>
-  //     💬 Kontakt
-  //   </button>
-  // </div>
-  
-  // ZASTĄP TO:
-  
-  <div className="card-actions">
-    <button 
-      className="action-btn buy-now"
-      onClick={(e) => {
-        e.stopPropagation()
-        handleBuyNow(cat)
-      }}
-    >
-      💳 Kup teraz
-    </button>
-    <button 
-      className="action-btn secondary"
-      onClick={(e) => {
-        e.stopPropagation()
-        handleBookVisit(cat)
-      }}
-    >
-      📅 Umów wizytę
-    </button>
-    <button 
-      className="action-btn secondary"
-      onClick={(e) => {
-        e.stopPropagation()
-        handleContactBreeder(cat.breeder)
-      }}
-    >
-      💬 Napisz
-    </button>
-  </div>
-
-  const ExtraActions = ({ cat, openContract, openReviewModal }) => {
+const ExtraActions = ({ cat, openContract, openReviewModal }) => {
   return (
     <div className="card-extra-actions">
       <button 
@@ -4548,63 +4466,129 @@ Umowa została zawarta w dniu ${new Date().toLocaleDateString('pl-PL')}.
   );
 };
 
-  // ====================================================================
-  // W sekcji hero-main dodaj przycisk "Zostań hodowcą" i "Mapa"
-  // ====================================================================
-  
-  // Znajdź <div className="hero-stats"> i PRZED NIM dodaj:
-  
-  <div className="hero-cta">
-    {!isBreeder && (
-      <button 
-        className="cta-btn primary"
-        onClick={() => setShowSubscriptionModal(true)}
-      >
-        🌟 Zostań hodowcą
-      </button>
-    )}
-    {isBreeder && (
-      <button 
-        className="cta-btn primary"
-        onClick={handleAddNewCat}
-      >
-        ➕ Dodaj kota
-      </button>
-    )}
-    <button 
-      className="cta-btn secondary"
-      onClick={openMap}
-    >
-      🗺️ Mapa hodowli
-    </button>
-  </div>
+// GŁÓWNY RETURN
+return (
+  <div className="App">
+    <header>
+      <div className="header-actions">
+        <button className="header-icon-btn" onClick={() => setShowNotifications(!showNotifications)}>
+          🔔 {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
+        </button>
+        
+        <button 
+          className="header-icon-btn"
+          onClick={() => setShowMessenger(!showMessenger)}
+        >
+          💬 {unreadMessages > 0 && <span className="notif-badge">{unreadMessages}</span>}
+        </button>
 
-  // ====================================================================
-  // NA KOŃCU return(), PRZED zamykającym </div>, DODAJ WSZYSTKIE RENDERY:
-  // ====================================================================
-  
-  return (
-    <div className="App">
-      {/* ... existing header ... */}
-      
-      {/* ... existing content ... */}
-      
-      {/* 🆕 NOWE MODAŁY I KOMPONENTY */}
-      {renderAddCatForm()}
-      {renderPaymentModal()}
-      {renderSubscriptionModal()}
-      {renderCalendar()}
-      {renderMessenger()}
-      {renderBreederDashboard()}
-      {renderReviewModal()}
-      {renderContractModal()}
-      {renderNewsletterPopup()}
-      {renderMap()}
-      
-      {/* ... existing footer ... */}
-    </div>
-  );
+        {isBreeder && (
+          <button 
+            className="header-icon-btn breeder-btn"
+            onClick={openBreederDashboard}
+          >
+            📊 Panel
+          </button>
+        )}
+
+        {!isBreeder && (
+          <button 
+            className="header-icon-btn premium-btn"
+            onClick={() => setShowSubscriptionModal(true)}
+          >
+            💎 Premium
+          </button>
+        )}
+      </div>
+    </header>
+
+    <main>
+      <div className="hero-main">
+        <div className="hero-cta">
+          {!isBreeder && (
+            <button 
+              className="cta-btn primary"
+              onClick={() => setShowSubscriptionModal(true)}
+            >
+              🌟 Zostań hodowcą
+            </button>
+          )}
+          {isBreeder && (
+            <button 
+              className="cta-btn primary"
+              onClick={handleAddNewCat}
+            >
+              ➕ Dodaj kota
+            </button>
+          )}
+          <button 
+            className="cta-btn secondary"
+            onClick={openMap}
+          >
+            🗺️ Mapa hodowli
+          </button>
+        </div>
+      </div>
+
+      {/* Karty kotów */}
+      {cats.map(cat => (
+        <div key={cat.id} className="cat-card">
+          {/* ... zawartość karty ... */}
+          
+          <div className="card-actions">
+            <button 
+              className="action-btn buy-now"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleBuyNow(cat);
+              }}
+            >
+              💳 Kup teraz
+            </button>
+            <button 
+              className="action-btn secondary"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleBookVisit(cat);
+              }}
+            >
+              📅 Umów wizytę
+            </button>
+            <button 
+              className="action-btn secondary"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleContactBreeder(cat.breeder);
+              }}
+            >
+              💬 Napisz
+            </button>
+          </div>
+
+          <ExtraActions 
+            cat={cat}
+            openContract={openContract}
+            openReviewModal={openReviewModal}
+          />
+        </div>
+      ))}
+    </main>
+
+    {/* MODAŁY NA KOŃCU */}
+    {renderAddCatForm()}
+    {renderPaymentModal()}
+    {renderSubscriptionModal()}
+    {renderCalendar()}
+    {renderMessenger()}
+    {renderBreederDashboard()}
+    {renderReviewModal()}
+    {renderContractModal()}
+    {renderNewsletterPopup()}
+    {renderMap()}
+  </div>
+);
 }
 
-export default App
+export default App;
+
 
