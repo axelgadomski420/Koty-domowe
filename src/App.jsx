@@ -4585,10 +4585,11 @@ return (
     {renderContractModal()}
     {renderNewsletterPopup()}
     {renderMap()}
-  </div>
-);
+      </div>
+  );
 }
 
 export default App;
+
 
 
