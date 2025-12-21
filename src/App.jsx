@@ -4603,7 +4603,7 @@ Umowa została zawarta w dniu ${new Date().toLocaleDateString('pl-PL')}.
       
       {/* ... existing footer ... */}
     </div>
-  )
+  );
 }
 
 export default App
